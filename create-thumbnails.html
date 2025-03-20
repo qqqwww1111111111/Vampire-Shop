@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品缩略图生成工具</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.157.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // 定义模型路径
+        const modelPaths = {
+            'cloak': '/models/products/cloak.glb',
+            'goblet': '/models/products/goblet.glb',
+            'dagger': '/models/products/dagger.glb',
+            'book': '/models/products/book.glb',
+            'watch': '/models/products/watch.glb',
+            'box': '/models/products/box.glb',
+            'crown': '/models/products/crown.glb',
+            'necklace': '/models/products/necklace.glb',
+            'wand': '/models/products/wand.glb',
+            'ring': '/models/products/ring.glb',
+            'crystal': '/models/products/crystal.glb',
+            'apple': '/models/products/apple.glb',
+            'mirror': '/models/products/mirror.glb'
+        };
+
+        let currentModelType = '';
+        let scene, camera, renderer, controls;
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            // 渲染所有模型的缩略图链接
+            const thumbnailsList = document.getElementById('thumbnails-list');
+            for (const modelType in modelPaths) {
+                const link = document.createElement('button');
+                link.textContent = `生成 ${modelType} 缩略图`;
+                link.onclick = () => loadModel(modelType);
+                thumbnailsList.appendChild(link);
+            }
+
+            setupRenderer();
+        });
+
+        function setupRenderer() {
+            // 创建场景
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x200000);
+            
+            // 创建相机
+            camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+            camera.position.z = 4;
+            
+            // 创建渲染器
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                preserveDrawingBuffer: true
+            });
+            renderer.setSize(512, 512);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            
+            const container = document.getElementById('model-container');
+            container.innerHTML = '';
+            container.appendChild(renderer.domElement);
+            
+            // 添加轨道控制器
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableZoom = true;
+            controls.enablePan = true;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 1.0;
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            
+            // 添加灯光
+            const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
+            scene.add(ambientLight);
+            
+            const redLight = new THREE.PointLight(0xff0000, 5.0);
+            redLight.position.set(5, 5, 5);
+            scene.add(redLight);
+            
+            const whiteLight = new THREE.DirectionalLight(0xffffff, 3.0);
+            whiteLight.position.set(-5, 5, 5);
+            scene.add(whiteLight);
+            
+            const secondRedLight = new THREE.PointLight(0xff0000, 3.0);
+            secondRedLight.position.set(-5, -5, -5);
+            scene.add(secondRedLight);
+            
+            // 添加背景平面
+            const planeGeometry = new THREE.PlaneGeometry(10, 10);
+            const planeMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x250000, 
+                side: THREE.DoubleSide,
+                metalness: 0.5,
+                roughness: 0.5
+            });
+            const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.rotation.x = Math.PI / 2;
+            plane.position.y = -1.5;
+            scene.add(plane);
+            
+            animate();
+        }
+
+        function loadModel(modelType) {
+            currentModelType = modelType;
+            document.getElementById('current-model').textContent = `当前模型: ${modelType}`;
+            
+            // 移除之前的模型
+            scene.children.forEach(child => {
+                if (child.isObject3D && !(child.isLight || child.isCamera || child.isMesh && child.geometry instanceof THREE.PlaneGeometry)) {
+                    scene.remove(child);
+                }
+            });
+            
+            const loader = new GLTFLoader();
+            loader.load(modelPaths[modelType],
+                function(gltf) {
+                    const model = gltf.scene;
+                    
+                    // 自动调整模型大小
+                    const box = new THREE.Box3().setFromObject(model);
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = 3 / maxDim;
+                    model.scale.multiplyScalar(scale);
+                    
+                    // 居中模型
+                    const center = box.getCenter(new THREE.Vector3());
+                    model.position.sub(center.multiplyScalar(scale));
+                    model.position.y += 0.3;
+                    
+                    // 添加发光效果
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            // 增强材质
+                            if (child.material) {
+                                child.material.emissive = new THREE.Color(0x330000);
+                                child.material.emissiveIntensity = 0.2;
+                                child.material.metalness = 0.8;
+                                child.material.roughness = 0.2;
+                            }
+                        }
+                    });
+                    
+                    scene.add(model);
+                    document.getElementById('thumbnail-preview').src = '';
+                },
+                undefined,
+                function(error) {
+                    console.error('Error loading model:', modelPaths[modelType], error);
+                }
+            );
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.captureImage = function() {
+            if (!currentModelType) {
+                alert('请先选择一个模型！');
+                return;
+            }
+            
+            const dataURL = renderer.domElement.toDataURL('image/jpeg', 0.95);
+            const preview = document.getElementById('thumbnail-preview');
+            preview.src = dataURL;
+            
+            // 显示下载链接
+            const downloadLink = document.getElementById('download-link');
+            downloadLink.href = dataURL;
+            downloadLink.download = `${currentModelType}.jpg`;
+            downloadLink.style.display = 'inline-block';
+            downloadLink.textContent = `下载 ${currentModelType}.jpg`;
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ff0000;
+            text-align: center;
+        }
+        .tool-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .model-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+        .thumbnails-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+        #model-container {
+            width: 512px;
+            height: 512px;
+            margin: 0 auto;
+            background-color: #200000;
+            border: 1px solid #333;
+        }
+        button {
+            background-color: #600;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #900;
+        }
+        #thumbnails-list {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        #thumbnail-preview {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #333;
+            margin-top: 10px;
+        }
+        #download-link {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #060;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        #download-link:hover {
+            background-color: #080;
+        }
+        .instructions {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>商品缩略图生成工具</h1>
+        
+        <div class="instructions">
+            <p>使用说明：</p>
+            <ol>
+                <li>选择一个模型</li>
+                <li>旋转模型到合适的角度（可以拖动、旋转和缩放）</li>
+                <li>点击"截取当前图像"按钮</li>
+                <li>预览图像并下载</li>
+                <li>将下载的图像放到 assets/products/ 目录下</li>
+            </ol>
+        </div>
+        
+        <div class="tool-container">
+            <div class="model-panel">
+                <h2 id="current-model">当前模型: 未选择</h2>
+                <div id="model-container"></div>
+                <button onclick="captureImage()">截取当前图像</button>
+            </div>
+            
+            <div class="thumbnails-panel">
+                <h2>选择模型</h2>
+                <div id="thumbnails-list"></div>
+                <h2>图像预览</h2>
+                <img id="thumbnail-preview" alt="缩略图预览">
+                <a id="download-link" href="#" download>下载图像</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html class="wf-initial-load">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>商品展示 - 吸血鬼商店</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 使用ES模块方式加载Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.157.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        
+        // 定义模型路径
+        const modelPaths = {
+            'cloak': './models/products/cloak.glb',
+            'goblet': './models/products/goblet.glb',
+            'dagger': './models/products/dagger.glb',
+            'book': './models/products/book.glb',
+            'watch': './models/products/watch.glb',
+            'box': './models/products/box.glb',
+            'crown': './models/products/crown.glb',
+            'necklace': './models/products/necklace.glb',
+            'wand': './models/products/wand.glb',
+            'ring': './models/products/ring.glb',
+            'crystal': './models/products/crystal.glb',
+            'apple': './models/products/apple.glb',
+            'mirror': './models/products/mirror.glb'
+        };
+        
+        // 初始化场景存储
+        const scenes = new Map();
+        
+        // 创建场景函数
+        function createScene(containerId, modelPath) {
+            const container = document.getElementById(containerId);
+            if (!container) return null;
+            
+            // 创建场景
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+            
+            // 创建相机
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 5;
+            camera.position.y = 2;
+            camera.lookAt(0, 0, 0);
+            
+            // 创建渲染器
+            const renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: true
+            });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.setClearColor(0x000000, 0);
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            container.appendChild(renderer.domElement);
+            
+            // 创建控制器
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableZoom = false;  // 禁用缩放
+            controls.enablePan = false;   // 禁用平移
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 3.0;
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 5;      // 固定距离
+            controls.maxDistance = 5;      // 固定距离
+            controls.target.set(0, 0, 0);
+            
+            // 添加光源
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+            scene.add(ambientLight);
+            
+            const redLight = new THREE.PointLight(0xff0000, 3.0);
+            redLight.position.set(5, 5, 5);
+            redLight.castShadow = true;
+            scene.add(redLight);
+            
+            const whiteLight = new THREE.DirectionalLight(0xffffff, 2.0);
+            whiteLight.position.set(-5, 5, 5);
+            whiteLight.castShadow = true;
+            scene.add(whiteLight);
+            
+            const secondRedLight = new THREE.PointLight(0xff0000, 2.0);
+            secondRedLight.position.set(-5, -5, -5);
+            scene.add(secondRedLight);
+            
+            const haloLight = new THREE.PointLight(0xff0000, 1.5);
+            haloLight.position.set(0, 0, 3);
+            scene.add(haloLight);
+            
+            // 加载模型
+            const loader = new GLTFLoader();
+            
+            loader.load(modelPath,
+                function(gltf) {
+                    const model = gltf.scene;
+                    
+                    // 优化模型缩放和位置
+                    const box = new THREE.Box3().setFromObject(model);
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = 4.0 / maxDim;
+                    model.scale.multiplyScalar(scale);
+                    
+                    const center = box.getCenter(new THREE.Vector3());
+                    model.position.sub(center.multiplyScalar(scale));
+                    model.position.y += 0.5;
+                    
+                    // 优化材质设置
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            if (child.material) {
+                                child.material.emissive = new THREE.Color(0x330000);
+                                child.material.emissiveIntensity = 0.2;
+                                child.material.metalness = 0.8;
+                                child.material.roughness = 0.2;
+                                child.material.envMapIntensity = 1.0;
+                                child.material.needsUpdate = true;
+                            }
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
+                    });
+                    
+                    scene.add(model);
+                },
+                // 加载进度回调
+                function(xhr) {
+                    console.log(`模型加载进度: ${Math.round(xhr.loaded / xhr.total * 100)}%`);
+                },
+                // 错误回调
+                function(error) {
+                    console.error('模型加载错误:', error);
+                }
+            );
+            
+            // 鼠标移动光效
+            container.addEventListener('mousemove', (event) => {
+                const rect = container.getBoundingClientRect();
+                const x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+                const y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
+                redLight.position.x = x * 10;
+                redLight.position.y = y * 10;
+                haloLight.position.x = x * 3;
+                haloLight.position.y = y * 3;
+            });
+            
+            // 窗口大小变化适应
+            window.addEventListener('resize', () => {
+                if (container) {
+                    camera.aspect = container.clientWidth / container.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                }
+            });
+            
+            return {
+                scene,
+                camera,
+                renderer,
+                controls
+            };
+        }
+        
+        // 初始化3D模型
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检查是否有选中的商品
+            const selectedProduct = sessionStorage.getItem('selectedProduct');
+            if (selectedProduct) {
+                const productCard = document.querySelector(`[data-model="${selectedProduct}"]`);
+                if (productCard) {
+                    productCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // 清除选中状态
+                    sessionStorage.removeItem('selectedProduct');
+                }
+            }
+
+            // 初始化所有产品的3D场景
+            document.querySelectorAll('.product-card').forEach(card => {
+                const modelType = card.dataset.model;
+                const containerId = `model-${modelType}`;
+                const modelPath = modelPaths[modelType];
+                
+                if (modelPath) {
+                    const sceneObj = createScene(containerId, modelPath);
+                    if (sceneObj) {
+                        scenes.set(containerId, sceneObj);
+                    }
+                }
+            });
+            
+            // 开始动画循环
+            animate();
+            
+            // 初始化详情查看按钮
+            initDetailButtons();
+            
+            // 初始化加入购物车按钮
+            initAddToCartButtons();
+        });
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            scenes.forEach(({scene, camera, renderer, controls}) => {
+                if (controls) controls.update();
+                if (scene && camera && renderer) {
+                    renderer.render(scene, camera);
+                }
+            });
+        }
+
+        // 详情查看功能
+        function initDetailButtons() {
+            // 为所有查看详情按钮添加点击事件
+            document.querySelectorAll('.view-details-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const modelType = this.dataset.model;
+                    openProductDetail(modelType);
+                });
+            });
+            
+            // 关闭详情模态框
+            document.querySelector('.modal-close').addEventListener('click', () => {
+                closeProductDetail();
+            });
+            
+            // 点击模态框外部关闭
+            document.getElementById('product-detail-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('product-detail-modal')) {
+                    closeProductDetail();
+                }
+            });
+            
+            // ESC键关闭模态框
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeProductDetail();
+                }
+            });
+        }
+        
+        // 创建详情模型
+        function createDetailModel(modelType) {
+            const container = document.getElementById('modal-product-canvas');
+            if (!container) {
+                console.error('找不到模态框容器');
+                return;
+            }
+            
+            // 清除之前的模型
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            
+            // 创建场景
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+            
+            // 创建相机
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 5;
+            camera.position.y = 2;
+            camera.lookAt(0, 0, 0);
+            
+            // 创建渲染器
+            const renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: true
+            });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.setClearColor(0x000000, 0);
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            container.appendChild(renderer.domElement);
+            
+            // 创建控制器
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableZoom = true;
+            controls.enablePan = true;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 3.0;
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 2;
+            controls.maxDistance = 10;
+            controls.target.set(0, 0, 0);
+            
+            // 添加光源
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+            scene.add(ambientLight);
+            
+            const redLight = new THREE.PointLight(0xff0000, 3.0);
+            redLight.position.set(5, 5, 5);
+            redLight.castShadow = true;
+            scene.add(redLight);
+            
+            const whiteLight = new THREE.DirectionalLight(0xffffff, 2.0);
+            whiteLight.position.set(-5, 5, 5);
+            whiteLight.castShadow = true;
+            scene.add(whiteLight);
+            
+            const secondRedLight = new THREE.PointLight(0xff0000, 2.0);
+            secondRedLight.position.set(-5, -5, -5);
+            scene.add(secondRedLight);
+            
+            const haloLight = new THREE.PointLight(0xff0000, 1.5);
+            haloLight.position.set(0, 0, 3);
+            scene.add(haloLight);
+            
+            // 加载模型
+            const loader = new GLTFLoader();
+            const modelPath = modelPaths[modelType];
+            
+            if (!modelPath) {
+                console.error('模型路径不存在:', modelType);
+                return;
+            }
+            
+            console.log('开始加载模型:', modelPath);
+            
+            // 添加加载指示器
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.className = 'loading-indicator';
+            loadingIndicator.textContent = '加载中...';
+            container.appendChild(loadingIndicator);
+            
+            loader.load(modelPath,
+                function(gltf) {
+                    console.log('模型加载成功');
+                    const model = gltf.scene;
+                    
+                    // 优化模型缩放和位置
+                    const box = new THREE.Box3().setFromObject(model);
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = 4.0 / maxDim;
+                    model.scale.multiplyScalar(scale);
+                    
+                    const center = box.getCenter(new THREE.Vector3());
+                    model.position.sub(center.multiplyScalar(scale));
+                    model.position.y += 0.5;
+                    
+                    // 优化材质设置
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            if (child.material) {
+                                child.material.emissive = new THREE.Color(0x330000);
+                                child.material.emissiveIntensity = 0.2;
+                                child.material.metalness = 0.8;
+                                child.material.roughness = 0.2;
+                                child.material.envMapIntensity = 1.0;
+                                child.material.needsUpdate = true;
+                            }
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
+                    });
+                    
+                    scene.add(model);
+                    console.log('模型已添加到场景');
+                    
+                    // 移除加载指示器
+                    if (loadingIndicator) {
+                        loadingIndicator.remove();
+                    }
+                    
+                    // 开始渲染循环
+                    function animate() {
+                        requestAnimationFrame(animate);
+                        controls.update();
+                        renderer.render(scene, camera);
+                    }
+                    animate();
+                },
+                // 加载进度回调
+                function(xhr) {
+                    console.log(`模型加载进度: ${Math.round(xhr.loaded / xhr.total * 100)}%`);
+                    if (loadingIndicator) {
+                        loadingIndicator.textContent = `加载中... ${Math.round(xhr.loaded / xhr.total * 100)}%`;
+                    }
+                },
+                // 错误回调
+                function(error) {
+                    console.error('模型加载错误:', error);
+                    if (loadingIndicator) {
+                        loadingIndicator.textContent = '加载失败，请刷新重试';
+                        loadingIndicator.style.color = '#ff0000';
+                    }
+                }
+            );
+            
+            // 鼠标移动光效
+            container.addEventListener('mousemove', (event) => {
+                const rect = container.getBoundingClientRect();
+                const x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+                const y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
+                redLight.position.x = x * 10;
+                redLight.position.y = y * 10;
+                haloLight.position.x = x * 3;
+                haloLight.position.y = y * 3;
+            });
+            
+            // 窗口大小变化适应
+            window.addEventListener('resize', () => {
+                if (container) {
+                    camera.aspect = container.clientWidth / container.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                }
+            });
+            
+            // 存储场景对象
+            scenes.set('modal-product-canvas', {
+                scene,
+                camera,
+                renderer,
+                controls
+            });
+            
+            console.log('详情模型创建完成');
+        }
+        
+        // 修改openProductDetail函数
+        function openProductDetail(modelType) {
+            console.log('打开产品详情:', modelType);
+            
+            // 获取产品卡片信息
+            const productCard = document.querySelector(`.product-card[data-model="${modelType}"]`);
+            if (!productCard) {
+                console.error('找不到产品卡片:', modelType);
+                return;
+            }
+            
+            // 获取产品信息
+            const title = productCard.querySelector('h3').textContent;
+            const description = productCard.querySelector('p').textContent;
+            const details = productCard.querySelector('.product-details').innerHTML;
+            const priceValue = productCard.querySelector('.product-price').textContent.replace('¥', '');
+            
+            // 设置模态框内容
+            document.getElementById('modal-product-title').textContent = title;
+            document.getElementById('modal-product-description').textContent = description;
+            document.getElementById('modal-product-details').innerHTML = details;
+            document.getElementById('modal-price-value').textContent = priceValue;
+            
+            // 设置购物车按钮数据
+            const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
+            const modalAddToCartBtn = document.getElementById('modal-add-to-cart');
+            
+            if (addToCartBtn) {
+                modalAddToCartBtn.dataset.name = addToCartBtn.dataset.name;
+                modalAddToCartBtn.dataset.baseprice = addToCartBtn.dataset.baseprice;
+            }
+            
+            // 显示模态框
+            const modal = document.getElementById('product-detail-modal');
+            modal.style.display = 'flex';
+            
+            // 创建3D模型
+            createDetailModel(modelType);
+            
+            // 延迟设置透明度，确保过渡效果正常
+            setTimeout(() => {
+                modal.style.opacity = '1';
+            }, 10);
+            
+            // 禁止背景滚动
+            document.body.style.overflow = 'hidden';
+            
+            console.log('产品详情模态框已打开');
+        }
+        
+        // 修改closeProductDetail函数
+        function closeProductDetail() {
+            const modal = document.getElementById('product-detail-modal');
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.display = 'none';
+                
+                // 清除模态框中的3D模型
+                const container = document.getElementById('modal-product-canvas');
+                while (container.firstChild) {
+                    container.removeChild(container.firstChild);
+                }
+                
+                // 清除场景
+                scenes.delete('modal-product-canvas');
+            }, 300);
+            
+            // 恢复背景滚动
+            document.body.style.overflow = '';
+        }
+        
+        // 尺寸选择功能
+        function initSizeOptions() {
+            document.querySelectorAll('.size-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const card = this.closest('.product-card');
+                    
+                    // 更新选中状态
+                    card.querySelectorAll('.size-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    // 更新价格
+                    const price = this.dataset.price;
+                    card.querySelector('.price-value').textContent = price;
+                    
+                    // 更新购物车按钮数据
+                    const button = card.querySelector('.add-to-cart-btn');
+                    if (button) {
+                        button.dataset.price = price;
+                    }
+                    
+                    // 可选：更新3D模型大小
+                    const modelType = card.dataset.model;
+                    const size = this.dataset.size;
+                    const sceneObj = scenes.get(`model-${modelType}`);
+                    if (sceneObj && sceneObj.scene) {
+                        let scale = 1;
+                        switch(size) {
+                            case 'S': scale = 0.9; break;
+                            case 'M': scale = 1.0; break;
+                            case 'L': scale = 1.1; break;
+                        }
+                        
+                        sceneObj.scene.scale.set(scale, scale, scale);
+                    }
+                });
+            });
+        }
+        
+        // 初始化加入购物车按钮
+        function initAddToCartButtons() {
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const name = this.dataset.name;
+                    // 获取当前选中的尺寸对应的价格
+                    const card = this.closest('.product-card');
+                    const selectedSize = card.querySelector('.size-option.selected');
+                    const price = selectedSize ? parseInt(selectedSize.dataset.price) : parseInt(this.dataset.baseprice);
+                    
+                    addToCart(name, price);
+                });
+            });
+        }
+        
+        // 购物车功能
+        let cart = [];
+        
+        // 添加商品到购物车
+        function addToCart(name, price) {
+            // 查找商品是否已经在购物车中
+            const existingItem = cart.find(item => item.name === name);
+            
+            if (existingItem) {
+                // 如果商品已存在，增加数量
+                existingItem.quantity = (existingItem.quantity || 1) + 1;
+            } else {
+                // 如果商品不存在，添加新商品
+                cart.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            
+            // 保存购物车到localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // 更新购物车计数
+            updateCartCount();
+            
+            // 更新购物车商品显示
+            updateCartItems();
+            
+            // 显示提示信息
+            showToast('已添加到购物车');
+            
+            // 购物车图标动画
+            const cartIcon = document.querySelector('.cart-icon');
+            cartIcon.classList.add('bounce');
+            setTimeout(() => {
+                cartIcon.classList.remove('bounce');
+            }, 500);
+            
+            // 自动打开购物车
+            document.getElementById('cart-modal').classList.add('active');
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartCount();
+            updateCartItems();
+            showToast('已从购物车移除');
+        }
+        
+        function updateCartCount() {
+            const cartCount = document.querySelector('.cart-count');
+            cartCount.textContent = cart.length;
+        }
+        
+        function updateCartItems() {
+            const cartItems = document.querySelector('.cart-items');
+            const cartTotal = document.querySelector('.cart-total span:last-child');
+            
+            // 清空购物车列表
+            cartItems.innerHTML = '';
+            
+            // 计算总价
+            let total = 0;
+            
+            // 添加购物车商品
+            cart.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-info">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">¥${item.price}</div>
+                    </div>
+                    <div class="remove-item" onclick="removeFromCart(${index})">×</div>
+                `;
+                cartItems.appendChild(cartItem);
+                total += item.price;
+            });
+            
+            // 更新总价
+            cartTotal.textContent = `¥${total}`;
+            
+            // 更新结算按钮状态
+            const checkoutButton = document.querySelector('.checkout-button');
+            checkoutButton.disabled = cart.length === 0;
+        }
+        
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+        
+        function toggleCart() {
+            const cartModal = document.getElementById('cart-modal');
+            cartModal.classList.toggle('active');
+        }
+        
+        // 结算功能
+        function checkout() {
+            // 跳转到结账页面
+            window.location.href = 'checkout.html';
+        }
+        
+        // 关闭购物车
+        document.querySelector('.close-cart').addEventListener('click', () => {
+            document.getElementById('cart-modal').classList.remove('active');
+        });
+        
+        // 点击购物车外部关闭
+        document.getElementById('cart-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('cart-modal')) {
+                document.getElementById('cart-modal').classList.remove('active');
+            }
+        });
+        
+        // 结算按钮点击事件
+        document.querySelector('.checkout-button').addEventListener('click', checkout);
+    </script>
+    <style>
+        html {
+            cursor: url("https://freight.cargo.site/t/original/i/X1891125108465342991869321415690/cussor-6.png"), auto !important;
+        }
+
+        a {
+            cursor: url("https://freight.cargo.site/t/original/i/X1891125108446896247795611864074/cussor-5.png"), auto !important;
+        }
+        
+        body {
+            background-color: #000000;
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Diatype Variable", sans-serif;
+            color: white;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-family: "Gravity Variable", serif;
+            font-size: 3rem;
+            color: #ff0000;
+            text-decoration: none;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .nav-link {
+            font-family: Newsreader;
+            font-size: 1.7rem;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        .cart-icon {
+            position: relative;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.75);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cart-icon:hover {
+            color: #ff0000;
+            transform: scale(1.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(45deg, #8b0000, #ff0000);
+            color: white;
+            font-size: 0.8rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(255,0,0,0.3);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5rem 4rem;
+            padding: 4rem 5rem;
+            margin-top: 100px;
+            position: relative;
+            z-index: 2;
+            max-width: 1500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .product-card {
+            background: transparent;
+            backdrop-filter: none;
+            border: none;
+            border-radius: 0;
+            padding: 2rem 0.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            background: transparent;
+            transform: translateY(-8px);
+            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.15));
+        }
+
+        .product-canvas-wrapper {
+            width: 100%;
+            height: 320px;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff0000;
+            font-size: 1.2rem;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff0000;
+            font-size: 1.2rem;
+            text-align: center;
+            z-index: 1;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            border-radius: 5px;
+        }
+
+        .product-canvas {
+            width: 100%;
+            height: 320px;
+            margin-bottom: 0;
+            border-radius: 0;
+            overflow: hidden;
+            background: transparent;
+            position: relative;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-canvas {
+            transform: scale(1.08);
+        }
+        
+        /* 缩放指示器样式 */
+        .zoom-indicator {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: rgba(255, 0, 0, 0.2);
+            color: white;
+            padding: 5px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .product-canvas:hover .zoom-indicator {
+            opacity: 1;
+        }
+        
+        /* 颜色选择器样式 */
+        .color-options {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+        
+        .color-option.selected {
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        
+        /* 尺寸选择器样式 */
+        .size-options {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .size-option {
+            padding: 5px 12px;
+            margin: 0 5px 5px 0;
+            border-radius: 15px;
+            background: rgba(20, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+        
+        .size-option:hover {
+            background: rgba(139, 0, 0, 0.4);
+            color: white;
+        }
+        
+        .size-option.selected {
+            background: rgba(255, 0, 0, 0.4);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        
+        /* 查看详情按钮 - 新样式 */
+        .view-details-btn {
+            display: inline-block;
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 10px auto;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            text-align: center;
+            width: auto;
+        }
+        
+        .view-details-btn:hover {
+            background: rgba(255, 0, 0, 0.9);
+            transform: scale(1.05);
+        }
+        
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 0 10px;
+            gap: 10px;
+        }
+        
+        .product-actions button {
+            flex: 1;
+            min-width: 120px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .view-details-btn {
+            background: rgba(255, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+        }
+        
+        .view-details-btn:hover {
+            background: rgba(255, 0, 0, 0.5);
+            border-color: rgba(255, 0, 0, 0.8);
+        }
+        
+        .add-to-cart-btn {
+            background: rgba(255, 0, 0, 0.7);
+            border: none;
+        }
+        
+        .add-to-cart-btn:hover {
+            background: rgba(255, 0, 0, 0.9);
+        }
+        
+        /* 商品详情模态框 */
+        .product-detail-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1400px;
+            height: 80vh;
+            background: rgba(10, 0, 0, 0.8);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-product-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .modal-product-canvas {
+            flex: 1;
+            height: 100%;
+            background: black;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-product-info {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .modal-product-info .product-title {
+            font-size: 2.5rem;
+            color: #ff0000;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+        
+        .modal-product-info .product-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .modal-product-info .product-details {
+            margin-bottom: 2rem;
+        }
+        
+        .modal-product-info .product-price {
+            font-size: 2rem;
+            color: #ff0000;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        
+        .modal-product-info .add-to-cart-btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-product-info .add-to-cart-btn:hover {
+            background: rgba(255, 0, 0, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: color 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            color: #ff0000;
+        }
+
+        .highlight-product {
+            animation: highlight-pulse 2s ease;
+        }
+        
+        @keyframes highlight-pulse {
+            0%, 100% { box-shadow: 0 0 0 rgba(255, 0, 0, 0); }
+            50% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
+        }
+
+        .product-card h3 {
+            color: #ff0000;
+            font-size: 2.2rem;
+            margin: 0.8rem 0;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+            font-weight: 600;
+            letter-spacing: 2px;
+            font-family: "Gravity Variable", serif;
+            transition: text-shadow 0.3s ease;
+        }
+
+        .product-card:hover h3 {
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .product-card p {
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1.2rem;
+            min-height: 70px;
+            line-height: 1.6;
+            font-size: 1.05rem;
+            padding: 0 0.8rem;
+            font-family: "Newsreader", serif;
+        }
+
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            padding: 0 0.8rem;
+            transition: opacity 0.3s ease;
+            opacity: 0.85;
+        }
+        
+        .product-card:hover .product-details {
+            opacity: 1;
+        }
+
+        .product-origin, .product-age, .product-magic-level {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0.2rem 0;
+            font-family: "Diatype Variable", sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-origin i, .product-age i, .product-magic-level i {
+            margin-right: 8px;
+            color: rgba(255, 0, 0, 0.7);
+        }
+
+        .product-tags {
+            margin-top: 0.6rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .product-tag {
+            display: inline-block;
+            background: rgba(139, 0, 0, 0.15);
+            padding: 0.25rem 0.7rem;
+            margin: 0.3rem 0.2rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .product-card:hover .product-tag {
+            background: rgba(139, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff0000;
+            margin: 0.8rem 0;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            font-family: "Gravity Variable", serif;
+        }
+
+        .product-card button {
+            background: rgba(255, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.4rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: "Diatype Variable", sans-serif;
+            margin-top: auto;
+            align-self: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card button:hover {
+            background: rgba(205, 0, 0, 0.8);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .product-card button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .product-card button:hover::before {
+            left: 100%;
+        }
+
+        /* 添加购物车弹窗样式 */
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            border-left: 1px solid rgba(255, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-modal.active {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-title {
+            font-size: 1.5rem;
+            color: #ff0000;
+            font-family: "Gravity Variable", serif;
+        }
+
+        .close-cart {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-cart:hover {
+            color: #ff0000;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: #ff0000;
+        }
+
+        .cart-item-price {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .remove-item {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 0 10px;
+        }
+
+        .remove-item:hover {
+            color: #ff0000;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #ff0000;
+            font-size: 1.2rem;
+            font-family: "Gravity Variable", serif;
+        }
+
+        .checkout-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #8b0000, #ff0000);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "Diatype Variable", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .checkout-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .checkout-button:disabled {
+            background: rgba(255, 0, 0, 0.3);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .cart-icon.bounce {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        /* 新增的购物车样式 */
+        .empty-cart {
+            text-align: center;
+            padding: 30px 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+        
+        .cart-item {
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .item-name {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #ff0000;
+        }
+        
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .item-price {
+            color: rgba(255, 255, 255, 0.7);
+            margin-right: 10px;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            margin: 0 10px;
+        }
+        
+        .quantity-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.3);
+            border: none;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .quantity-btn:hover {
+            background: rgba(255, 0, 0, 0.6);
+        }
+        
+        .item-quantity {
+            margin: 0 8px;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .item-total {
+            color: #ff0000;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        
+        .remove-btn {
+            background: rgba(255, 0, 0, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .remove-btn:hover {
+            background: rgba(255, 0, 0, 0.5);
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            font-size: 1.2rem;
+            color: #ff0000;
+            margin-top: 10px;
+        }
+        
+        .checkout-btn {
+            width: calc(100% - 30px);
+            margin: 10px 15px;
+            padding: 12px;
+            background: linear-gradient(45deg, #8b0000, #ff0000);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+        
+        .continue-shopping {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            margin: 5px 15px 15px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .continue-shopping:hover {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="backdrop"></div>
+    
+    <div class="header">
+        <a href="index.html" class="nav-link">✧ Home ✧</a>
+        <a href="index.html" class="logo">VAMPIRE SHOP</a>
+        <div class="cart-icon" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div id="cart-modal" class="cart-modal">
+            <div class="cart-header">
+                <div class="cart-title">购物车</div>
+                <div class="close-cart">×</div>
+            </div>
+            <div class="cart-items">
+                <!-- 购物车商品将在这里动态添加 -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>总计:</span>
+                    <span>¥0</span>
+                </div>
+                <button class="checkout-button" onclick="checkout()">结算</button>
+                <a href="javascript:void(0)" onclick="toggleCart()" class="continue-shopping">继续购物</a>
+            </div>
+        </div>
+
+        <div class="products-grid">
+            <div class="product-card" data-model="cloak">
+                <div class="product-canvas-wrapper">
+                    <div id="model-cloak" class="product-canvas model-container"></div>
+                </div>
+                <h3>幽影蝙蝠结</h3>
+                <p>这款手提包由黑色光泽的皮革制成，镶嵌精致的蝙蝠翅膀装饰，翅膀上隐约流动着暗红色的光芒，带有神秘的魔力。蝙蝠的翅膀是吸血鬼能力的象征，增强吸血鬼的速度和飞行能力。包上的蝴蝶结充满优雅的气息，但却隐藏了某种不为人知的魔力，可以令佩戴者瞬间融入阴影，令其隐身于夜色之中。</p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：飞行与隐身，增强夜视能力</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：黑色红宝石和月光石，提升夜晚的魔法效能</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 高级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">隐身</span>
+                        <span class="product-tag">夜行</span>
+                        <span class="product-tag">贵族</span>
+                    </div>
+                </div>
+                <div class="product-price">¥3250</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="cloak">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="神秘斗篷" data-baseprice="3250">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="goblet">
+                <div class="product-canvas-wrapper">
+                    <div id="model-goblet" class="product-canvas model-container"></div>
+                </div>
+                <h3>亡者的呢喃</h3>
+                <div class="size-options">
+                    <div class="size-option selected" data-size="S" data-price="2800">S</div>
+                    <div class="size-option" data-size="M" data-price="3000">M</div>
+                    <div class="size-option" data-size="L" data-price="3200">L</div>
+                </div>
+                <p>这款包设计独特，采用白色骨骼装饰，仿佛是从沉睡的墓地中提取出来的遗物。骨头的纹理呈现着岁月的痕迹，散发出淡淡的幽光。它不仅是时尚配件，还是吸血鬼力量的容器，增强了持有者的死亡感知能力，能听见亡灵的低语与灵魂的指引。
+                </p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：亡灵沟通与死者感知，强化暗影魔法。
+                    </div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：蓝色月光石和黑曜石，提升与亡灵交流的能力。</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 中级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">转化</span>
+                        <span class="product-tag">圣器</span>
+                        <span class="product-tag">贵族</span>
+                    </div>
+                </div>
+                <div class="product-price">¥<span class="price-value">2800</span></div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="goblet">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="血色圣杯" data-baseprice="2800">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="dagger">
+                <div class="product-canvas-wrapper">
+                    <div id="model-dagger" class="product-canvas model-container"></div>
+                </div>
+                <h3>天龙羽翼</h3>
+                <p>这款包以天使的羽毛与龙的尾巴为设计灵感，天使翅膀的纤细羽毛飘逸至包的一侧，而龙尾则以其威猛的形态缠绕在包身。翅膀象征着纯洁与飞翔，龙尾则代表着力量与防护。这款包能使吸血鬼的力量得到平衡，提升飞行与战斗能力。
+                </p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：飞行与力量平衡，提升防御与攻击力</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：火焰红宝石和天使之羽晶石，强化飞行速度与力量</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 中高级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">锋利</span>
+                        <span class="product-tag">符文</span>
+                        <span class="product-tag">防御</span>
+                    </div>
+                </div>
+                <div class="product-price">¥3500</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="dagger">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="暗夜匕首" data-baseprice="3500">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="book">
+                <div class="product-canvas-wrapper">
+                    <div id="model-book" class="product-canvas model-container"></div>
+                </div>
+                <h3>死寂之翼</h3>
+                <div class="size-options">
+                    <div class="size-option selected" data-size="S" data-price="3000">S</div>
+                    <div class="size-option" data-size="M" data-price="3250">M</div>
+                    <div class="size-option" data-size="L" data-price="3500">L</div>
+                </div>
+                <p>这款手提包巧妙地结合了骨头与蝙蝠翅膀，呈现出冷酷且神秘的氛围。骨头的细节与蝙蝠翅膀的流线型设计相互交织，仿佛预示着生命与死亡的界限。它赋予吸血鬼更强的敏捷与夜间感知能力，使其在黑暗中如同幽灵般游走。</p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：隐匿与敏捷，强化夜间行动的魔法能力</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：银色骨灰与血晶，增强隐形效果</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 顶级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">禁忌</span>
+                        <span class="product-tag">咒语</span>
+                        <span class="product-tag">血魔法</span>
+                    </div>
+                </div>
+                <div class="product-price">¥<span class="price-value">3000</span></div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="book">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="禁忌魔典" data-baseprice="3000">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="watch">
+                <div class="product-canvas-wrapper">
+                    <div id="model-watch" class="product-canvas model-container"></div>
+                </div>
+                <h3>血月薇薇</h3>
+                <p>这款手提包以纯白蝴蝶结为基础，包内却镶嵌着象征鲜血与死亡的血荆棘。蝴蝶结代表了优雅与柔美，而荆棘则是吸血鬼的冷酷与危险的象征。佩戴此包的吸血鬼将拥有吸取他人生命力的能力，每当触摸荆棘，便能感知他人血液的脉动。</p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：吸血能力与生命力操控</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：鲜血石与血色水晶，提升吸血效果</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 高级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">时间</span>
+                        <span class="product-tag">夜晚</span>
+                        <span class="product-tag">银制</span>
+                    </div>
+                </div>
+                <div class="product-price">¥3380</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="watch">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="永夜怀表" data-baseprice="3380">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="box">
+                <div class="product-canvas-wrapper">
+                    <div id="model-box" class="product-canvas model-container"></div>
+                </div>
+                <h3>神圣曙光</h3>
+                <p>这款背包以白色黄金羽翼为设计核心，翅膀上的金属反射出纯净的光芒。它象征着神圣与升华的力量。佩戴者能获得一部分天使的力量，增强恢复能力与自愈的速度。这款包适合那些追求力量与纯洁的吸血鬼，帮助他们平衡内心的黑暗与光明。
+                </p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：自愈与复生，强化抗击负面魔法的能力</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：纯白翡翠与黄金太阳石，提升恢复速度</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 顶级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">诅咒</span>
+                        <span class="product-tag">封印</span>
+                        <span class="product-tag">远古</span>
+                    </div>
+                </div>
+                <div class="product-price">¥2950</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="box">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="灵魂宝盒" data-baseprice="2950">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="crown">
+                <div class="product-canvas-wrapper">
+                    <div id="model-crown" class="product-canvas model-container"></div>
+                </div>
+                <h3>天使降临</h3>
+                <p>这款背包采用纯银与白金制作，边缘燃烧着永不熄灭的圣火。它是天使与吸血鬼结合的产物，代表了光明与黑暗的完美融合。佩戴者将获得神圣的庇护，增强抵抗阳光伤害的能力，同时能感知到远处的天使存在。</p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：神圣抵抗与阳光庇护</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：天使羽毛化石与月光石，提升白天活动能力</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 传奇</div>
+                    <div class="product-tags">
+                        <span class="product-tag">皇家</span>
+                        <span class="product-tag">贵族</span>
+                        <span class="product-tag">珠宝</span>
+                    </div>
+                </div>
+                <div class="product-price">¥4800</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="crown">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="血族王冠" data-baseprice="4800">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="necklace">
+                <div class="product-canvas-wrapper">
+                    <div id="model-necklace" class="product-canvas model-container"></div>
+                </div>
+                <h3>血猩玫瑰</h3>
+                <p>这款背包上密布着鲜红的血玫瑰花纹，每朵玫瑰都如同真实的花朵般立体。花瓣边缘滴落的露珠实则是凝固的鲜血。背包周围环绕着荆棘的图案，象征着吸血鬼的痛苦与美丽并存。这款包能增强吸血鬼的魅惑能力，使其言语如同蛊惑般动听。</p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：血液魅惑与精神控制</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：真血晶石与玫瑰花蕊，提升魅惑效果</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 中级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">视觉</span>
+                        <span class="product-tag">月光</span>
+                        <span class="product-tag">暗影</span>
+                    </div>
+                </div>
+                <div class="product-price">¥5999</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="necklace">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="血石项链" data-baseprice="3600">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="wand">
+                <div class="product-canvas-wrapper">
+                    <div id="model-wand" class="product-canvas model-container"></div>
+                </div>
+                <h3>铁翼复仇</h3>
+                <p>这款黑色背包装饰有铆钉与蝙蝠翅膀，设计大胆且具有朋克风格。铆钉的尖锐与蝙蝠翅膀的宽展结合，散发出一种不容忽视的威慑力。佩戴者的战斗力得到极大的增强，同时还能用背包中的魔法增强对抗敌人时的冷静与准确性</p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：战斗力与决策力增强</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：红色玛瑙与黑曜石，强化战斗中的冷静与力量</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 高级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">血魔法</span>
+                        <span class="product-tag">引导</span>
+                        <span class="product-tag">放大</span>
+                    </div>
+                </div>
+                <div class="product-price">¥3888</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="wand">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="血魔法杖" data-baseprice="3888">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="ring">
+                <div class="product-canvas-wrapper">
+                    <div id="model-ring" class="product-canvas model-container"></div>
+                </div>
+                <h3>血骨之翼</h3>
+                <p>这款背包结合了骨头与鲜血色的蝙蝠翅膀，翅膀的红色象征着吸血鬼的血统与复仇。骨头的坚硬与翅膀的轻盈对比，赋予佩戴者强大的力量与速度。适合那些渴望复仇并掌握更强大能力的吸血鬼。</p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：复仇力量与速度提升
+                    </div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：血色红宝石与骨质结晶，强化战斗力与速度</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 中高级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">自愈</span>
+                        <span class="product-tag">生命力</span>
+                        <span class="product-tag">精血</span>
+                    </div>
+                </div>
+                <div class="product-price">¥4999</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="ring">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="永恒戒指" data-baseprice="4999">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="crystal">
+                <div class="product-canvas-wrapper">
+                    <div id="model-crystal" class="product-canvas model-container"></div>
+                </div>
+                <h3>黑暗魔瞳</h3>
+                <p>这款背包上镶嵌着一颗巨大的紫色水晶，水晶内部似乎有烟雾缭绕，如同一只永不闭合的眼睛。它代表着吸血鬼的预知与远视能力。佩戴者能够预见危险，感知未来的模糊轮廓，同时能看透黑暗，发现隐藏的敌人与秘密。</p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：预知与远视</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：紫晶与暗影水晶，提升预见能力</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 高级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">水晶</span>
+                        <span class="product-tag">宝石</span>
+                        <span class="product-tag">魔法</span>
+                    </div>
+                </div>
+                <div class="product-price">¥3900</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="crystal">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="预知水晶" data-baseprice="3900">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="mirror">
+                <div class="product-canvas-wrapper">
+                    <div id="model-mirror" class="product-canvas model-container"></div>
+                </div>
+                <h3>月光之镜</h3>
+                <p>这款背包上嵌入了一面古老的银镜，镜面虽然看似普通，但在满月之夜，却能照射出持有者的吸血鬼真实形态。它是连接现实与灵魂世界的桥梁，能帮助吸血鬼看到灵魂与鬼魂，甚至能与已故的吸血鬼先祖交流。</p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：灵魂视觉与灵界交流</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：银质玻璃与魂灵银，增强灵体感知能力</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 高级</div>
+                    <div class="product-tags">
+                        <span class="product-tag">镜子</span>
+                        <span class="product-tag">灵魂</span>
+                        <span class="product-tag">古董</span>
+                    </div>
+                </div>
+                <div class="product-price">¥3750</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="mirror">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="灵魂之镜" data-baseprice="3750">加入购物车</button>
+                </div>
+            </div>
+            <div class="product-card" data-model="apple">
+                <div class="product-canvas-wrapper">
+                    <div id="model-apple" class="product-canvas model-container"></div>
+                </div>
+                <h3>血毒之果</h3>
+                <p>这款包以红宝石苹果为设计中心，苹果表面镌刻着古老的吸血鬼符文。传说这是伊甸园的禁果，被注入了吸血鬼的原始能量。佩戴者将获得生命长久的能力，同时能散发出致命的魅力，如同禁果般吸引猎物靠近。</p>
+                <div class="product-details">
+                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> 增强能力：魅惑与青春永驻</div>
+                    <div class="product-age"><i class="fas fa-hourglass-half"></i> 镶嵌物：红宝石精华与生命树脂，提升魅惑效果</div>
+                    <div class="product-magic-level"><i class="fas fa-magic"></i> 魔法等级: 传奇</div>
+                    <div class="product-tags">
+                        <span class="product-tag">禁忌</span>
+                        <span class="product-tag">毒药</span>
+                        <span class="product-tag">生命</span>
+                    </div>
+                </div>
+                <div class="product-price">¥3399</div>
+                <div class="product-actions">
+                    <button class="view-details-btn" data-model="apple">查看详情</button>
+                    <button class="add-to-cart-btn" data-name="血红苹果" data-baseprice="3399">加入购物车</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="product-modal">
+        <div class="close-modal">×</div>
+        <div class="modal-content">
+            <div id="modal-canvas-container"></div>
+            <div class="modal-info">
+                <h2 class="product-title"></h2>
+                <p class="product-description"></p>
+                <button class="buy-button">添加到购物车</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 修改商品详情模态框 -->
+    <div id="product-detail-modal" class="product-detail-modal">
+        <div class="modal-content">
+            <div class="modal-close">×</div>
+            <div class="modal-product-container">
+                <div id="modal-product-canvas" class="modal-product-canvas" style="width: 100%; height: 100%; position: relative;"></div>
+                <div class="modal-product-info">
+                    <h2 id="modal-product-title" class="product-title"></h2>
+                    <p id="modal-product-description" class="product-description"></p>
+                    <div id="modal-product-details" class="product-details"></div>
+                    <div class="product-price">¥<span id="modal-price-value">0</span></div>
+                    <button id="modal-add-to-cart" class="add-to-cart-btn" data-name="" data-baseprice="0">加入购物车</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2024 Vampire Shop. All rights reserved.
+    </div>
+
+    <script>
+        // 购物车功能实现
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // 添加商品到购物车
+        function addToCart(name, price) {
+            // 查找商品是否已经在购物车中
+            const existingItem = cart.find(item => item.name === name);
+            
+            if (existingItem) {
+                // 如果商品已存在，增加数量
+                existingItem.quantity = (existingItem.quantity || 1) + 1;
+            } else {
+                // 如果商品不存在，添加新商品
+                cart.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            
+            // 保存购物车到localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // 更新购物车计数
+            updateCartCount();
+            
+            // 更新购物车商品显示
+            updateCartItems();
+            
+            // 显示提示信息
+            showToast('已添加到购物车');
+            
+            // 购物车图标动画
+            const cartIcon = document.querySelector('.cart-icon');
+            cartIcon.classList.add('bounce');
+            setTimeout(() => {
+                cartIcon.classList.remove('bounce');
+            }, 500);
+            
+            // 自动打开购物车
+            document.getElementById('cart-modal').classList.add('active');
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartCount();
+            updateCartItems();
+            showToast('已从购物车移除');
+        }
+        
+        function updateCartCount() {
+            const cartCount = document.querySelector('.cart-count');
+            cartCount.textContent = cart.length;
+        }
+        
+        function updateCartItems() {
+            const cartItems = document.querySelector('.cart-items');
+            const cartTotal = document.querySelector('.cart-total span:last-child');
+            
+            // 清空购物车列表
+            cartItems.innerHTML = '';
+            
+            // 计算总价
+            let total = 0;
+            
+            // 添加购物车商品
+            cart.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-info">
+                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-price">¥${item.price}</div>
+                    </div>
+                    <div class="remove-item" onclick="removeFromCart(${index})">×</div>
+                `;
+                cartItems.appendChild(cartItem);
+                total += item.price;
+            });
+            
+            // 更新总价
+            cartTotal.textContent = `¥${total}`;
+            
+            // 更新结算按钮状态
+            const checkoutButton = document.querySelector('.checkout-button');
+            checkoutButton.disabled = cart.length === 0;
+        }
+        
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+        
+        function toggleCart() {
+            const cartModal = document.getElementById('cart-modal');
+            cartModal.classList.toggle('active');
+        }
+        
+        // 结算功能
+        function checkout() {
+            // 跳转到结账页面
+            window.location.href = 'checkout.html';
+        }
+        
+        // 关闭购物车
+        document.querySelector('.close-cart').addEventListener('click', () => {
+            document.getElementById('cart-modal').classList.remove('active');
+        });
+        
+        // 点击购物车外部关闭
+        document.getElementById('cart-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('cart-modal')) {
+                document.getElementById('cart-modal').classList.remove('active');
+            }
+        });
+        
+        // 结算按钮点击事件
+        document.querySelector('.checkout-button').addEventListener('click', checkout);
+    </script>
+</body>
+</html> 

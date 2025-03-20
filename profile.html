@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 吸血鬼商店</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        html {
+            cursor: url("https://freight.cargo.site/t/original/i/X1891125108465342991869321415690/cussor-6.png"), auto !important;
+        }
+
+        a {
+            cursor: url("https://freight.cargo.site/t/original/i/X1891125108446896247795611864074/cussor-5.png"), auto !important;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('assets/background-9.jpg') center/cover no-repeat fixed;
+            opacity: 1; 
+            z-index: 0;
+            pointer-events: none;
+            filter: brightness(1.1) contrast(1.1);
+        }
+        
+        .backdrop::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.5) 0%,
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.5) 100%
+            );
+            z-index: 1;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+        
+        .logo {
+            font-family: "Gravity Variable", serif;
+            font-size: 3rem;
+            color: #ff0000;
+            text-decoration: none;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+        
+        .nav-link {
+            font-family: Newsreader;
+            font-size: 1.7rem;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-weight: 800;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 2;
+            padding: 120px 40px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .profile-sidebar {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .profile-avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .vampire-level {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: linear-gradient(45deg, #ff0000, #ff6b6b);
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .level-progress {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .level-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff6b6b);
+            width: 75%;
+            transition: width 0.3s ease;
+        }
+
+        .profile-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .profile-menu li {
+            margin-bottom: 10px;
+        }
+
+        .profile-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-menu a:hover {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff0000;
+        }
+
+        .profile-menu a.active {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+        }
+
+        .profile-content {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-family: "Gravity Variable", serif;
+            font-size: 2rem;
+            color: #ff0000;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .customization-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .customization-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .customization-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.2);
+        }
+
+        .customization-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .customization-item h3 {
+            color: #ff0000;
+            margin-bottom: 10px;
+        }
+
+        .customization-item p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .customize-button {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(45deg, #ff0000, #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .customize-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .magic-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            color: #ff0000;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="backdrop"></div>
+    
+    <header class="header">
+        <a href="index.html" class="logo">吸血鬼商店</a>
+        <nav>
+            <a href="products.html" class="nav-link">商品</a>
+            <a href="blood-supply.html" class="nav-link">血液特供</a>
+            <a href="profile.html" class="nav-link">个人中心</a>
+            <a href="community.html" class="nav-link">社区</a>
+        </nav>
+    </header>
+
+    <div class="content">
+        <div class="profile-container">
+            <div class="profile-sidebar">
+                <div class="profile-avatar">
+                    <img src="assets/avatar-default.jpg" alt="用户头像">
+                </div>
+                <div class="vampire-level">
+                    <div class="level-badge">吸血鬼等级: 伯爵</div>
+                    <div class="level-progress">
+                        <div class="level-progress-bar"></div>
+                    </div>
+                    <div>距离下一等级: 5000 经验值</div>
+                </div>
+                <ul class="profile-menu">
+                    <li><a href="#profile" class="active">个人资料</a></li>
+                    <li><a href="#magic-bag">魔法背包</a></li>
+                    <li><a href="#purchase-history">购买历史</a></li>
+                    <li><a href="#magic-achievements">魔法成就</a></li>
+                    <li><a href="#settings">设置</a></li>
+                </ul>
+            </div>
+            
+            <div class="profile-content">
+                <h2 class="section-title">个人资料</h2>
+                <div class="magic-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">75</div>
+                        <div class="stat-label">魔法力量</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">已解锁成就</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">魔法背包</div>
+                    </div>
+                </div>
+
+                <h2 class="section-title">魔法背包定制</h2>
+                <div class="customization-grid">
+                    <div class="customization-item">
+                        <img src="assets/products/bag-1.jpg" alt="暗夜之翼">
+                        <h3>暗夜之翼</h3>
+                        <p>具有飞行能力的魔法背包，可在夜间自由翱翔。</p>
+                        <button class="customize-button">定制</button>
+                    </div>
+                    <div class="customization-item">
+                        <img src="assets/products/bag-2.jpg" alt="血月之影">
+                        <h3>血月之影</h3>
+                        <p>隐身能力加持，在月光下完美隐匿。</p>
+                        <button class="customize-button">定制</button>
+                    </div>
+                    <div class="customization-item">
+                        <img src="assets/products/bag-3.jpg" alt="暗影之魂">
+                        <h3>暗影之魂</h3>
+                        <p>强大的暗影魔法，可储存大量魔法能量。</p>
+                        <button class="customize-button">定制</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 这里可以添加交互逻辑
+        document.querySelectorAll('.customize-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // 打开定制界面
+                alert('定制功能即将开放，敬请期待！');
+            });
+        });
+    </script>
+</body>
+</html> 

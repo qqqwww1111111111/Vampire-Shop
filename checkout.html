@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>结算 - 吸血鬼商店</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        html {
+            cursor: url("https://freight.cargo.site/t/original/i/X1891125108465342991869321415690/cussor-6.png"), auto !important;
+        }
+
+        a {
+            cursor: url("https://freight.cargo.site/t/original/i/X1891125108446896247795611864074/cussor-5.png"), auto !important;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('assets/background-9.jpg') center/cover no-repeat fixed;
+            opacity: 1; 
+            z-index: 0;
+            pointer-events: none;
+            filter: brightness(1.1) contrast(1.1);
+        }
+        
+        .backdrop::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.5) 0%,
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.5) 100%
+            );
+            z-index: 1;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+        
+        .logo {
+            font-family: "Gravity Variable", serif;
+            font-size: 3rem;
+            color: #ff0000;
+            text-decoration: none;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+        
+        .nav-link {
+            font-family: Newsreader;
+            font-size: 1.7rem;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-weight: 800;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 2;
+            padding: 120px 40px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .checkout-container {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .page-title {
+            font-family: "Gravity Variable", serif;
+            font-size: 3rem;
+            color: #ff0000;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            letter-spacing: 3px;
+        }
+        
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .cart-summary {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .summary-title {
+            font-family: "Gravity Variable", serif;
+            font-size: 2rem;
+            color: #ff0000;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .cart-items {
+            margin-bottom: 30px;
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .cart-item:hover {
+            background: rgba(40, 0, 0, 0.2);
+            padding-left: 10px;
+            border-radius: 5px;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            font-family: "Newsreader", serif;
+        }
+        
+        .item-price {
+            color: #ff0000;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .cart-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(255, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        
+        .total-amount {
+            color: #ff0000;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+        
+        .form-section {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .form-title {
+            font-family: "Gravity Variable", serif;
+            font-size: 2rem;
+            color: #ff0000;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        input, select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            border-color: #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        
+        .submit-button {
+            background: linear-gradient(45deg, #8b0000, #ff0000);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            width: 100%;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .submit-button:hover::before {
+            left: 100%;
+        }
+        
+        .submit-button:hover {
+            background: linear-gradient(45deg, #ff0000, #8b0000);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 0, 0, 0.6);
+            letter-spacing: 4px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            font-family: "Newsreader", serif;
+            letter-spacing: 1px;
+        }
+        
+        .back-link:hover {
+            color: #ff0000;
+            transform: translateX(-5px);
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        
+        .back-icon {
+            margin-right: 10px;
+        }
+        
+        /* 添加响应式样式 */
+        @media (max-width: 768px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .content {
+                padding: 100px 20px 40px;
+            }
+            
+            .checkout-container {
+                padding: 30px 20px;
+            }
+            
+            .page-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* 添加折扣相关样式 */
+        .discount-section {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+        }
+
+        .discount-input {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .discount-input input {
+            flex: 1;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .discount-input button {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .discount-input button:hover {
+            background: rgba(255, 0, 0, 0.4);
+        }
+
+        .discount-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .discount-amount {
+            color: #ff0000;
+        }
+
+        .cart-item-model {
+            width: 100px;
+            height: 100px;
+            margin-right: 15px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .model-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .model-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        /* 支付方式相关样式 */
+        .payment-methods {
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            padding-top: 20px;
+        }
+        
+        .payment-methods h3 {
+            font-family: "Gravity Variable", serif;
+            font-size: 1.5rem;
+            color: #ff0000;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .payment-option {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .payment-option:hover {
+            background: rgba(255, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .payment-option.selected {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+        
+        .payment-icon {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .payment-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .payment-details {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .payment-details.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+        
+        .form-group input, 
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .magical-payment-desc {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            line-height: 1.5;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 添加支付成功弹窗样式 */
+        .payment-success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .payment-success-modal.active {
+            display: flex;
+        }
+        
+        .success-content {
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 80%;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+            animation: fadeInScale 0.5s ease;
+        }
+        
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            color: #00cc00;
+            margin-bottom: 20px;
+        }
+        
+        .success-content h2 {
+            color: #ff0000;
+            font-family: "Gravity Variable", serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .success-content p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+        
+        .success-content button {
+            background: linear-gradient(45deg, #8b0000, #ff0000);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .success-content button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .discount-code-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .discount-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .discount-input input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 150px;
+        }
+
+        .discount-input button {
+            background: rgba(255, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .discount-input button:hover {
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        .discount-input button.applied {
+            background: rgba(0, 255, 0, 0.3);
+            border-color: rgba(0, 255, 0, 0.2);
+        }
+
+        .delete-item {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+        }
+
+        .delete-item:hover {
+            background: rgba(255, 0, 0, 0.4);
+            transform: scale(1.1);
+        }
+
+        .delete-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100%);
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .delete-message.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="backdrop"></div>
+    
+    <div class="header">
+        <a href="index.html" class="nav-link">✧ 首页 ✧</a>
+        <a href="products.html" class="nav-link">✧ 商品 ✧</a>
+    </div>
+    
+    <div class="content">
+        <div class="checkout-container">
+            <h1 class="page-title">✧ 结算 ✧</h1>
+            
+            <div class="checkout-grid">
+                <div class="cart-summary">
+                    <h2 class="summary-title">购物车商品</h2>
+                    <div id="cartItems" class="cart-items">
+                        <!-- 购物车商品将在这里动态添加 -->
+                    </div>
+                </div>
+                
+                <div class="order-summary">
+                    <h2 class="summary-title">订单摘要</h2>
+                    <div class="summary-item">
+                        <span>商品总额</span>
+                        <span id="subtotal">¥0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>运费</span>
+                        <span id="shipping">¥0.00</span>
+                    </div>
+                    <div class="summary-item discount-code-section">
+                        <div class="discount-input">
+                            <input type="text" id="discountCode" placeholder="输入优惠码">
+                            <button onclick="applyDiscount()">应用</button>
+                        </div>
+                    </div>
+                    <div class="summary-item" id="discountRow" style="display: none;">
+                        <span>优惠金额</span>
+                        <span id="discountAmount">-¥0.00</span>
+                    </div>
+                    <div class="summary-item total">
+                        <span>总计</span>
+                        <span id="total">¥0.00</span>
+                    </div>
+                    
+                    <div class="payment-methods">
+                        <h3>选择支付方式</h3>
+                        <div class="payment-options">
+                            <div class="payment-option" data-method="card">
+                                <div class="payment-icon"><i class="fas fa-credit-card"></i></div>
+                                <div class="payment-name">信用卡支付</div>
+                            </div>
+                            <div class="payment-option" data-method="alipay">
+                                <div class="payment-icon"><i class="fab fa-alipay"></i></div>
+                                <div class="payment-name">支付宝</div>
+                            </div>
+                            <div class="payment-option" data-method="wechat">
+                                <div class="payment-icon"><i class="fab fa-weixin"></i></div>
+                                <div class="payment-name">微信支付</div>
+                            </div>
+                            <div class="payment-option" data-method="magical">
+                                <div class="payment-icon"><i class="fas fa-magic"></i></div>
+                                <div class="payment-name">血液魔法交换</div>
+                            </div>
+                        </div>
+                        
+                        <div id="paymentDetails" class="payment-details">
+                            <!-- 支付方式详细信息将在这里动态添加 -->
+                        </div>
+                    </div>
+                    
+                    <button class="submit-button" id="confirmPayment">确认支付</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="payment-success-modal" id="paymentSuccessModal">
+        <div class="success-content">
+            <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+            <h2 class="success-title">支付成功</h2>
+            <p class="success-message">
+                感谢您在吸血鬼商店的购物！<br>
+                您的订单已确认，我们将在黄昏时分为您发货。<br>
+                订单编号: <span style="color: #ff0000;">VM-2024-<span id="orderNumber">0000</span></span>
+            </p>
+            <a href="index.html" class="continue-shopping">返回首页</a>
+        </div>
+    </div>
+
+    <div id="deleteMessage" class="delete-message">商品已移除</div>
+
+    <script>
+        // 从localStorage获取购物车数据
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let discountApplied = false;
+        let discountPercent = 0;
+        let selectedPaymentMethod = '';
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCartItems();
+            calculateTotals();
+            initPaymentOptions();
+        });
+        
+        // 加载购物车商品
+        function loadCartItems() {
+            const cartItemsEl = document.getElementById('cartItems');
+            cartItemsEl.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsEl.innerHTML = '<div class="empty-cart-message">购物车是空的</div>';
+                return;
+            }
+            
+            cart.forEach((item, index) => {
+                const cartItemEl = document.createElement('div');
+                cartItemEl.className = 'cart-item';
+                cartItemEl.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-quantity">数量: ${item.quantity || 1}</div>
+                        <div class="item-price">¥${item.price.toFixed(2)} × ${item.quantity || 1}</div>
+                    </div>
+                    <div class="item-total">¥${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</div>
+                    <button class="delete-item" data-index="${index}">×</button>
+                `;
+                cartItemsEl.appendChild(cartItemEl);
+            });
+            
+            // 添加删除商品的事件监听
+            document.querySelectorAll('.delete-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeCartItem(index);
+                });
+            });
+        }
+        
+        // 删除购物车商品
+        function removeCartItem(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCartItems();
+            calculateTotals();
+            
+            // 显示删除提示
+            const deleteMessage = document.getElementById('deleteMessage');
+            deleteMessage.classList.add('show');
+            setTimeout(() => {
+                deleteMessage.classList.remove('show');
+            }, 2000);
+        }
+        
+        // 计算总金额
+        function calculateTotals() {
+            let subtotal = 0;
+            cart.forEach(item => {
+                subtotal += (item.price || 0) * (item.quantity || 1);
+            });
+            
+            // 设置运费，这里固定为30元
+            const shipping = subtotal > 0 ? 30 : 0;
+            
+            // 计算折扣金额
+            let discount = 0;
+            if (discountApplied) {
+                discount = subtotal * (discountPercent / 100);
+            }
+            
+            // 计算总金额
+            const total = subtotal + shipping - discount;
+            
+            // 更新显示
+            document.getElementById('subtotal').textContent = `¥${subtotal.toFixed(2)}`;
+            document.getElementById('shipping').textContent = `¥${shipping.toFixed(2)}`;
+            
+            // 显示或隐藏折扣行
+            const discountRow = document.getElementById('discountRow');
+            if (discountApplied) {
+                discountRow.style.display = 'flex';
+                document.getElementById('discountAmount').textContent = `-¥${discount.toFixed(2)}`;
+            } else {
+                discountRow.style.display = 'none';
+            }
+            
+            document.getElementById('total').textContent = `¥${total.toFixed(2)}`;
+            
+            // 如果购物车为空，禁用支付按钮
+            document.getElementById('confirmPayment').disabled = cart.length === 0;
+        }
+        
+        // 应用优惠码
+        function applyDiscount() {
+            const discountCodeInput = document.getElementById('discountCode');
+            const discountCode = discountCodeInput.value.trim();
+            
+            // 检查优惠码是否有效
+            if (discountCode === 'VAMPIRE10') {
+                discountApplied = true;
+                discountPercent = 10;
+                discountCodeInput.disabled = true;
+                document.querySelector('.discount-input button').classList.add('applied');
+                document.querySelector('.discount-input button').textContent = '已应用';
+                calculateTotals();
+            } else if (discountCode === 'BLOOD20') {
+                discountApplied = true;
+                discountPercent = 20;
+                discountCodeInput.disabled = true;
+                document.querySelector('.discount-input button').classList.add('applied');
+                document.querySelector('.discount-input button').textContent = '已应用';
+                calculateTotals();
+            } else {
+                alert('无效的优惠码');
+            }
+        }
+        
+        // 初始化支付方式选项
+        function initPaymentOptions() {
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除之前选中的支付方式
+                    document.querySelectorAll('.payment-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // 添加选中样式
+                    this.classList.add('selected');
+                    selectedPaymentMethod = this.getAttribute('data-method');
+                    
+                    // 更新支付详情
+                    updatePaymentDetails(selectedPaymentMethod);
+                });
+            });
+            
+            // 确认支付按钮事件
+            document.getElementById('confirmPayment').addEventListener('click', function() {
+                if (cart.length === 0) {
+                    alert('您的购物车是空的，请先添加商品');
+                    return;
+                }
+                
+                if (!selectedPaymentMethod) {
+                    alert('请选择支付方式');
+                    return;
+                }
+                
+                // 模拟支付过程
+                this.textContent = '处理中...';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    // 支付成功后显示成功模态框
+                    document.getElementById('paymentSuccessModal').classList.add('active');
+                    
+                    // 清空购物车
+                    cart = [];
+                    localStorage.removeItem('cart');
+                }, 1500);
+            });
+        }
+        
+        // 更新支付详情
+        function updatePaymentDetails(method) {
+            const detailsEl = document.getElementById('paymentDetails');
+            detailsEl.innerHTML = '';
+            
+            switch (method) {
+                case 'card':
+                    detailsEl.innerHTML = `
+                        <div class="payment-form">
+                            <div class="form-group">
+                                <label>卡号</label>
+                                <input type="text" placeholder="1234 5678 9012 3456">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>有效期</label>
+                                    <input type="text" placeholder="MM/YY">
+                                </div>
+                                <div class="form-group">
+                                    <label>CVV</label>
+                                    <input type="text" placeholder="123">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>持卡人姓名</label>
+                                <input type="text" placeholder="持卡人姓名">
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'alipay':
+                    detailsEl.innerHTML = `
+                        <div class="qr-code-section">
+                            <div class="qr-code"></div>
+                            <p>请使用支付宝扫描二维码完成支付</p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'wechat':
+                    detailsEl.innerHTML = `
+                        <div class="qr-code-section">
+                            <div class="qr-code"></div>
+                            <p>请使用微信扫描二维码完成支付</p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'magical':
+                    detailsEl.innerHTML = `
+                        <div class="magical-payment">
+                            <p>血液魔法交换是一种古老的支付方式，您将通过血液交换获得商品。</p>
+                            <div class="blood-drop-animation"></div>
+                            <p>请在月圆之夜，对着月亮念出咒语: "Sanguis pro mercibus"</p>
+                            <p>点击"确认支付"即视为您同意血液交换条款。</p>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+    </script>
+</body>
+</html> 

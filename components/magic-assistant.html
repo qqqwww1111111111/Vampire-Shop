@@ -1,0 +1,321 @@
+<!-- 魔法助手组件 -->
+<div class="magic-assistant">
+    <div class="assistant-toggle">
+        <i class="fas fa-magic"></i>
+        <span>魔法助手</span>
+    </div>
+    
+    <div class="assistant-panel">
+        <div class="assistant-header">
+            <h3>魔法助手</h3>
+            <button class="close-assistant"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="assistant-content">
+            <div class="assistant-avatar">
+                <img src="assets/assistant/avatar.jpg" alt="魔法助手">
+            </div>
+            
+            <div class="assistant-message">
+                <p>你好！我是你的魔法助手。我可以帮你：</p>
+                <ul>
+                    <li>推荐适合你的魔法背包</li>
+                    <li>解答魔法使用问题</li>
+                    <li>提供活动建议</li>
+                    <li>分享魔法技巧</li>
+                </ul>
+            </div>
+            
+            <div class="assistant-input">
+                <input type="text" placeholder="输入你的问题...">
+                <button class="send-message"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="quick-action">推荐背包</button>
+                <button class="quick-action">魔法技巧</button>
+                <button class="quick-action">活动信息</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.magic-assistant {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.assistant-toggle {
+    background: linear-gradient(45deg, #ff0000, #ff6b6b);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.assistant-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+}
+
+.assistant-toggle i {
+    font-size: 1.2rem;
+}
+
+.assistant-panel {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 350px;
+    background: rgba(20, 20, 20, 0.95);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    display: none;
+    backdrop-filter: blur(10px);
+}
+
+.assistant-panel.active {
+    display: block;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.assistant-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.assistant-header h3 {
+    color: #ff0000;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.close-assistant {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.close-assistant:hover {
+    color: #ff0000;
+}
+
+.assistant-content {
+    padding: 20px;
+}
+
+.assistant-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    border: 3px solid #ff0000;
+    overflow: hidden;
+}
+
+.assistant-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.assistant-message {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 20px;
+}
+
+.assistant-message ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.assistant-message li {
+    margin: 5px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.assistant-message li:before {
+    content: "•";
+    color: #ff0000;
+    position: absolute;
+    left: 0;
+}
+
+.assistant-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.assistant-input input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    border-radius: 20px;
+    padding: 10px 15px;
+    color: white;
+}
+
+.assistant-input input:focus {
+    outline: none;
+    border-color: #ff0000;
+}
+
+.send-message {
+    background: linear-gradient(45deg, #ff0000, #ff6b6b);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.send-message:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.quick-action {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    border-radius: 15px;
+    padding: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.quick-action:hover {
+    background: rgba(255, 0, 0, 0.2);
+    color: #ff0000;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const assistant = document.querySelector('.magic-assistant');
+    const toggle = assistant.querySelector('.assistant-toggle');
+    const panel = assistant.querySelector('.assistant-panel');
+    const closeBtn = assistant.querySelector('.close-assistant');
+    const quickActions = assistant.querySelectorAll('.quick-action');
+    const input = assistant.querySelector('input');
+    const sendBtn = assistant.querySelector('.send-message');
+
+    // 切换助手面板
+    toggle.addEventListener('click', () => {
+        panel.classList.toggle('active');
+    });
+
+    // 关闭助手面板
+    closeBtn.addEventListener('click', () => {
+        panel.classList.remove('active');
+    });
+
+    // 快速操作按钮
+    quickActions.forEach(button => {
+        button.addEventListener('click', () => {
+            const action = button.textContent;
+            handleQuickAction(action);
+        });
+    });
+
+    // 发送消息
+    sendBtn.addEventListener('click', () => {
+        const message = input.value.trim();
+        if (message) {
+            handleUserMessage(message);
+            input.value = '';
+        }
+    });
+
+    // 回车发送消息
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const message = input.value.trim();
+            if (message) {
+                handleUserMessage(message);
+                input.value = '';
+            }
+        }
+    });
+
+    // 处理快速操作
+    function handleQuickAction(action) {
+        let response = '';
+        switch(action) {
+            case '推荐背包':
+                response = '根据你的吸血鬼等级和魔法属性，我推荐以下背包：\n1. 暗夜之翼 - 适合夜行\n2. 血月之影 - 适合隐身\n3. 暗影之魂 - 适合储存魔法能量';
+                break;
+            case '魔法技巧':
+                response = '以下是一些实用的魔法技巧：\n1. 在满月时使用魔法背包效果最佳\n2. 定期为背包充能可以提升性能\n3. 不同背包组合可以产生特殊效果';
+                break;
+            case '活动信息':
+                response = '近期活动：\n1. 血月之夜 - 3月25日\n2. 魔法挑战赛 - 3月28日\n3. 血族战争 - 4月1日';
+                break;
+        }
+        showAssistantResponse(response);
+    }
+
+    // 处理用户消息
+    function handleUserMessage(message) {
+        // 这里可以添加更复杂的消息处理逻辑
+        showUserMessage(message);
+        setTimeout(() => {
+            showAssistantResponse('我收到了你的消息："' + message + '"。让我为你寻找相关信息...');
+        }, 1000);
+    }
+
+    // 显示用户消息
+    function showUserMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'user-message';
+        messageDiv.textContent = message;
+        assistant.querySelector('.assistant-content').appendChild(messageDiv);
+    }
+
+    // 显示助手回复
+    function showAssistantResponse(response) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'assistant-message';
+        messageDiv.innerHTML = response.replace(/\n/g, '<br>');
+        assistant.querySelector('.assistant-content').appendChild(messageDiv);
+    }
+});
+</script> 

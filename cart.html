@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购物车 - 吸血鬼神秘商店</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@300;400;600&family=Playfair+Display:wght@400;700&family=EB+Garamond:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+        }
+
+        .cart-container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 2rem;
+            background: rgba(20, 0, 0, 0.8);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+        }
+
+        .cart-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: #ff0000;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            background: rgba(40, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .item-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 1.5rem;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #ff0000;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-price {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1rem;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .quantity-btn {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: rgba(255, 0, 0, 0.4);
+        }
+
+        .quantity-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            color: #fff;
+            padding: 0.5rem;
+            width: 60px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .remove-btn {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 0, 0, 0.4);
+        }
+
+        .cart-summary {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(40, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .total-row {
+            font-size: 1.5rem;
+            color: #ff0000;
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.4);
+            color: #fff;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .checkout-btn:hover {
+            background: rgba(255, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .empty-cart-text {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+        }
+
+        .continue-shopping {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .continue-shopping:hover {
+            background: rgba(255, 0, 0, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" style="color: #fff; text-decoration: none; font-size: 1.2rem;">← 返回首页</a>
+    </div>
+
+    <div class="cart-container">
+        <h1 class="cart-title">✧ 购物车 ✧</h1>
+        <div id="cartContent">
+            <!-- 购物车内容将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <script>
+        class CartPage {
+            constructor() {
+                this.items = JSON.parse(localStorage.getItem('cartItems')) || [];
+                this.render();
+            }
+
+            render() {
+                const cartContent = document.getElementById('cartContent');
+                
+                if (this.items.length === 0) {
+                    cartContent.innerHTML = `
+                        <div class="empty-cart">
+                            <div class="empty-cart-text">购物车是空的</div>
+                            <a href="index.html" class="continue-shopping">继续购物</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let itemsHtml = '<div class="cart-items">';
+                
+                this.items.forEach(item => {
+                    itemsHtml += `
+                        <div class="cart-item" data-id="${item.id}">
+                            <img src="${item.image}" alt="${item.name}" class="item-image">
+                            <div class="item-details">
+                                <div class="item-name">${item.name}</div>
+                                <div class="item-price">¥${item.price}</div>
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" onclick="cartPage.updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
+                                    <input type="number" class="quantity-input" value="${item.quantity}" 
+                                           onchange="cartPage.updateQuantity('${item.id}', this.value)">
+                                    <button class="quantity-btn" onclick="cartPage.updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
+                                    <button class="remove-btn" onclick="cartPage.removeItem('${item.id}')">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                itemsHtml += '</div>';
+
+                const total = this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                
+                itemsHtml += `
+                    <div class="cart-summary">
+                        <div class="summary-row">
+                            <span>商品总价：</span>
+                            <span>¥${total}</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span>应付总额：</span>
+                            <span>¥${total}</span>
+                        </div>
+                        <a href="checkout.html" class="checkout-btn">结算</a>
+                    </div>
+                `;
+
+                cartContent.innerHTML = itemsHtml;
+            }
+
+            updateQuantity(productId, newQuantity) {
+                newQuantity = parseInt(newQuantity);
+                if (newQuantity < 1) {
+                    this.removeItem(productId);
+                    return;
+                }
+
+                const item = this.items.find(item => item.id === productId);
+                if (item) {
+                    item.quantity = newQuantity;
+                    this.saveCart();
+                    this.render();
+                }
+            }
+
+            removeItem(productId) {
+                this.items = this.items.filter(item => item.id !== productId);
+                this.saveCart();
+                this.render();
+            }
+
+            saveCart() {
+                localStorage.setItem('cartItems', JSON.stringify(this.items));
+            }
+        }
+
+        // 初始化购物车页面
+        const cartPage = new CartPage();
+    </script>
+</body>
+</html> 

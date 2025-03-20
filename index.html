@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吸血鬼神秘商店</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.157.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/"
+        }
+    }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@300;400;600&family=Playfair+Display:wght@400;700&family=EB+Garamond:wght@400;700&display=swap');
+        
+        html {
+            cursor: url("https://freight.cargo.site/t/original/i/X1891125108465342991869321415690/cussor-6.png"), auto !important;
+        }
+
+        a {
+            cursor: url("https://freight.cargo.site/t/original/i/X1891125108446896247795611864074/cussor-5.png"), auto !important;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('assets/background-9.jpg') center/cover no-repeat fixed;
+            opacity: 1; 
+            z-index: 0;
+            pointer-events: none;
+            filter: brightness(1.1) contrast(1.1);
+        }
+        .backdrop::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.5) 0%,
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.5) 100%
+            );
+            z-index: 1;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            box-sizing: border-box;
+            height: 80px;
+        }
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 3.2rem;
+            color: #ff0000;
+            text-decoration: none;
+            text-shadow: 
+                0 0 20px rgba(255, 0, 0, 0.3),
+                0 0 40px rgba(255, 0, 0, 0.2);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            letter-spacing: 4px;
+            z-index: 1;
+        }
+        .nav-link {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 15px;
+            white-space: nowrap;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+        .nav-link:hover {
+            color: #ff0000;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+        }
+        .model-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+            cursor: grab;
+            mix-blend-mode: normal;
+            background-color: transparent;
+            pointer-events: auto;
+            display: block;
+        }
+        .model-container:active {
+            cursor: grabbing;
+        }
+        .model-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            outline: none;
+            display: block;
+        }
+        .welcome-section {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding-top: 65vh;  /* 增加上边距，使文字往下移 */
+        }
+        .welcome-text {
+            font-family: 'Cinzel', serif;
+            font-size: 4.5rem;
+            color: #ff0000;
+            text-shadow: 
+                0 0 25px rgba(255, 0, 0, 0.6),
+                0 0 45px rgba(255, 0, 0, 0.4),
+                0 0 65px rgba(255, 0, 0, 0.3);
+            text-align: center;
+            padding: 0 20px;
+            letter-spacing: 4px;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 2;
+            font-weight: 700;
+        }
+        .sub-text {
+            font-family: 'EB Garamond', serif;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 
+                0 0 15px rgba(255, 255, 255, 0.4),
+                0 0 25px rgba(255, 255, 255, 0.3);
+            text-align: center;
+            padding: 0 20px;
+            letter-spacing: 3px;
+            margin-bottom: 35px;
+            position: relative;
+            z-index: 2;
+            font-weight: 300;
+        }
+        .shop-button {
+            font-family: 'Playfair Display', serif;
+            position: relative;
+            padding: 15px 40px;
+            font-size: 1.8rem;
+            color: #ffffff;
+            background: rgba(199, 0, 0, 0.3);
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            text-shadow: 
+                0 0 10px rgba(255, 0, 0, 0.5),
+                0 0 20px rgba(255, 0, 0, 0.3);
+            box-shadow: 
+                0 0 20px rgba(255, 0, 0, 0.2),
+                inset 0 0 20px rgba(255, 0, 0, 0.1);
+            letter-spacing: 3px;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        .shop-button:hover {
+            background: rgba(255, 0, 0, 0.4);
+            box-shadow: 
+                0 0 30px rgba(255, 0, 0, 0.3),
+                inset 0 0 30px rgba(255, 0, 0, 0.2);
+            transform: scale(1.05);
+        }
+        .main-content {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+        }
+        .explore-section {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .hot-products {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 3rem 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+        }
+        .hot-products h2 {
+            font-family: 'Cinzel', serif;
+            color: #ff0000;
+            font-size: 3.2rem;
+            margin-bottom: 2.5rem;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+            letter-spacing: 4px;
+            font-weight: 700;
+        }
+        .hot-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+        .hot-product-card {
+            background: rgba(20, 0, 0, 0.3);
+            padding: 2rem;
+            border-radius: 15px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 0, 0, 0.15);
+            box-shadow: 0 0 20px rgba(199, 0, 0, 0.2);
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            text-decoration: none;
+        }
+        .hot-product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.35);
+            background: rgba(40, 0, 0, 0.6);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        .hot-product-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            filter: brightness(0.9) contrast(1.1);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+        .hot-product-card:hover .hot-product-image {
+            transform: scale(1.03);
+            filter: brightness(1) contrast(1.2);
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.3);
+        }
+        .hot-product-content {
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .hot-product-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            color: #ff0000;
+            margin-bottom: 1.2rem;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        .hot-product-card:hover .hot-product-title {
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+        .hot-product-description {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+        }
+        .hot-product-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(255, 0, 0, 0.15);
+        }
+        .hot-product-price {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ff0000;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+        .hot-product-tag {
+            font-family: 'Playfair Display', serif;
+            background: rgba(255, 0, 0, 0.15);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            letter-spacing: 1px;
+        }
+        .view-all-button {
+            font-family: 'Playfair Display', serif;
+            display: inline-block;
+            padding: 15px 40px;
+            background: rgba(139, 0, 0, 0.3);
+            color: #fff;
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            position: relative;
+            overflow: hidden;
+            font-weight: 600;
+        }
+        .view-all-button:hover {
+            background: rgba(255, 0, 0, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+        .view-all-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        .view-all-button:hover::before {
+            left: 100%;
+        }
+        .shop-info {
+            width: 100%;
+            max-width: 1200px;
+            margin: 4rem auto;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+        .shop-info h2 {
+            font-family: 'Cinzel', serif;
+            color: #ff0000;
+            font-size: 2.8rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            letter-spacing: 4px;
+            font-weight: 700;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .info-section {
+            text-align: left;
+        }
+        .info-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #ff0000;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        .info-section p, .info-section li {
+            font-family: 'EB Garamond', serif;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+        }
+        .info-section ul {
+            list-style-position: inside;
+            margin-bottom: 1.5rem;
+        }
+        .contact-info {
+            margin-top: 2rem;
+        }
+        .social-links {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .social-links a {
+            font-family: 'Playfair Display', serif;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        .social-links a:hover {
+            color: #ff0000;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        .map-container {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .footer {
+            font-family: 'Cormorant Garamond', serif;
+            padding: 2rem;
+            text-align: center;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            margin-top: 2rem;
+            letter-spacing: 1px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        .footer .social-links {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+        .footer .social-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer .social-link:hover {
+            color: #ff0000;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        .footer .social-link i {
+            font-size: 1.4rem;
+        }
+        @media (max-width: 768px) {
+            .welcome-text {
+                font-size: 3.2rem;
+            }
+            .sub-text {
+                font-size: 1.5rem;
+            }
+            .shop-button {
+                font-size: 1.6rem;
+            }
+            .hot-products h2, .shop-info h2 {
+                font-size: 2.4rem;
+            }
+            .hot-product-title {
+                font-size: 2rem;
+            }
+        }
+        .page-title {
+            text-align: center;
+            padding: 120px 20px 60px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .page-title h1 {
+            font-family: "Pirata One", serif;
+            font-size: 4rem;
+            color: #ff0000;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+            letter-spacing: 4px;
+        }
+        
+        .page-title p {
+            font-family: "Newsreader", serif;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 2px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: auto;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            min-width: 200px;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        }
+
+        .user-menu:hover .user-dropdown {
+            display: block;
+        }
+
+        .user-info {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            overflow: hidden;
+            border: 2px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .level-tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(255, 0, 0, 0.2);
+            border-radius: 15px;
+            font-size: 0.9rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff6b6b);
+            border-radius: 2px;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 0, 0, 0.2);
+            color: #fff;
+        }
+
+        .cart-link {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff0000;
+            color: #fff;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* 添加弹窗样式 */
+        .discount-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .discount-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(20, 0, 0, 0.95), rgba(40, 0, 0, 0.95));
+            padding: 2.5rem;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 0, 0, 0.4);
+            box-shadow: 
+                0 0 50px rgba(255, 0, 0, 0.3),
+                0 0 100px rgba(255, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            animation: modalPop 0.5s ease;
+        }
+
+        .discount-header {
+            position: relative;
+            margin-bottom: 2.5rem;
+        }
+
+        .discount-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            border: 2px solid rgba(255, 0, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .discount-image:hover {
+            transform: scale(1.02);
+        }
+
+        .discount-title {
+            font-family: "Cinzel", serif;
+            font-size: 3rem;
+            color: #ff0000;
+            margin-bottom: 1.2rem;
+            text-shadow: 
+                0 0 20px rgba(255, 0, 0, 0.4),
+                0 0 40px rgba(255, 0, 0, 0.2);
+            letter-spacing: 3px;
+        }
+
+        .discount-text {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            letter-spacing: 1px;
+        }
+
+        .discount-code {
+            background: rgba(255, 0, 0, 0.15);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .discount-code span {
+            font-family: "Cinzel", serif;
+            font-size: 1.3rem;
+            color: #fff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .copy-code-btn {
+            background: rgba(255, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "Cinzel", serif;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .copy-code-btn:hover {
+            background: rgba(255, 0, 0, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .copy-code-btn.copied {
+            background: rgba(0, 255, 0, 0.3);
+            border-color: rgba(0, 255, 0, 0.3);
+        }
+
+        .copy-feedback {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 255, 0, 0.9);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 1rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .copy-feedback.show {
+            top: -50px;
+            opacity: 1;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1.8rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 0, 0, 0.4);
+            transform: rotate(90deg);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+
+        @keyframes modalPop {
+            from { 
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to { 
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .discount-content {
+                width: 95%;
+                padding: 2rem;
+            }
+
+            .discount-title {
+                font-size: 2.5rem;
+            }
+
+            .discount-text {
+                font-size: 1.2rem;
+            }
+
+            .discount-code {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* 购买指南与教程样式 */
+        .guide-section {
+            padding: 4rem 5rem;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 2rem;
+        }
+
+        .guide-section .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #ff0000;
+            margin-bottom: 3rem;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+            font-family: "Gravity Variable", serif;
+        }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .guide-card {
+            background: rgba(10, 0, 0, 0.6);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .guide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.2);
+            border-color: rgba(255, 0, 0, 0.4);
+        }
+
+        .guide-image {
+            height: 200px;
+            background: rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guide-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .guide-card:hover .guide-image img {
+            transform: scale(1.05);
+        }
+
+        .guide-content {
+            padding: 1.5rem;
+        }
+
+        .guide-content h3 {
+            color: #ff0000;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-family: "Gravity Variable", serif;
+        }
+
+        .guide-content p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-family: "Diatype Variable", sans-serif;
+        }
+
+        .guide-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .guide-list li {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            font-family: "Diatype Variable", sans-serif;
+        }
+
+        .guide-list li:last-child {
+            border-bottom: none;
+        }
+
+        .guide-list li::before {
+            content: "•";
+            color: #ff0000;
+            margin-right: 0.5rem;
+        }
+
+        .carousel-section {
+            padding: 4rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            margin: 2rem 0;
+        }
+
+        .carousel-section.dark {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .carousel-section h2 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 3rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.2);
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+        }
+
+        .carousel-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            display: none;
+        }
+
+        .carousel-item.active {
+            opacity: 1;
+            display: block;
+            position: relative;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.95));  /* 加深渐变背景 */
+            padding: 80px 40px 40px;  /* 增加内边距 */
+            color: white;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .carousel-caption h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;  /* 增大标题字体 */
+            margin-bottom: 20px;
+            color: #ff0000;
+            text-shadow: 
+                0 0 25px rgba(255, 0, 0, 0.5),
+                0 0 50px rgba(255, 0, 0, 0.3);  /* 增强文字阴影效果 */
+            letter-spacing: 4px;
+            font-weight: 700;
+            text-transform: uppercase;  /* 转换为大写 */
+        }
+
+        .carousel-caption p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;  /* 增大副标题字体 */
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* 添加响应式样式 */
+        @media (max-width: 768px) {
+            .carousel-caption {
+                padding: 60px 20px 30px;
+            }
+            
+            .carousel-caption h3 {
+                font-size: 2.2rem;
+                margin-bottom: 15px;
+            }
+            
+            .carousel-caption p {
+                font-size: 1.3rem;
+            }
+        }
+
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-control:hover {
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        .carousel-control.prev {
+            left: 10px;
+        }
+
+        .carousel-control.next {
+            right: 10px;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: #ff0000;
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        /* 添加加载界面样式 */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: #ff0000;
+        }
+        
+        .loading-text {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid transparent;
+            border-top-color: #ff0000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 轮播图样式 */
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+        }
+
+        .carousel-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            display: none;
+        }
+
+        .carousel-item.active {
+            opacity: 1;
+            display: block;
+            position: relative;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: #ff0000;
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
+        }
+
+        .carousel-nav button {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .carousel-nav button:hover {
+            background: rgba(255, 0, 0, 0.7);
+        }
+
+        .add-to-cart-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.4);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Playfair Display', serif;
+            z-index: 2;
+        }
+
+        .add-to-cart-btn:hover {
+            background: rgba(255, 0, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        .add-to-cart-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 5px;
+            z-index: 1000;
+            animation: fadeInOut 2s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        #cartCount {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff0000;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <!-- 开屏广告弹窗 -->
+    <div class="discount-modal" id="discountModal" style="display: none;">
+        <div class="discount-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <div class="discount-header">
+                <img src="assets/discount-banner.jpg" alt="特别优惠" class="discount-image">
+                <h2 class="discount-title">✧ 血月特惠 ✧</h2>
+                <p class="discount-text">限时折扣活动现已开启！使用优惠码可享受全场85折优惠。</p>
+            </div>
+            <div class="discount-code">
+                <span>优惠码：BLOODMOON2024</span>
+                <button class="copy-code-btn" onclick="copyCode()">
+                    <span class="btn-text">复制</span>
+                    <span class="copy-feedback">已复制！</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 加载界面 -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-text">加载中...</div>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+    
+    <div class="backdrop"></div>
+
+    <!-- 3D模型容器 -->
+    <div class="model-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1;"></div>
+
+    <div class="header">
+        <nav style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="products.html" class="nav-link">商品</a>
+                <a href="information.html" class="nav-link">资讯</a>
+            </div>
+            <a href="index.html" class="logo">Vampire Shop</a>
+            <div>
+                <a href="account.html" class="nav-link">账户</a>
+                <a href="cart.html" class="nav-link" style="position: relative;">
+                    购物车
+                    <span id="cartCount">0</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>VAMPIRE SHOP</h1>
+            <p>探索黑暗中的神秘宝藏</p>
+            <a href="products.html" class="cta-button">开始探索</a>
+        </div>
+    </div>
+
+    <div class="content" style="opacity: 1;">
+        <div class="welcome-section">
+            <div class="welcome-text">欢迎来到神秘的吸血鬼商店</div>
+            <div class="sub-text">这里收藏着世界上最稀有的超自然物品</div>
+            <a href="products.html" class="shop-button">探索神秘商品 ✧</a>
+        </div>
+
+        <div class="main-content">
+            <div class="hot-products">
+                <h2>✧ 热门商品 ✧</h2>
+                <div class="hot-products-grid">
+                    <a href="products.html" class="hot-product-card" data-product="goblet">
+                        <img src="assets/products/1.jpg" alt="亡者的呢喃" class="hot-product-image">
+                        <div class="hot-product-content">
+                            <div class="hot-product-title">❧ 亡者的呢喃 ❧</div>
+                            <div class="hot-product-description">这款包设计独特，采用白色骨骼装饰，仿佛是从沉睡的墓地中提取出来的遗物。骨头的纹理呈现着岁月的痕迹，散发出淡淡的幽光。它能增强持有者的死亡感知能力，能听见亡灵的低语与灵魂的指引。</div>
+                            <div class="hot-product-details">
+                                <div class="hot-product-price">¥2800</div>
+                                <div class="hot-product-tag">亡灵沟通</div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="products.html" class="hot-product-card" data-product="book">
+                        <img src="assets/products/2.jpg" alt="死寂之翼" class="hot-product-image">
+                        <div class="hot-product-content">
+                            <div class="hot-product-title">❧ 死寂之翼 ❧</div>
+                            <div class="hot-product-description">这款手提包巧妙地结合了骨头与蝙蝠翅膀，呈现出冷酷且神秘的氛围。骨头的细节与蝙蝠翅膀的流线型设计相互交织，仿佛预示着生命与死亡的界限。它赋予吸血鬼更强的敏捷与夜间感知能力。</div>
+                            <div class="hot-product-details">
+                                <div class="hot-product-price">¥3000</div>
+                                <div class="hot-product-tag">隐匿敏捷</div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="products.html" class="hot-product-card" data-product="apple">
+                        <img src="assets/products/3.jpg" alt="天使降临" class="hot-product-image">
+                        <div class="hot-product-content">
+                            <div class="hot-product-title">❧ 天使降临 ❧</div>
+                            <div class="hot-product-description">这款手提包的设计灵感来源于天使的羽翼，翅膀展翅的姿态充满神圣与荣耀。它不仅代表着高贵与美丽，还赋予吸血鬼恢复生命力与治愈他人伤口的能力。此包的魔力能使吸血鬼暂时获得天使的治愈之力。</div>
+                            <div class="hot-product-details">
+                                <div class="hot-product-price">¥3399</div>
+                                <div class="hot-product-tag">治愈能力</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <a href="products.html" class="view-all-button">查看全部商品</a>
+            </div>
+
+            <div class="carousel-section">
+                <h2>促销活动与新品</h2>
+                <div class="carousel-container">
+                    <div class="carousel" id="promotionCarousel">
+                        <div class="carousel-item active">
+                            <a href="promotion.html#bloodmoon">
+                                <img src="assets/carousel/WechatIMG53.jpg" class="d-block w-100" alt="血月特惠">
+                                <div class="carousel-caption">
+                                    <h3>血月特惠</h3>
+                                    <p>限时折扣，仅此一天！</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="carousel-item">
+                            <a href="promotion.html#newproducts">
+                                <img src="assets/carousel/WechatIMG54.jpg" class="d-block w-100" alt="新品首发">
+                                <div class="carousel-caption">
+                                    <h3>新品首发</h3>
+                                    <p>古老符文系列，现已上市</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="carousel-item">
+                            <a href="promotion.html#member">
+                                <img src="assets/carousel/WechatIMG55.jpg" class="d-block w-100" alt="会员专享">
+                                <div class="carousel-caption">
+                                    <h3>会员专享</h3>
+                                    <p>尊贵会员，独享优惠</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <button class="carousel-control prev" onclick="moveCarousel('promotionCarousel', -1)">❮</button>
+                    <button class="carousel-control next" onclick="moveCarousel('promotionCarousel', 1)">❯</button>
+                    <div class="carousel-dots" id="promotionDots"></div>
+                </div>
+            </div>
+
+            <div class="carousel-section dark">
+                <h2>节日主题与限时活动</h2>
+                <div class="carousel-container">
+                    <div class="carousel" id="festivalCarousel">
+                        <div class="carousel-item active">
+                            <a href="festival.html#bloodmoon">
+                                <img src="assets/carousel/WechatIMG56.jpg" class="d-block w-100" alt="血月节">
+                                <div class="carousel-caption">
+                                    <h3>血月节特别活动</h3>
+                                    <p>神秘仪式，等你参与</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="carousel-item">
+                            <a href="festival.html#darknight">
+                                <img src="assets/carousel/WechatIMG57.jpg" class="d-block w-100" alt="暗夜庆典">
+                                <div class="carousel-caption">
+                                    <h3>暗夜庆典</h3>
+                                    <p>华丽舞会，不容错过</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="carousel-item">
+                            <a href="festival.html#mysteryset">
+                                <img src="assets/carousel/WechatIMG58.jpg" class="d-block w-100" alt="神秘套装">
+                                <div class="carousel-caption">
+                                    <h3>神秘仪式套装</h3>
+                                    <p>完整道具，限量发售</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <button class="carousel-control prev" onclick="moveCarousel('festivalCarousel', -1)">❮</button>
+                    <button class="carousel-control next" onclick="moveCarousel('festivalCarousel', 1)">❯</button>
+                    <div class="carousel-dots" id="festivalDots"></div>
+                </div>
+            </div>
+
+            <div class="shop-info">
+                <h2>✧ 关于我们的商店 ✧</h2>
+                <div class="info-grid">
+                    <div class="info-section">
+                        <h3>商店简介</h3>
+                        <p>欢迎来到吸血鬼商店，这里是连接现实与超自然的神秘之地。我们专注于为追求独特的顾客提供最精致的神秘物品。</p>
+                        <ul>
+                            <li>百年历史的神秘商店</li>
+                            <li>独家定制魔法物品</li>
+                            <li>专业鉴定与保养服务</li>
+                            <li>隐私保护承诺</li>
+                        </ul>
+                        <div class="contact-info">
+                            <p>营业时间：日落后 - 黎明前</p>
+                            <p>预约电话：666-VAMPIRE</p>
+                            <div class="social-links">
+                                <a href="#" title="Instagram">✧ Instagram</a>
+                                <a href="#" title="Twitter">✧ Twitter</a>
+                                <a href="#" title="Facebook">✧ Facebook</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-section">
+                        <h3>位置与地图</h3>
+                        <div class="map-container">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2789.654656890722!2d25.365952615591948!3d45.51492937910131!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b3380db8b5aedf%3A0x3d4c9e67cc3b54cd!2z5ZC56KGA6bKB56We56eY5a2Q5ZWG5bqX!5e0!3m2!1szh-CN!2sus!4v1647689123456!5m2!1szh-CN!2sus"
+                                frameborder="0" 
+                                style="border:0" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <p style="margin-top: 1rem;">
+                            地址：神秘森林深处，月光大道666号<br>
+                            交通：搭乘午夜专车，或使用传送门到达<br>
+                            <small style="color: rgba(255, 255, 255, 0.6);">（灵感来源：布兰城堡 - 德古拉伯爵的传说发源地）</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加购买建议与教程部分 -->
+        <div class="guide-section">
+            <h2 class="section-title">购买指南与教程</h2>
+            <div class="guide-grid">
+                <div class="guide-card">
+                    <div class="guide-image">
+                        <img src="assets/guides/WechatIMG41.jpg" alt="魔法道具使用指南">
+                    </div>
+                    <div class="guide-content">
+                        <h3>魔法道具使用指南</h3>
+                        <p>了解如何正确使用各类魔法道具，包括咒语激活、能量调节、安全防护等关键信息。我们的专业魔法师团队为您提供详细的使用教程。</p>
+                        <ul class="guide-list">
+                            <li>咒语激活方法</li>
+                            <li>能量调节技巧</li>
+                            <li>安全防护措施</li>
+                            <li>日常维护建议</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="guide-card">
+                    <div class="guide-image">
+                        <img src="assets/guides/WechatIMG42.jpg" alt="高端魔法道具选购建议">
+                    </div>
+                    <div class="guide-content">
+                        <h3>高端魔法道具选购建议</h3>
+                        <p>针对不同级别的吸血鬼，我们提供专业的选购建议。从入门级到传奇级魔法道具，帮助您选择最适合的装备。</p>
+                        <ul class="guide-list">
+                            <li>入门级推荐</li>
+                            <li>进阶装备选择</li>
+                            <li>高端魔法道具</li>
+                            <li>传奇级装备</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="guide-card">
+                    <div class="guide-image">
+                        <img src="assets/guides/WechatIMG44.jpg" alt="魔法效果展示">
+                    </div>
+                    <div class="guide-content">
+                        <h3>魔法效果展示</h3>
+                        <p>通过实际案例展示各类魔法道具的效果，包括战斗场景、防御效果、辅助能力等。让您直观了解每件道具的实际应用价值。</p>
+                        <ul class="guide-list">
+                            <li>战斗效果展示</li>
+                            <li>防御能力测试</li>
+                            <li>辅助效果演示</li>
+                            <li>特殊能力展示</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="social-links">
+                <a href="https://vk.com/id870078514" target="_blank" class="social-link">
+                    <i class="fab fa-vk"></i> VK
+                </a>
+                <a href="https://t.me/vampire_shop" target="_blank" class="social-link">
+                    <i class="fab fa-telegram"></i> Telegram
+                </a>
+            </div>
+            <span>© 2024 Vampire Shop. All rights reserved</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        let scene, camera, renderer, controls;
+        const modelPaths = {
+            'goblet': './models/home page/goblet.glb',
+            'book': './models/home page/book.glb',
+            'apple': './models/home page/apple.glb',
+            'cloak': './models/home page/cloak.glb',
+            'dagger': './models/home page/dagger.glb',
+            'watch': './models/home page/watch.glb',
+            'box': './models/home page/box.glb',
+            'crown': './models/home page/crown.glb',
+            'necklace': './models/home page/necklace.glb',
+            'wand': './models/home page/wand.glb',
+            'ring': './models/home page/ring.glb',
+            'crystal': './models/home page/crystal.glb',
+            'mirror': './models/home page/mirror.glb'
+        };
+
+        function init() {
+            // 创建场景
+            scene = new THREE.Scene();
+            scene.background = null;
+
+            // 创建相机
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 12); // 调整相机距离
+
+            // 创建渲染器
+            renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.setClearColor(0x000000, 0);
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+            // 添加到DOM
+            const container = document.querySelector('.model-container');
+            if (container) {
+                container.innerHTML = '';
+                container.appendChild(renderer.domElement);
+                console.log('渲染器已添加到容器');
+            }
+
+            // 创建控制器
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableZoom = false;
+            controls.enablePan = false;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 4.0; // 增加旋转速度
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+
+            // 添加灯光
+            const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
+            scene.add(ambientLight);
+
+            const redLight = new THREE.PointLight(0xff0000, 3.0);
+            redLight.position.set(5, 5, 5);
+            scene.add(redLight);
+
+            const whiteLight = new THREE.DirectionalLight(0xffffff, 2.0);
+            whiteLight.position.set(-5, 5, 5);
+            scene.add(whiteLight);
+
+            // 加载模型
+            loadModel();
+
+            // 窗口大小调整
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function loadModel() {
+            console.log('开始加载模型');
+            const loader = new GLTFLoader();
+            
+            loader.load('./models/homepage/blood-moon.glb',
+                function(gltf) {
+                    console.log('模型加载成功');
+                    const model = gltf.scene;
+                    
+                    // 调整模型大小
+                    const box = new THREE.Box3().setFromObject(model);
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = 8.0 / maxDim; // 增大模型尺寸
+                    model.scale.multiplyScalar(scale);
+                    
+                    // 居中模型
+                    model.position.set(0, 0, 0);
+                    
+                    // 添加发光效果
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            console.log('处理模型材质:', child.name);
+                            if (child.material) {
+                                // 保持原始颜色
+                                child.material.emissiveIntensity = 0.5;
+                                child.material.metalness = 0.7;
+                                child.material.roughness = 0.3;
+                                child.material.transparent = true;
+                                child.material.opacity = 1.0;
+                            }
+                        }
+                    });
+                    
+                    scene.add(model);
+                    console.log('模型已添加到场景');
+                },
+                function(xhr) {
+                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                function(error) {
+                    console.error('模型加载错误:', error);
+                }
+            );
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (controls) {
+                controls.update();
+            }
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        // 初始化3D场景
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM加载完成，初始化3D场景');
+            init();
+            animate();
+        });
+    </script>
+    <script>
+        // 显示加载界面函数
+        function showLoadingScreen() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'flex';
+            }
+        }
+
+        // 隐藏加载界面函数
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        }
+
+        // 商品卡片点击事件处理
+        document.querySelectorAll('.hot-product-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = this.getAttribute('data-product');
+                sessionStorage.setItem('selectedProduct', productId);
+                window.location.href = 'products.html';
+            });
+        });
+
+        // 轮播图功能
+        function showSlide(carouselId, index) {
+            console.log('切换轮播图:', carouselId, '索引:', index);
+            const carousel = document.getElementById(carouselId);
+            if (!carousel) return;
+            
+            const items = Array.from(carousel.querySelectorAll('.carousel-item'));
+            const dotsContainer = document.getElementById(carouselId + 'Dots');
+            
+            // 获取当前和下一个项目
+            const currentItem = items.find(item => item.classList.contains('active'));
+            const nextItem = items[index];
+            
+            if (currentItem === nextItem) return;
+            
+            // 切换显示
+            if (currentItem) {
+                currentItem.style.opacity = '0';
+                setTimeout(() => {
+                    currentItem.style.display = 'none';
+                    currentItem.classList.remove('active');
+                    
+                    nextItem.style.display = 'block';
+                    nextItem.classList.add('active');
+                    nextItem.offsetHeight; // 强制重绘
+                    nextItem.style.opacity = '1';
+                }, 500);
+            }
+            
+            // 更新导航点
+            if (dotsContainer) {
+                const dots = Array.from(dotsContainer.children);
+                dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+            }
+        }
+
+        function moveCarousel(carouselId, direction) {
+            const carousel = document.getElementById(carouselId);
+            if (!carousel) return;
+            
+            const items = Array.from(carousel.querySelectorAll('.carousel-item'));
+            const currentIndex = items.findIndex(item => item.classList.contains('active'));
+            const nextIndex = (currentIndex + direction + items.length) % items.length;
+            
+            showSlide(carouselId, nextIndex);
+        }
+
+        // 初始化轮播图
+        function initCarousel(carouselId) {
+            const carousel = document.getElementById(carouselId);
+            if (!carousel) {
+                console.error('未找到轮播图容器:', carouselId);
+                return;
+            }
+            
+            const items = carousel.querySelectorAll('.carousel-item');
+            if (items.length === 0) {
+                console.error('轮播图没有项目');
+                return;
+            }
+            
+            let currentIndex = 0;
+            let intervalId = null;
+            
+            // 显示第一张图片
+            items.forEach((item, index) => {
+                if (index === 0) {
+                    item.style.display = 'block';
+                    item.style.opacity = '1';
+                    item.classList.add('active');
+                } else {
+                    item.style.display = 'none';
+                    item.style.opacity = '0';
+                    item.classList.remove('active');
+                }
+            });
+            
+            // 创建导航点
+            const dotsContainer = document.getElementById(`${carouselId}Dots`);
+            if (dotsContainer) {
+                dotsContainer.innerHTML = '';
+                items.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
+                    dot.onclick = () => {
+                        clearInterval(intervalId);
+                        showSlide(carouselId, index);
+                        intervalId = startAutoPlay();
+                    };
+                    dotsContainer.appendChild(dot);
+                });
+            }
+            
+            // 自动轮播函数
+            function startAutoPlay() {
+                if (intervalId) clearInterval(intervalId);
+                return setInterval(() => {
+                    currentIndex = (currentIndex + 1) % items.length;
+                    showSlide(carouselId, currentIndex);
+                }, 5000);
+            }
+            
+            // 开始自动轮播
+            intervalId = startAutoPlay();
+            
+            // 鼠标悬停暂停
+            carousel.addEventListener('mouseenter', () => clearInterval(intervalId));
+            
+            // 鼠标离开继续
+            carousel.addEventListener('mouseleave', () => {
+                intervalId = startAutoPlay();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化轮播图
+            initCarousel('promotionCarousel');
+            initCarousel('festivalCarousel');
+            
+            // 隐藏加载界面
+            hideLoadingScreen();
+            
+            // 显示广告
+            setTimeout(() => {
+                const discountModal = document.getElementById('discountModal');
+                if (discountModal) {
+                    discountModal.style.display = 'block';
+                    console.log('显示广告');
+                }
+            }, 2000);
+        });
+
+        // 开屏广告相关函数
+        function closeModal() {
+            const discountModal = document.getElementById('discountModal');
+            if (discountModal) {
+                discountModal.style.display = 'none';
+            }
+        }
+
+        function copyCode() {
+            const code = 'BLOODMOON2024';
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.querySelector('.copy-code-btn');
+                const feedback = document.querySelector('.copy-feedback');
+                btn.classList.add('copied');
+                feedback.classList.add('show');
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    feedback.classList.remove('show');
+                }, 2000);
+            });
+        }
+
+        // 页面加载完成后也确保隐藏加载界面
+        window.onload = function() {
+            hideLoadingScreen();
+            
+            setTimeout(function() {
+                const discountModal = document.getElementById('discountModal');
+                if (discountModal) {
+                    discountModal.style.display = 'block';
+                    console.log('显示开屏广告 - window.onload');
+                }
+            }, 2000);
+        };
+
+        // 购物车类
+        class ShoppingCart {
+            constructor() {
+                this.items = JSON.parse(localStorage.getItem('cartItems')) || [];
+            }
+
+            addItem(item) {
+                const existingItem = this.items.find(i => i.id === item.id);
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    this.items.push({
+                        id: item.id,
+                        name: item.name,
+                        price: item.price,
+                        image: item.image,
+                        quantity: 1
+                    });
+                }
+                this.saveCart();
+                this.updateCartCount();
+                this.showAddToCartMessage();
+            }
+
+            saveCart() {
+                localStorage.setItem('cartItems', JSON.stringify(this.items));
+            }
+
+            updateCartCount() {
+                const cartCount = document.getElementById('cartCount');
+                if (cartCount) {
+                    const totalItems = this.items.reduce((total, item) => total + item.quantity, 0);
+                    cartCount.textContent = totalItems;
+                    cartCount.style.display = totalItems > 0 ? 'block' : 'none';
+                }
+            }
+
+            showAddToCartMessage() {
+                const message = document.createElement('div');
+                message.className = 'add-to-cart-message';
+                message.textContent = '已添加到购物车';
+                document.body.appendChild(message);
+
+                setTimeout(() => {
+                    message.remove();
+                }, 2000);
+            }
+        }
+
+        // 初始化购物车
+        const cart = new ShoppingCart();
+
+        // 为每个商品卡片添加"加入购物车"按钮
+        document.addEventListener('DOMContentLoaded', function() {
+            const productCards = document.querySelectorAll('.hot-product-card');
+            
+            productCards.forEach(card => {
+                const addToCartBtn = document.createElement('button');
+                addToCartBtn.className = 'add-to-cart-btn';
+                addToCartBtn.innerHTML = '加入购物车';
+                
+                addToCartBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const productId = card.getAttribute('data-product');
+                    const productName = card.querySelector('.product-name').textContent;
+                    const productPrice = parseFloat(card.querySelector('.product-price').textContent.replace('¥', ''));
+                    const productImage = card.querySelector('.product-image').src;
+                    
+                    cart.addItem({
+                        id: productId,
+                        name: productName,
+                        price: productPrice,
+                        image: productImage
+                    });
+                });
+                
+                card.appendChild(addToCartBtn);
+            });
+        });
+
+        // 添加购物车相关的样式
+        const style = document.createElement('style');
+        style.textContent = `
+            .add-to-cart-message {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.8);
+                color: #fff;
+                padding: 15px 30px;
+                border-radius: 5px;
+                z-index: 1000;
+                animation: fadeInOut 2s ease-in-out;
+            }
+
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translateY(-20px); }
+                20% { opacity: 1; transform: translateY(0); }
+                80% { opacity: 1; transform: translateY(0); }
+                100% { opacity: 0; transform: translateY(-20px); }
+            }
+
+            #cartCount {
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                background: #ff0000;
+                color: white;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                display: none;
+                justify-content: center;
+                align-items: center;
+                font-size: 12px;
+                font-family: Arial, sans-serif;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> 
