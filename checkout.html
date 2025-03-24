@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>结算 - Vampire Shop</title>
+    <title>Checkout - Vampire Shop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         html {
@@ -514,24 +514,24 @@
 
     <div class="content">
         <div class="checkout-container">
-            <h1 class="checkout-title">结算</h1>
+            <h1 class="checkout-title">Checkout</h1>
             
             <div class="step-indicator">
                 <div class="step completed">
                     <div class="step-number">1</div>
-                    <div class="step-label">购物车</div>
+                    <div class="step-label">Cart</div>
                 </div>
                 <div class="step active">
                     <div class="step-number">2</div>
-                    <div class="step-label">配送信息</div>
+                    <div class="step-label">Shipping</div>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <div class="step-label">支付</div>
+                    <div class="step-label">Payment</div>
                 </div>
                 <div class="step">
                     <div class="step-number">4</div>
-                    <div class="step-label">完成</div>
+                    <div class="step-label">Complete</div>
                 </div>
             </div>
 
@@ -542,49 +542,49 @@
             <div class="checkout-content">
                 <div class="checkout-form">
                     <div class="form-group">
-                        <label>收货人姓名</label>
-                        <input type="text" placeholder="请输入收货人姓名" required>
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Enter your full name" required>
                     </div>
                     
                     <div class="form-group">
-                        <label>联系电话</label>
-                        <input type="tel" placeholder="请输入联系电话" required>
+                        <label>Phone Number</label>
+                        <input type="tel" placeholder="Enter your phone number" required>
                     </div>
                     
                     <div class="form-group">
-                        <label>收货地址</label>
-                        <textarea rows="3" placeholder="请输入详细收货地址" required></textarea>
+                        <label>Shipping Address</label>
+                        <textarea rows="3" placeholder="Enter your shipping address" required></textarea>
                     </div>
 
                     <div class="payment-methods">
-                        <h3>支付方式</h3>
+                        <h3>Payment Method</h3>
                         <div class="payment-option selected">
                             <i class="fas fa-credit-card payment-icon"></i>
-                            <span>信用卡支付</span>
+                            <span>Credit Card</span>
                         </div>
                         <div class="payment-option">
                             <i class="fab fa-alipay payment-icon"></i>
-                            <span>支付宝</span>
+                            <span>Alipay</span>
                         </div>
                         <div class="payment-option">
                             <i class="fab fa-weixin payment-icon"></i>
-                            <span>微信支付</span>
+                            <span>WeChat Pay</span>
                         </div>
                     </div>
 
                     <button class="place-order-btn" onclick="showSuccessMessage()">
-                        确认支付 <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
+                        Confirm Payment <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
                     </button>
                 </div>
 
                 <div class="order-summary">
-                    <h2>订单摘要</h2>
+                    <h2>Order Summary</h2>
                     <div class="summary-items">
                         <div class="summary-item">
                             <img src="./assets/products/product1.jpg" class="item-image" alt="Product">
                             <div class="item-details">
-                                <div class="item-name">神秘魔法药水</div>
-                                <div class="item-price">¥299.00</div>
+                                <div class="item-name">Mystic Potion</div>
+                                <div class="item-price">$299.00</div>
                             </div>
                             <button class="delete-item" onclick="removeItem(this)">
                                 <i class="fas fa-times"></i>
@@ -593,8 +593,8 @@
                         <div class="summary-item">
                             <img src="./assets/products/product2.jpg" class="item-image" alt="Product">
                             <div class="item-details">
-                                <div class="item-name">古老符文项链</div>
-                                <div class="item-price">¥599.00</div>
+                                <div class="item-name">Ancient Rune Necklace</div>
+                                <div class="item-price">$599.00</div>
                             </div>
                             <button class="delete-item" onclick="removeItem(this)">
                                 <i class="fas fa-times"></i>
@@ -603,8 +603,8 @@
                     </div>
 
                     <div class="summary-total">
-                        <span>总计</span>
-                        <span class="total-amount">¥898.00</span>
+                        <span>Total</span>
+                        <span class="total-amount">$898.00</span>
                     </div>
                 </div>
             </div>
@@ -613,9 +613,9 @@
 
     <div class="success-message" id="successMessage">
         <i class="fas fa-check-circle"></i>
-        <h3>支付成功</h3>
-        <p>您的订单已经成功提交</p>
-        <button onclick="window.location.href='index.html'">返回首页</button>
+        <h3>Payment Successful</h3>
+        <p>Your order has been successfully placed</p>
+        <button onclick="window.location.href='index.html'">Back to Home</button>
     </div>
 
     <script>
@@ -643,9 +643,9 @@
         // 更新总价
         function updateTotal() {
             const prices = Array.from(document.querySelectorAll('.item-price'))
-                .map(el => parseFloat(el.textContent.replace('¥', '')));
+                .map(el => parseFloat(el.textContent.replace('$', '')));
             const total = prices.reduce((sum, price) => sum + price, 0);
-            document.querySelector('.total-amount').textContent = `¥${total.toFixed(2)}`;
+            document.querySelector('.total-amount').textContent = `$${total.toFixed(2)}`;
         }
 
         // 显示支付成功消息
