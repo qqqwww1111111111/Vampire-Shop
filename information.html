@@ -198,12 +198,22 @@
             border-radius: 15px;
             overflow: hidden;
             margin-top: 40px;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+            transition: all 0.3s ease;
         }
 
-        .map-container iframe {
+        .map-container:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.3);
+        }
+
+        .map-container img {
             width: 100%;
             height: 100%;
-            border: none;
+            object-fit: cover;
+            border-radius: 15px;
+            transition: all 0.3s ease;
         }
 
         .footer {
@@ -294,7 +304,7 @@
                     <a href="#" class="social-link">Twitter</a>
                 </div>
                 <div class="map-container">
-                    <img src="./assets/info/WechatIMG38.jpg" alt="Store Location" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
+                    <img src="./assets/info/WechatIMG37.jpg" alt="Store Location">
                 </div>
             </div>
         </div>
