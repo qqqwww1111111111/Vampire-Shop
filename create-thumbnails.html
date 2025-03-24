@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品缩略图生成工具</title>
+    <title>Product Thumbnail Generator</title>
     <script type="importmap">
     {
         "imports": {
@@ -43,7 +43,7 @@
             const thumbnailsList = document.getElementById('thumbnails-list');
             for (const modelType in modelPaths) {
                 const link = document.createElement('button');
-                link.textContent = `生成 ${modelType} 缩略图`;
+                link.textContent = `Generate ${modelType} Thumbnail`;
                 link.onclick = () => loadModel(modelType);
                 thumbnailsList.appendChild(link);
             }
@@ -117,7 +117,7 @@
 
         function loadModel(modelType) {
             currentModelType = modelType;
-            document.getElementById('current-model').textContent = `当前模型: ${modelType}`;
+            document.getElementById('current-model').textContent = `Current Model: ${modelType}`;
             
             // 移除之前的模型
             scene.children.forEach(child => {
@@ -174,7 +174,7 @@
 
         window.captureImage = function() {
             if (!currentModelType) {
-                alert('请先选择一个模型！');
+                alert('Please select a model first!');
                 return;
             }
             
@@ -182,12 +182,11 @@
             const preview = document.getElementById('thumbnail-preview');
             preview.src = dataURL;
             
-            // 显示下载链接
             const downloadLink = document.getElementById('download-link');
             downloadLink.href = dataURL;
             downloadLink.download = `${currentModelType}.jpg`;
             downloadLink.style.display = 'inline-block';
-            downloadLink.textContent = `下载 ${currentModelType}.jpg`;
+            downloadLink.textContent = `Download ${currentModelType}.jpg`;
         }
     </script>
     <style>
@@ -272,32 +271,37 @@
 </head>
 <body>
     <div class="container">
-        <h1>商品缩略图生成工具</h1>
+        <h1>Product Thumbnail Generator</h1>
         
         <div class="instructions">
-            <p>使用说明：</p>
+            <p>Usage Instructions:</p>
             <ol>
-                <li>选择一个模型</li>
-                <li>旋转模型到合适的角度（可以拖动、旋转和缩放）</li>
-                <li>点击"截取当前图像"按钮</li>
-                <li>预览图像并下载</li>
-                <li>将下载的图像放到 assets/products/ 目录下</li>
+                <li>Select a model</li>
+                <li>Rotate the model to the desired angle (drag, rotate, and scale)</li>
+                <li>Click the "Capture Thumbnail" button</li>
+                <li>Preview the image and download</li>
+                <li>Place the downloaded image in the assets/products/ directory</li>
             </ol>
         </div>
         
         <div class="tool-container">
             <div class="model-panel">
-                <h2 id="current-model">当前模型: 未选择</h2>
+                <h2>3D Model Viewer</h2>
                 <div id="model-container"></div>
-                <button onclick="captureImage()">截取当前图像</button>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button onclick="captureImage()">Capture Thumbnail</button>
+                </div>
+                <div id="current-model" style="text-align: center; margin-top: 10px;"></div>
             </div>
             
             <div class="thumbnails-panel">
-                <h2>选择模型</h2>
+                <h2>Available Models</h2>
                 <div id="thumbnails-list"></div>
-                <h2>图像预览</h2>
-                <img id="thumbnail-preview" alt="缩略图预览">
-                <a id="download-link" href="#" download>下载图像</a>
+                <div id="thumbnail-preview-container">
+                    <h3>Preview</h3>
+                    <img id="thumbnail-preview" src="" alt="Thumbnail Preview">
+                    <a id="download-link" style="display: none;"></a>
+                </div>
             </div>
         </div>
     </div>

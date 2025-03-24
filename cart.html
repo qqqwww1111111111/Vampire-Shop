@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>购物车 - 吸血鬼神秘商店</title>
+    <title>Cart - Vampire Shop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@300;400;600&family=Playfair+Display:wght@400;700&family=EB+Garamond:wght@400;700&display=swap');
@@ -215,102 +215,125 @@
     </div>
 
     <div class="cart-container">
-        <h1 class="cart-title">✧ 购物车 ✧</h1>
-        <div id="cartContent">
-            <!-- 购物车内容将通过JavaScript动态生成 -->
+        <h1 class="cart-title">✧ Shopping Cart ✧</h1>
+        <div class="cart-items">
+            <!-- 购物车为空时显示 -->
+            <div class="empty-cart" id="emptyCart">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Your cart is empty</p>
+                <a href="/products.html" class="continue-shopping">Continue Shopping</a>
+            </div>
+        </div>
+        <div class="cart-summary">
+            <div class="summary-item">
+                <span>Subtotal:</span>
+                <span id="subtotal">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Shipping:</span>
+                <span id="shipping">$0.00</span>
+            </div>
+            <div class="summary-item total">
+                <span>Total:</span>
+                <span id="total">$0.00</span>
+            </div>
+            <button class="checkout-btn" onclick="window.location.href='/checkout.html'">Proceed to Checkout</button>
         </div>
     </div>
 
     <script>
-        class CartPage {
+        // 购物车类
+        class ShoppingCart {
             constructor() {
                 this.items = JSON.parse(localStorage.getItem('cartItems')) || [];
-                this.render();
             }
 
-            render() {
-                const cartContent = document.getElementById('cartContent');
-                
+            // 更新购物车显示
+            updateCartDisplay() {
+                const cartItems = document.querySelector('.cart-items');
+                const emptyCart = document.getElementById('emptyCart');
+                const subtotalElement = document.getElementById('subtotal');
+                const shippingElement = document.getElementById('shipping');
+                const totalElement = document.getElementById('total');
+
                 if (this.items.length === 0) {
-                    cartContent.innerHTML = `
-                        <div class="empty-cart">
-                            <div class="empty-cart-text">购物车是空的</div>
-                            <a href="index.html" class="continue-shopping">继续购物</a>
+                    cartItems.innerHTML = `
+                        <div class="empty-cart" id="emptyCart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>Your cart is empty</p>
+                            <a href="/products.html" class="continue-shopping">Continue Shopping</a>
                         </div>
                     `;
                     return;
                 }
 
-                let itemsHtml = '<div class="cart-items">';
-                
-                this.items.forEach(item => {
-                    itemsHtml += `
-                        <div class="cart-item" data-id="${item.id}">
-                            <img src="${item.image}" alt="${item.name}" class="item-image">
-                            <div class="item-details">
-                                <div class="item-name">${item.name}</div>
-                                <div class="item-price">¥${item.price}</div>
-                                <div class="quantity-controls">
-                                    <button class="quantity-btn" onclick="cartPage.updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
-                                    <input type="number" class="quantity-input" value="${item.quantity}" 
-                                           onchange="cartPage.updateQuantity('${item.id}', this.value)">
-                                    <button class="quantity-btn" onclick="cartPage.updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
-                                    <button class="remove-btn" onclick="cartPage.removeItem('${item.id}')">删除</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                itemsHtml += '</div>';
+                // 计算总价
+                const subtotal = this.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+                const shipping = subtotal > 0 ? 10 : 0;
+                const total = subtotal + shipping;
 
-                const total = this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                
-                itemsHtml += `
-                    <div class="cart-summary">
-                        <div class="summary-row">
-                            <span>商品总价：</span>
-                            <span>¥${total}</span>
+                // 更新价格显示
+                subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
+                shippingElement.textContent = `$${shipping.toFixed(2)}`;
+                totalElement.textContent = `$${total.toFixed(2)}`;
+
+                // 显示购物车商品
+                cartItems.innerHTML = this.items.map(item => `
+                    <div class="cart-item" data-id="${item.id}">
+                        <img src="${item.image}" alt="${item.name}" class="item-image">
+                        <div class="item-details">
+                            <h3>${item.name}</h3>
+                            <p class="item-price">$${item.price.toFixed(2)}</p>
                         </div>
-                        <div class="summary-row total-row">
-                            <span>应付总额：</span>
-                            <span>¥${total}</span>
+                        <div class="item-quantity">
+                            <button class="quantity-btn minus" onclick="cart.updateQuantity('${item.id}', -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="quantity-btn plus" onclick="cart.updateQuantity('${item.id}', 1)">+</button>
                         </div>
-                        <a href="checkout.html" class="checkout-btn">结算</a>
+                        <button class="remove-item" onclick="cart.removeItem('${item.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
-                `;
-
-                cartContent.innerHTML = itemsHtml;
+                `).join('');
             }
 
-            updateQuantity(productId, newQuantity) {
-                newQuantity = parseInt(newQuantity);
-                if (newQuantity < 1) {
-                    this.removeItem(productId);
-                    return;
-                }
-
-                const item = this.items.find(item => item.id === productId);
+            // 更新商品数量
+            updateQuantity(itemId, change) {
+                const item = this.items.find(i => i.id === itemId);
                 if (item) {
-                    item.quantity = newQuantity;
+                    item.quantity = Math.max(1, item.quantity + change);
                     this.saveCart();
-                    this.render();
+                    this.updateCartDisplay();
                 }
             }
 
-            removeItem(productId) {
-                this.items = this.items.filter(item => item.id !== productId);
+            // 移除商品
+            removeItem(itemId) {
+                this.items = this.items.filter(item => item.id !== itemId);
                 this.saveCart();
-                this.render();
+                this.updateCartDisplay();
             }
 
+            // 保存购物车
             saveCart() {
                 localStorage.setItem('cartItems', JSON.stringify(this.items));
             }
+
+            // 清空购物车
+            clearCart() {
+                this.items = [];
+                this.saveCart();
+                this.updateCartDisplay();
+            }
         }
 
-        // 初始化购物车页面
-        const cartPage = new CartPage();
+        // 初始化购物车
+        const cart = new ShoppingCart();
+
+        // 页面加载时更新购物车显示
+        document.addEventListener('DOMContentLoaded', () => {
+            cart.updateCartDisplay();
+        });
     </script>
 </body>
 </html> 

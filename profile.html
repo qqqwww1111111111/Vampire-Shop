@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人中心 - 吸血鬼商店</title>
+    <title>Profile - Vampire Shop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         html {
@@ -293,73 +293,64 @@
     <div class="backdrop"></div>
     
     <header class="header">
-        <a href="index.html" class="logo">吸血鬼商店</a>
-        <nav>
-            <a href="products.html" class="nav-link">商品</a>
-            <a href="blood-supply.html" class="nav-link">血液特供</a>
-            <a href="profile.html" class="nav-link">个人中心</a>
-            <a href="community.html" class="nav-link">社区</a>
-        </nav>
+        <a href="information.html" class="nav-link">✧ Information ✧</a>
+        <a href="index.html" class="logo">VAMPIRE SHOP</a>
+        <div class="nav-right">
+            <a href="products.html" class="nav-link">✧ Shop ✧</a>
+            <a href="cart.html" class="nav-link cart-link">
+                ✧ Cart <span class="cart-count">0</span> ✧
+            </a>
+        </div>
     </header>
 
     <div class="content">
         <div class="profile-container">
             <div class="profile-sidebar">
                 <div class="profile-avatar">
-                    <img src="assets/avatar-default.jpg" alt="用户头像">
+                    <img src="assets/default-avatar.jpg" alt="Profile Avatar">
                 </div>
                 <div class="vampire-level">
-                    <div class="level-badge">吸血鬼等级: 伯爵</div>
+                    <div class="level-badge">Silver Vampire</div>
                     <div class="level-progress">
                         <div class="level-progress-bar"></div>
                     </div>
-                    <div>距离下一等级: 5000 经验值</div>
                 </div>
                 <ul class="profile-menu">
-                    <li><a href="#profile" class="active">个人资料</a></li>
-                    <li><a href="#magic-bag">魔法背包</a></li>
-                    <li><a href="#purchase-history">购买历史</a></li>
-                    <li><a href="#magic-achievements">魔法成就</a></li>
-                    <li><a href="#settings">设置</a></li>
+                    <li><a href="account.html">Profile</a></li>
+                    <li><a href="orders.html">Order History</a></li>
+                    <li><a href="favorites.html">Favorites</a></li>
+                    <li><a href="settings.html">Settings</a></li>
+                    <li><a href="security.html">Security</a></li>
+                    <li><a href="#" onclick="logout()">Logout</a></li>
                 </ul>
             </div>
             
             <div class="profile-content">
-                <h2 class="section-title">个人资料</h2>
-                <div class="magic-stats">
-                    <div class="stat-card">
-                        <div class="stat-value">75</div>
-                        <div class="stat-label">魔法力量</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">12</div>
-                        <div class="stat-label">已解锁成就</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">3</div>
-                        <div class="stat-label">魔法背包</div>
-                    </div>
-                </div>
-
-                <h2 class="section-title">魔法背包定制</h2>
+                <h2 class="section-title">Profile Customization</h2>
                 <div class="customization-grid">
                     <div class="customization-item">
-                        <img src="assets/products/bag-1.jpg" alt="暗夜之翼">
-                        <h3>暗夜之翼</h3>
-                        <p>具有飞行能力的魔法背包，可在夜间自由翱翔。</p>
-                        <button class="customize-button">定制</button>
+                        <img src="assets/customization/avatar-1.jpg" alt="Vampire Avatar 1">
+                        <h3>Classic Vampire</h3>
+                        <p>A timeless look for the traditional vampire.</p>
+                        <button class="customize-button">Select</button>
                     </div>
                     <div class="customization-item">
-                        <img src="assets/products/bag-2.jpg" alt="血月之影">
-                        <h3>血月之影</h3>
-                        <p>隐身能力加持，在月光下完美隐匿。</p>
-                        <button class="customize-button">定制</button>
+                        <img src="assets/customization/avatar-2.jpg" alt="Vampire Avatar 2">
+                        <h3>Modern Vampire</h3>
+                        <p>Contemporary style for the modern vampire.</p>
+                        <button class="customize-button">Select</button>
                     </div>
                     <div class="customization-item">
-                        <img src="assets/products/bag-3.jpg" alt="暗影之魂">
-                        <h3>暗影之魂</h3>
-                        <p>强大的暗影魔法，可储存大量魔法能量。</p>
-                        <button class="customize-button">定制</button>
+                        <img src="assets/customization/avatar-3.jpg" alt="Vampire Avatar 3">
+                        <h3>Noble Vampire</h3>
+                        <p>Elegant appearance for the aristocratic vampire.</p>
+                        <button class="customize-button">Select</button>
+                    </div>
+                    <div class="customization-item">
+                        <img src="assets/customization/avatar-4.jpg" alt="Vampire Avatar 4">
+                        <h3>Mystic Vampire</h3>
+                        <p>Mysterious look for the magical vampire.</p>
+                        <button class="customize-button">Select</button>
                     </div>
                 </div>
             </div>
@@ -367,13 +358,22 @@
     </div>
 
     <script>
-        // 这里可以添加交互逻辑
+        // Avatar selection
         document.querySelectorAll('.customize-button').forEach(button => {
             button.addEventListener('click', () => {
-                // 打开定制界面
-                alert('定制功能即将开放，敬请期待！');
+                const avatar = button.parentElement.querySelector('img').src;
+                document.querySelector('.profile-avatar img').src = avatar;
+                // Add save logic here
             });
         });
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/index.html';
+            }
+        }
     </script>
 </body>
+</html> 
 </html> 

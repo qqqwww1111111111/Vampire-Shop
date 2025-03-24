@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "name": "vampire-shop",
+  "builds": [
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "domains": ["vampire-shop.com"]
+} 

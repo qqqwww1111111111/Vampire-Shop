@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的订单 - 吸血鬼商店</title>
+    <title>My Orders - Vampire Shop</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pirata+One&family=Poppins:wght@300;400;600&display=swap');
         
@@ -369,131 +369,114 @@
         <div class="nav-right">
             <a href="products.html" class="nav-link">✧ Shop ✧</a>
             <a href="cart.html" class="nav-link cart-link">
-                ✧ 购物车 <span class="cart-count">0</span> ✧
+                ✧ Cart <span class="cart-count">0</span> ✧
             </a>
         </div>
     </div>
 
     <div class="orders-container">
         <div class="orders-header">
-            <h1>我的订单</h1>
-            <p>查看和管理您的所有订单</p>
+            <h1>My Orders</h1>
+            <p>Track and manage your orders</p>
         </div>
 
         <div class="orders-grid">
             <div class="orders-sidebar">
                 <div class="user-profile">
                     <div class="user-avatar">
-                        <img src="assets/default-avatar.jpg" alt="用户头像">
+                        <img src="assets/default-avatar.jpg" alt="User Avatar">
                     </div>
-                    <div class="user-name">暗夜伯爵</div>
-                    <div class="user-level">银卡会员</div>
+                    <div class="user-name">Dark Knight</div>
+                    <div class="user-level">Silver Card Member</div>
                 </div>
 
-                <ul class="sidebar-menu">
-                    <li><a href="account.html">个人信息</a></li>
-                    <li><a href="#" class="active">我的订单</a></li>
-                    <li><a href="favorites.html">收藏夹</a></li>
-                    <li><a href="points.html">积分商城</a></li>
-                    <li><a href="address.html">收货地址</a></li>
-                    <li><a href="security.html">账户安全</a></li>
-                    <li><a href="#" id="logoutBtn">退出登录</a></li>
-                </ul>
+                <nav class="sidebar-menu">
+                    <a href="account.html">Profile</a>
+                    <a href="orders.html" class="active">Order History</a>
+                    <a href="favorites.html">Favorites</a>
+                    <a href="settings.html">Settings</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </nav>
             </div>
 
             <div class="orders-content">
                 <div class="orders-filters">
-                    <button class="filter-btn active">全部订单</button>
-                    <button class="filter-btn">待付款</button>
-                    <button class="filter-btn">待发货</button>
-                    <button class="filter-btn">待收货</button>
-                    <button class="filter-btn">已完成</button>
-                    <button class="filter-btn">已取消</button>
+                    <button class="filter-btn active">All Orders</button>
+                    <button class="filter-btn">Pending</button>
+                    <button class="filter-btn">Processing</button>
+                    <button class="filter-btn">Shipped</button>
+                    <button class="filter-btn">Delivered</button>
+                    <button class="filter-btn">Cancelled</button>
                 </div>
 
-                <ul class="order-list">
-                    <li class="order-item">
+                <div class="order-list">
+                    <div class="order-item">
                         <div class="order-header">
-                            <div class="order-number">订单号：VAMP2024032001</div>
-                            <div class="order-date">2024-03-20</div>
-                            <div class="order-status">已完成</div>
+                            <div class="order-number">Order #VM-2024-0001</div>
+                            <div class="order-date">March 15, 2024</div>
+                            <div class="order-status">Delivered</div>
                         </div>
                         <div class="order-details">
                             <div class="order-product">
-                                <div class="product-image">
-                                    <img src="assets/products/book.jpg" alt="亡者的呢喃">
-                                </div>
+                                <img src="assets/products/cloak.jpg" alt="Shadow Cloak">
                                 <div class="product-info">
-                                    <h3>亡者的呢喃</h3>
-                                    <p>数量：1</p>
+                                    <h3>Shadow Cloak</h3>
+                                    <p>Quantity: 1</p>
+                                    <p class="price">$1,200.00</p>
                                 </div>
                             </div>
-                            <div class="order-price">¥2800</div>
+                            <div class="order-actions">
+                                <button class="action-btn">View Details</button>
+                                <button class="action-btn">Track Package</button>
+                                <button class="action-btn">Write Review</button>
+                            </div>
                         </div>
-                        <div class="order-actions">
-                            <button class="action-btn">查看详情</button>
-                            <button class="action-btn">再次购买</button>
-                            <button class="action-btn">评价</button>
-                        </div>
-                    </li>
+                    </div>
 
-                    <li class="order-item">
+                    <div class="order-item">
                         <div class="order-header">
-                            <div class="order-number">订单号：VAMP2024031902</div>
-                            <div class="order-date">2024-03-19</div>
-                            <div class="order-status">配送中</div>
+                            <div class="order-number">Order #VM-2024-0002</div>
+                            <div class="order-date">March 10, 2024</div>
+                            <div class="order-status">Processing</div>
                         </div>
                         <div class="order-details">
                             <div class="order-product">
-                                <div class="product-image">
-                                    <img src="assets/products/cloak.jpg" alt="死寂之翼">
-                                </div>
+                                <img src="assets/products/goblet.jpg" alt="Eternal Chalice">
                                 <div class="product-info">
-                                    <h3>死寂之翼</h3>
-                                    <p>数量：1</p>
+                                    <h3>Eternal Chalice</h3>
+                                    <p>Quantity: 2</p>
+                                    <p class="price">$1,700.00</p>
                                 </div>
                             </div>
-                            <div class="order-price">¥3000</div>
+                            <div class="order-actions">
+                                <button class="action-btn">View Details</button>
+                                <button class="action-btn">Track Package</button>
+                                <button class="action-btn">Cancel Order</button>
+                            </div>
                         </div>
-                        <div class="order-actions">
-                            <button class="action-btn">查看详情</button>
-                            <button class="action-btn">查看物流</button>
-                            <button class="action-btn">确认收货</button>
-                        </div>
-                    </li>
-                </ul>
-
-                <div class="pagination">
-                    <button class="page-btn">上一页</button>
-                    <button class="page-btn active">1</button>
-                    <button class="page-btn">2</button>
-                    <button class="page-btn">3</button>
-                    <button class="page-btn">下一页</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 订单筛选
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                // 这里添加筛选逻辑
+        // Filter orders
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                // Add filter logic here
             });
         });
 
-        // 退出登录
-        document.getElementById('logoutBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('确定要退出登录吗？')) {
-                window.location.href = 'index.html';
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/index.html';
             }
-        });
-    });
+        }
     </script>
 </body>
+</html> 
 </html> 

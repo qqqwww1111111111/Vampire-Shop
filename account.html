@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人中心 - 吸血鬼商店</title>
+    <title>Account - Vampire Shop</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pirata+One&family=Poppins:wght@300;400;600&display=swap');
         
@@ -308,109 +308,213 @@
         <div class="nav-right">
             <a href="products.html" class="nav-link">✧ Shop ✧</a>
             <a href="cart.html" class="nav-link cart-link">
-                ✧ 购物车 <span class="cart-count">0</span> ✧
+                ✧ Cart <span class="cart-count">0</span> ✧
             </a>
         </div>
     </div>
 
     <div class="account-container">
         <div class="account-header">
-            <h1>个人中心</h1>
-            <p>管理您的账户信息与订单</p>
+            <h1>Account</h1>
+            <p>Manage information and orders</p>
         </div>
 
         <div class="account-grid">
             <div class="account-sidebar">
                 <div class="user-profile">
                     <div class="user-avatar">
-                        <img src="assets/default-avatar.jpg" alt="用户头像">
+                        <img src="assets/default-avatar.jpg" alt="User Avatar">
                     </div>
-                    <div class="user-name">暗夜伯爵</div>
-                    <div class="user-level">银卡会员</div>
+                    <div class="user-name">Dark Knight</div>
+                    <div class="user-level">Silver Card Member</div>
                     <div class="level-progress">
                         <div class="progress-bar"></div>
                     </div>
-                    <div class="user-points">积分：6,500</div>
+                    <div class="user-points">Points: 6,500</div>
                 </div>
 
-                <ul class="sidebar-menu">
-                    <li><a href="#" class="active">个人信息</a></li>
-                    <li><a href="orders.html">我的订单</a></li>
-                    <li><a href="favorites.html">收藏夹</a></li>
-                    <li><a href="points.html">积分商城</a></li>
-                    <li><a href="address.html">收货地址</a></li>
-                    <li><a href="security.html">账户安全</a></li>
-                    <li><a href="#" id="logoutBtn">退出登录</a></li>
-                </ul>
+                <nav class="account-nav">
+                    <a href="#profile" class="active">Profile</a>
+                    <a href="#orders">Order History</a>
+                    <a href="#favorites">Favorites</a>
+                    <a href="#settings">Settings</a>
+                    <a href="#security">Security</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </nav>
             </div>
 
             <div class="account-content">
-                <div class="content-section">
-                    <h2>基本信息</h2>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <h3>用户名</h3>
-                            <p>暗夜伯爵</p>
+                <div class="content-section" id="profile">
+                    <h2>Profile Information</h2>
+                    <form class="profile-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" value="Dark Knight">
                         </div>
-                        <div class="info-item">
-                            <h3>会员等级</h3>
-                            <p>银卡会员</p>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" value="darkknight@example.com">
                         </div>
-                        <div class="info-item">
-                            <h3>注册时间</h3>
-                            <p>2024-01-15</p>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" value="+1 234 567 8900">
                         </div>
-                        <div class="info-item">
-                            <h3>最后登录</h3>
-                            <p>2024-03-20</p>
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <textarea id="address">123 Vampire Street, Transylvania</textarea>
+                        </div>
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </form>
+                </div>
+
+                <div class="content-section" id="orders">
+                    <h2>Order History</h2>
+                    <div class="order-history">
+                        <div class="order-item">
+                            <div class="order-header">
+                                <div class="order-number">Order #VM-2024-0001</div>
+                                <div class="order-date">March 15, 2024</div>
+                            </div>
+                            <div class="order-details">
+                                <div class="order-product">
+                                    <img src="assets/products/cloak.jpg" alt="Shadow Cloak">
+                                    <div class="product-info">
+                                        <h3>Shadow Cloak</h3>
+                                        <p>Quantity: 1</p>
+                                        <p class="price">$1,200.00</p>
+                                    </div>
+                                </div>
+                                <div class="order-status">
+                                    <span class="status delivered">Delivered</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-item">
+                            <div class="order-header">
+                                <div class="order-number">Order #VM-2024-0002</div>
+                                <div class="order-date">March 10, 2024</div>
+                            </div>
+                            <div class="order-details">
+                                <div class="order-product">
+                                    <img src="assets/products/goblet.jpg" alt="Eternal Chalice">
+                                    <div class="product-info">
+                                        <h3>Eternal Chalice</h3>
+                                        <p>Quantity: 2</p>
+                                        <p class="price">$1,700.00</p>
+                                    </div>
+                                </div>
+                                <div class="order-status">
+                                    <span class="status processing">Processing</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="content-section">
-                    <h2>最近订单</h2>
-                    <div class="order-history">
-                        <div class="order-item">
-                            <div class="order-header">
-                                <div class="order-number">订单号：VAMP2024032001</div>
-                                <div class="order-date">2024-03-20</div>
-                                <div class="order-status">已完成</div>
-                            </div>
-                            <div class="order-details">
-                                <p>商品：亡者的呢喃</p>
-                                <p>数量：1</p>
-                                <p>总价：¥2800</p>
-                            </div>
+                <div class="content-section" id="favorites">
+                    <h2>Favorite Items</h2>
+                    <div class="favorites-grid">
+                        <div class="favorite-item">
+                            <img src="assets/products/book.jpg" alt="Grimoire of Shadows">
+                            <h3>Grimoire of Shadows</h3>
+                            <p class="price">$1,500.00</p>
+                            <button class="add-to-cart-btn">Add to Cart</button>
                         </div>
-                        <div class="order-item">
-                            <div class="order-header">
-                                <div class="order-number">订单号：VAMP2024031902</div>
-                                <div class="order-date">2024-03-19</div>
-                                <div class="order-status">配送中</div>
-                            </div>
-                            <div class="order-details">
-                                <p>商品：死寂之翼</p>
-                                <p>数量：1</p>
-                                <p>总价：¥3000</p>
-                            </div>
+                        <div class="favorite-item">
+                            <img src="assets/products/watch.jpg" alt="Timekeeper's Watch">
+                            <h3>Timekeeper's Watch</h3>
+                            <p class="price">$2,000.00</p>
+                            <button class="add-to-cart-btn">Add to Cart</button>
                         </div>
                     </div>
+                </div>
+
+                <div class="content-section" id="settings">
+                    <h2>Account Settings</h2>
+                    <form class="settings-form">
+                        <div class="form-group">
+                            <label for="language">Language</label>
+                            <select id="language">
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="currency">Currency</label>
+                            <select id="currency">
+                                <option value="usd">USD ($)</option>
+                                <option value="eur">EUR (€)</option>
+                                <option value="gbp">GBP (£)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="notifications">Notifications</label>
+                            <div class="checkbox-group">
+                                <label>
+                                    <input type="checkbox" checked> Order Updates
+                                </label>
+                                <label>
+                                    <input type="checkbox" checked> New Products
+                                </label>
+                                <label>
+                                    <input type="checkbox"> Promotions
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="save-btn">Save Settings</button>
+                    </form>
+                </div>
+
+                <div class="content-section" id="security">
+                    <h2>Security Settings</h2>
+                    <form class="security-form">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword">
+                        </div>
+                        <button type="submit" class="save-btn">Change Password</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 退出登录
-        document.getElementById('logoutBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('确定要退出登录吗？')) {
-                // 这里添加退出登录的逻辑
-                window.location.href = 'index.html';
-            }
+        // 切换内容区域
+        document.querySelectorAll('.account-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                
+                // 更新导航激活状态
+                document.querySelectorAll('.account-nav a').forEach(a => a.classList.remove('active'));
+                link.classList.add('active');
+                
+                // 显示目标内容区域
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.getElementById(targetId).style.display = 'block';
+            });
         });
-    });
+
+        // 退出登录
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // 这里添加退出登录逻辑
+                window.location.href = '/index.html';
+            }
+        }
     </script>
 </body>
 </html> 
