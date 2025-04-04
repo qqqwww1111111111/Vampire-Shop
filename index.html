@@ -216,9 +216,10 @@
         }
         .explore-section {
             text-align: center;
-            padding: 2rem;
-            margin-top: 0;
-            height: 100vh;
+           padding: 2rem;  /* 增加上下内边距 */
+            padding-top: 65vh;
+            margin-top: 0;    /* 增加顶部外边距 */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -235,6 +236,7 @@
             padding: 3rem 2rem;
             border-radius: 10px;
             backdrop-filter: blur(10px);
+            margin-top: 15vh;
             border: 1px solid rgba(255, 0, 0, 0.2);
         }
         .hot-products h2 {
