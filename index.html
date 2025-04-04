@@ -7,8 +7,8 @@
     <script type="importmap">
     {
         "imports": {
-            "three": "https://unpkg.com/three@0.157.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/"
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
         }
     }
     </script>
@@ -1355,7 +1355,7 @@
                 <h2>✧ Hot Items ✧</h2>
                 <div class="hot-products-grid">
                     <a href="products.html" class="hot-product-card" data-product="goblet">
-                        <img src="assets/products/1.jpg" alt="Whisper of the Dead" class="hot-product-image">
+                        <img src="assets/hot items/WechatIMG8.jpg" alt="Whisper of the Dead" class="hot-product-image">
                         <div class="hot-product-content">
                             <div class="hot-product-title">❧ Whisper of the Dead ❧</div>
                             <div class="hot-product-description">This bag is uniquely designed and decorated with white bones, as if it were a relic extracted from a sleeping cemetery. The texture of the bones shows traces of time and emits a faint glow. It can enhance the holder's ability to perceive death and hear the whispers of the dead and the guidance of the soul.</div>
@@ -1365,7 +1365,7 @@
                         </div>
                     </a>
                     <a href="products.html" class="hot-product-card" data-product="book">
-                        <img src="assets/products/2.jpg" alt="Wings of Death" class="hot-product-image">
+                        <img src="assets/hot items/WechatIMG9.jpg" alt="Wings of Death" class="hot-product-image">
                         <div class="hot-product-content">
                             <div class="hot-product-title">❧ Wings of Death ❧</div>
                             <div class="hot-product-description">This handbag cleverly combines bones and bat wings, presenting a cold and mysterious atmosphere. The bone details and the streamlined design of the bat wings are intertwined, as if foreshadowing the boundary between life and death. It gives vampires greater agility and night perception.</div>
@@ -1375,7 +1375,7 @@
                         </div>
                     </a>
                     <a href="products.html" class="hot-product-card" data-product="apple">
-                        <img src="assets/products/3.jpg" alt="Angels Descend" class="hot-product-image">
+                        <img src="assets/hot items/WechatIMG10.jpg" alt="Angels Descend" class="hot-product-image">
                         <div class="hot-product-content">
                             <div class="hot-product-title">❧ Angels Descend ❧</div>
                             <div class="hot-product-description">The design of this handbag is inspired by the wings of an angel, whose wings are spread out in a posture full of holiness and glory. It not only represents nobility and beauty, but also gives vampires the ability to restore vitality and heal the wounds of others. The magic of this bag can temporarily enable vampires to obtain the healing power of angels.</div>
@@ -1419,6 +1419,15 @@
                                 </div>
                             </a>
                         </div>
+                        <div class="carousel-item">
+                            <a href="promotion.html#new">
+                                <img src="assets/carousel/WechatIMG11.jpg" class="d-block w-100" alt="New Arrivals">
+                                <div class="carousel-caption">
+                                    <h3>New Arrivals</h3>
+                                    <p>Latest magical items in stock</p>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                     <button class="carousel-control prev" onclick="moveCarousel('promotionCarousel', -1)">❮</button>
                     <button class="carousel-control next" onclick="moveCarousel('promotionCarousel', 1)">❯</button>
@@ -1441,7 +1450,7 @@
                         </div>
                         <div class="carousel-item">
                             <a href="festival.html#darknight">
-                                <img src="assets/carousel/WechatIMG57.jpg" class="d-block w-100" alt="Dark Night Celebration">
+                                <img src="assets/carousel/WechatIMG58.jpg" class="d-block w-100" alt="Dark Night Celebration">
                                 <div class="carousel-caption">
                                     <h3>Dark Night Celebration</h3>
                                     <p>A gorgeous dance party not to be missed</p>
@@ -1450,7 +1459,7 @@
                         </div>
                         <div class="carousel-item">
                             <a href="festival.html#mysteryset">
-                                <img src="assets/carousel/WechatIMG58.jpg" class="d-block w-100" alt="Mysterious Set">
+                                <img src="assets/carousel/WechatIMG11.jpg" class="d-block w-100" alt="Mysterious Set">
                                 <div class="carousel-caption">
                                     <h3>Mystical Ritual Set</h3>
                                     <p>Complete props, limited edition</p>
@@ -1528,7 +1537,7 @@
                 
                 <div class="guide-card">
                     <div class="guide-image">
-                        <img src="assets/guides/WechatIMG42.jpg" alt="High-end magic props purchase suggestions">
+                        <img src="assets/guides/WechatIMG7.jpg" alt="High-end magic props purchase suggestions">
                     </div>
                     <div class="guide-content">
                         <h3>High-end magic props purchase suggestions</h3>
@@ -1574,153 +1583,89 @@
     </div>
 
     <script type="module">
+        // 添加错误处理
+        window.addEventListener('error', function(e) {
+            console.error('Error loading script:', e);
+        });
+        
         import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-        let scene, camera, renderer, controls;
-        const modelPaths = {
-            'goblet': './models/home page/goblet.glb',
-            'book': './models/home page/book.glb',
-            'apple': './models/home page/apple.glb',
-            'cloak': './models/home page/cloak.glb',
-            'dagger': './models/home page/dagger.glb',
-            'watch': './models/home page/watch.glb',
-            'box': './models/home page/box.glb',
-            'crown': './models/home page/crown.glb',
-            'necklace': './models/home page/necklace.glb',
-            'wand': './models/home page/wand.glb',
-            'ring': './models/home page/ring.glb',
-            'crystal': './models/home page/crystal.glb',
-            'mirror': './models/home page/mirror.glb'
-        };
+        // 初始化场景
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
+        document.querySelector('.model-container').appendChild(renderer.domElement);
 
-        function init() {
-            // 创建场景
-            scene = new THREE.Scene();
-            scene.background = null;
+        // 添加环境光和平行光
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);  // 大幅增加环境光强度
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);  // 大幅增加平行光强度
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
 
-            // 创建相机
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 0, 12); // 调整相机距离
+        // 设置相机位置
+        camera.position.z = 5;
 
-            // 创建渲染器
-            renderer = new THREE.WebGLRenderer({
-                antialias: true,
-                alpha: true,
-                powerPreference: "high-performance"
-            });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            renderer.setClearColor(0x000000, 0);
-            renderer.outputColorSpace = THREE.SRGBColorSpace;
+        // 添加轨道控制器
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
 
-            // 添加到DOM
-            const container = document.querySelector('.model-container');
-            if (container) {
-                container.innerHTML = '';
-                container.appendChild(renderer.domElement);
-                console.log('渲染器已添加到容器');
-            }
+        // 加载3D模型
+        const loader = new GLTFLoader();
+        loader.load(
+            'models/homepage/blood-moon.glb',
+            function (gltf) {
+                const model = gltf.scene;
+                model.scale.set(3.5, 3.5, 3.5);
+                scene.add(model);
 
-            // 创建控制器
-            controls = new OrbitControls(camera, renderer.domElement);
-            controls.enableZoom = false;
-            controls.enablePan = false;
-            controls.autoRotate = true;
-            controls.autoRotateSpeed = 4.0; // 增加旋转速度
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
+                // 添加多个点光源
+                const pointLight1 = new THREE.PointLight(0xffffff, 2.0, 10);  // 大幅增加点光源强度
+                pointLight1.position.set(5, 5, 5);
+                scene.add(pointLight1);
 
-            // 添加灯光
-            const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
-            scene.add(ambientLight);
+                const pointLight2 = new THREE.PointLight(0xffffff, 2.0, 10);  // 大幅增加点光源强度
+                pointLight2.position.set(-5, -5, -5);
+                scene.add(pointLight2);
 
-            const redLight = new THREE.PointLight(0xff0000, 3.0);
-            redLight.position.set(5, 5, 5);
-            scene.add(redLight);
+                const pointLight3 = new THREE.PointLight(0xffffff, 1.8, 10);  // 大幅增加点光源强度
+                pointLight3.position.set(0, 5, -5);
+                scene.add(pointLight3);
 
-            const whiteLight = new THREE.DirectionalLight(0xffffff, 2.0);
-            whiteLight.position.set(-5, 5, 5);
-            scene.add(whiteLight);
+                const pointLight4 = new THREE.PointLight(0xffffff, 1.8, 10);  // 大幅增加点光源强度
+                pointLight4.position.set(0, -5, 5);
+                scene.add(pointLight4);
 
-            // 加载模型
-            loadModel();
-
-            // 窗口大小调整
-            window.addEventListener('resize', onWindowResize, false);
-        }
-
-        function loadModel() {
-            console.log('开始加载模型');
-            const loader = new GLTFLoader();
-            
-            loader.load('./models/homepage/blood-moon.glb',
-                function(gltf) {
-                    console.log('模型加载成功');
-                    const model = gltf.scene;
-                    
-                    // 调整模型大小
-                    const box = new THREE.Box3().setFromObject(model);
-                    const size = box.getSize(new THREE.Vector3());
-                    const maxDim = Math.max(size.x, size.y, size.z);
-                    const scale = 8.0 / maxDim; // 增大模型尺寸
-                    model.scale.multiplyScalar(scale);
-                    
-                    // 居中模型
-                    model.position.set(0, 0, 0);
-                    
-                    // 添加发光效果
-                    model.traverse((child) => {
-                        if (child.isMesh) {
-                            console.log('处理模型材质:', child.name);
-                            if (child.material) {
-                                // 保持原始颜色
-                                child.material.emissiveIntensity = 0.5;
-                                child.material.metalness = 0.7;
-                                child.material.roughness = 0.3;
-                                child.material.transparent = true;
-                                child.material.opacity = 1.0;
-                            }
-                        }
-                    });
-                    
-                    scene.add(model);
-                    console.log('模型已添加到场景');
-                },
-                function(xhr) {
-                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-                },
-                function(error) {
-                    console.error('模型加载错误:', error);
+                // 自动旋转
+                function animate() {
+                    requestAnimationFrame(animate);
+                    model.rotation.y += 0.005;
+                    controls.update();
+                    renderer.render(scene, camera);
                 }
-            );
-        }
+                animate();
+            },
+            function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% 加载完成');
+            },
+            function (error) {
+                console.error('模型加载错误:', error);
+            }
+        );
 
+        // 窗口大小调整
+        window.addEventListener('resize', onWindowResize, false);
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            if (controls) {
-                controls.update();
-            }
-            if (renderer && scene && camera) {
-                renderer.render(scene, camera);
-            }
-        }
-
-        // 初始化3D场景
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM加载完成，初始化3D场景');
-            init();
-            animate();
-        });
     </script>
     <script>
         // 显示加载界面函数
