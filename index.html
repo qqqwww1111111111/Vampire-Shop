@@ -3,7 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vampire Mystery Shop</title>
+    <title>Vampire Mystery Shop - 神秘的吸血鬼商店</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="探索神秘的吸血鬼商店，发现稀有的超自然物品、古董和魔法物品。独特的购物体验等待着您。">
+    <meta name="keywords" content="吸血鬼商店,神秘商店,魔法物品,古董收藏,超自然物品,vampire shop">
+    <meta name="author" content="Vampire Mystery Shop">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.your-domain.com/">
+    <meta property="og:title" content="Vampire Mystery Shop - 神秘的吸血鬼商店">
+    <meta property="og:description" content="探索神秘的吸血鬼商店，发现稀有的超自然物品、古董和魔法物品。">
+    <meta property="og:image" content="https://www.your-domain.com/assets/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.your-domain.com/">
+    <meta property="twitter:title" content="Vampire Mystery Shop - 神秘的吸血鬼商店">
+    <meta property="twitter:description" content="探索神秘的吸血鬼商店，发现稀有的超自然物品、古董和魔法物品。">
+    <meta property="twitter:image" content="https://www.your-domain.com/assets/og-image.jpg">
+
+    <!-- Google Search Console验证 -->
+    <meta name="google-site-verification" content="您的Google验证码" />
+    
+    <!-- Yandex.Metrika验证 -->
+    <meta name="yandex-verification" content="您的Yandex验证码" />
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX'); // 替换为您的GA4跟踪ID
+    </script>
+
+    <!-- Yandex.Metrica counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(XXXXXXXX, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/XXXXXXXX" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrica counter -->
+
+    <!-- Robots.txt -->
+    <link rel="canonical" href="https://www.your-domain.com/" />
+    
+    <!-- 网站地图 -->
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+    <!-- 原有的importmap -->
     <script type="importmap">
     {
         "imports": {
@@ -204,10 +263,10 @@
         }
         .shop-button:hover {
             background: rgba(255, 0, 0, 0.4);
+            transform: translateY(-2px);
             box-shadow: 
                 0 0 30px rgba(255, 0, 0, 0.3),
                 inset 0 0 30px rgba(255, 0, 0, 0.2);
-            transform: scale(1.05);
         }
         .main-content {
             position: relative;
@@ -250,99 +309,69 @@
         }
         .hot-products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2.5rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
             margin-bottom: 3rem;
         }
         .hot-product-card {
-            background: rgba(20, 0, 0, 0.3);
-            padding: 2rem;
-            border-radius: 15px;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 0, 0, 0.15);
-            box-shadow: 0 0 20px rgba(199, 0, 0, 0.2);
             position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
             cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            height: auto;
-            text-decoration: none;
+            height: 400px;
         }
-        .hot-product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.35);
-            background: rgba(40, 0, 0, 0.6);
-            border: 1px solid rgba(255, 0, 0, 0.3);
+        .hot-product-image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
         .hot-product-image {
             width: 100%;
-            height: 250px;
+            height: 100%;
             object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            filter: brightness(0.9) contrast(1.1);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+            transition: transform 0.5s ease;
         }
         .hot-product-card:hover .hot-product-image {
-            transform: scale(1.03);
-            filter: brightness(1) contrast(1.2);
-            box-shadow: 0 0 25px rgba(255, 0, 0, 0.3);
+            transform: scale(1.1);
         }
-        .hot-product-content {
-            text-align: center;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
+        .hot-product-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            padding: 2rem;
+            transform: translateY(100%);
+            transition: transform 0.5s ease;
+        }
+        .hot-product-card:hover .hot-product-overlay {
+            transform: translateY(0);
         }
         .hot-product-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.4rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
             color: #ff0000;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            letter-spacing: 2px;
-            font-weight: 700;
-        }
-        .hot-product-card:hover .hot-product-title {
-            text-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
         }
         .hot-product-description {
             font-family: 'EB Garamond', serif;
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-            letter-spacing: 0.5px;
-        }
-        .hot-product-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-            padding-top: 1.2rem;
-            border-top: 1px solid rgba(255, 0, 0, 0.15);
-        }
-        .hot-product-price {
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #ff0000;
-            text-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
-            letter-spacing: 2px;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1rem;
+            line-height: 1.4;
         }
         .hot-product-tag {
-            font-family: 'Playfair Display', serif;
-            background: rgba(255, 0, 0, 0.15);
-            padding: 0.3rem 0.8rem;
+            display: inline-block;
+            background: rgba(255, 0, 0, 0.2);
+            color: #fff;
+            padding: 0.5rem 1rem;
             border-radius: 20px;
             font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(255, 0, 0, 0.2);
-            letter-spacing: 1px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
         }
         .view-all-button {
             font-family: 'Playfair Display', serif;
@@ -365,19 +394,6 @@
             background: rgba(255, 0, 0, 0.4);
             transform: translateY(-5px);
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-        }
-        .view-all-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.5s;
-        }
-        .view-all-button:hover::before {
-            left: 100%;
         }
         .shop-info {
             width: 100%;
@@ -514,6 +530,21 @@
             }
             .hot-product-title {
                 font-size: 2rem;
+            }
+            .hot-products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hot-product-card {
+                height: 300px;
+            }
+            
+            .hot-product-overlay {
+                padding: 1.5rem;
+            }
+            
+            .hot-product-title {
+                font-size: 1.5rem;
             }
         }
         .page-title {
@@ -1283,8 +1314,353 @@
             font-size: 12px;
             font-family: Arial, sans-serif;
         }
+
+        /* 登录注册弹窗样式 */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .auth-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 20, 20, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.2);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .auth-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: #ff0000;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+            margin: 0;
+        }
+
+        .close-auth {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-auth:hover {
+            color: #ff0000;
+            transform: rotate(90deg);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 1.2rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .auth-tab.active {
+            color: #ff0000;
+        }
+
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ff0000;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-family: 'EB Garamond', serif;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'EB Garamond', serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 0, 0, 0.8);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .auth-btn:hover {
+            background: #ff0000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .social-login {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .social-login p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+            font-family: 'EB Garamond', serif;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            background: #ff0000;
+            color: #fff;
+            transform: translateY(-3px);
+        }
+
+        .featured-products {
+            padding: 4rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .featured-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .featured-title h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: #ff0000;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .featured-title::after {
+            content: '*';
+            position: absolute;
+            top: -20px;
+            right: 20%;
+            font-size: 2rem;
+            color: #ff0000;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .lookbook-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .lookbook-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4rem;
+        }
+
+        .lookbook-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .lookbook-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2);
+        }
+
+        .lookbook-images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .lookbook-images img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .lookbook-images img:hover {
+            transform: scale(1.05);
+        }
+
+        .product-details {
+            display: flex;  /* 改为flex布局 */
+            flex-direction: row;  /* 设置为横向排列 */
+            justify-content: space-between;  /* 平均分配空间 */
+            gap: 1rem;
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+        .product-card {
+            flex: 1;  /* 让每个卡片平均分配空间 */
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 0;  /* 防止内容溢出 */
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 150px;  /* 统一图片高度 */
+            object-fit: contain;
+            margin-bottom: 1rem;
+        }
+
+        .product-card h4 {
+            color: #fff;
+            font-size: 1rem;
+            margin: 0.5rem 0;
+            text-align: center;
+            width: 100%;
+            white-space: normal;  /* 允许文字换行 */
+            word-wrap: break-word;  /* 长单词换行 */
+        }
+
+        .product-card .price {
+            color: #ff0000;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .add-to-cart {
+            background: #8B0000;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            background: #4A0000;
+        }
+
+        .collection-name {
+            font-family: 'Cinzel', serif;
+            color: #ff0000;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .lookbook-image {
+            width: 100%;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .banner-image {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .lookbook-item {
+            margin-bottom: 4rem;
+        }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- 开屏广告弹窗 -->
@@ -1320,21 +1696,13 @@
     <div class="model-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1;"></div>
 
     <div class="header">
-        <nav style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="products.html" class="nav-link">Shop</a>
-                <a href="information.html" class="nav-link">Information</a>
-            </div>
-            <a href="index.html" class="logo">Vampire Shop</a>
-            <div>
-                <a href="account.html" class="nav-link">Account</a>
-                <a href="cart.html" class="nav-link" style="position: relative;">
-                    Cart
-                    <span id="cartCount">0</span>
-                </a>
-            </div>
-        </nav>
+        <a href="index.html" class="logo">Vampire Mystery Shop</a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="products.html" class="nav-link">Products</a>
+            <a href="information.html" class="nav-link">About</a>
+            <a href="user.html" class="nav-link">Contact</a>
+        </div>
     </div>
 
     <div class="hero">
@@ -1356,36 +1724,36 @@
             <div class="hot-products">
                 <h2>✧ Hot Items ✧</h2>
                 <div class="hot-products-grid">
-                    <a href="products.html" class="hot-product-card" data-product="goblet">
-                        <img src="assets/hot items/WechatIMG8.jpg" alt="Whisper of the Dead" class="hot-product-image">
-                        <div class="hot-product-content">
-                            <div class="hot-product-title">❧ Whisper of the Dead ❧</div>
-                            <div class="hot-product-description">This bag is uniquely designed and decorated with white bones, as if it were a relic extracted from a sleeping cemetery. The texture of the bones shows traces of time and emits a faint glow. It can enhance the holder's ability to perceive death and hear the whispers of the dead and the guidance of the soul.</div>
-                            <div class="hot-product-details">
+                    <div class="hot-product-card" data-product="goblet">
+                        <div class="hot-product-image-container">
+                            <img src="assets/hot_items/WechatIMG145.jpg" alt="Whisper of the Dead" class="hot-product-image">
+                            <div class="hot-product-overlay">
+                                <div class="hot-product-title">❧ Whisper of the Dead ❧</div>
+                                <div class="hot-product-description">This bag is uniquely designed and decorated with white bones, as if it were a relic extracted from a sleeping cemetery.</div>
                                 <div class="hot-product-tag">Communication with the Dead</div>
                             </div>
                         </div>
-                    </a>
-                    <a href="products.html" class="hot-product-card" data-product="book">
-                        <img src="assets/hot items/WechatIMG9.jpg" alt="Wings of Death" class="hot-product-image">
-                        <div class="hot-product-content">
-                            <div class="hot-product-title">❧ Wings of Death ❧</div>
-                            <div class="hot-product-description">This handbag cleverly combines bones and bat wings, presenting a cold and mysterious atmosphere. The bone details and the streamlined design of the bat wings are intertwined, as if foreshadowing the boundary between life and death. It gives vampires greater agility and night perception.</div>
-                            <div class="hot-product-details">
+                    </div>
+                    <div class="hot-product-card" data-product="book">
+                        <div class="hot-product-image-container">
+                            <img src="assets/hot_items/WechatIMG146.jpg" alt="Wings of Death" class="hot-product-image">
+                            <div class="hot-product-overlay">
+                                <div class="hot-product-title">❧ Wings of Death ❧</div>
+                                <div class="hot-product-description">This handbag cleverly combines bones and bat wings, presenting a cold and mysterious atmosphere.</div>
                                 <div class="hot-product-tag">Stealth Agility</div>
                             </div>
                         </div>
-                    </a>
-                    <a href="products.html" class="hot-product-card" data-product="apple">
-                        <img src="assets/hot items/WechatIMG10.jpg" alt="Angels Descend" class="hot-product-image">
-                        <div class="hot-product-content">
-                            <div class="hot-product-title">❧ Angels Descend ❧</div>
-                            <div class="hot-product-description">The design of this handbag is inspired by the wings of an angel, whose wings are spread out in a posture full of holiness and glory. It not only represents nobility and beauty, but also gives vampires the ability to restore vitality and heal the wounds of others. The magic of this bag can temporarily enable vampires to obtain the healing power of angels.</div>
-                            <div class="hot-product-details">
+                    </div>
+                    <div class="hot-product-card" data-product="apple">
+                        <div class="hot-product-image-container">
+                            <img src="assets/hot_items/WechatIMG147.jpg" alt="Angels Descend" class="hot-product-image">
+                            <div class="hot-product-overlay">
+                                <div class="hot-product-title">❧ Angels Descend ❧</div>
+                                <div class="hot-product-description">The design of this handbag is inspired by the wings of an angel, whose wings are spread out in a posture full of holiness and glory.</div>
                                 <div class="hot-product-tag">Healing ability</div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
                 <a href="products.html" class="view-all-button">View all products</a>
             </div>
@@ -1395,8 +1763,8 @@
                 <div class="carousel-container">
                     <div class="carousel" id="promotionCarousel">
                         <div class="carousel-item active">
-                            <a href="promotion.html#bloodmoon">
-                                <img src="assets/carousel/WechatIMG53.jpg" class="d-block w-100" alt="Moon Special">
+                            <a href="products.html#necklace-section">
+                                <img src="assets/carousel/WechatIMG148.jpg" class="d-block w-100" alt="Moon Special">
                                 <div class="carousel-caption">
                                     <h3>Blood Moon Special</h3>
                                     <p>Limited time discount, one day only!</p>
@@ -1404,8 +1772,8 @@
                             </a>
                         </div>
                         <div class="carousel-item">
-                            <a href="promotion.html#newproducts">
-                                <img src="assets/carousel/WechatIMG54.jpg" class="d-block w-100" alt="newproducts">
+                            <a href="products.html#new-arrivals">
+                                <img src="assets/carousel/WechatIMG149.jpg" class="d-block w-100" alt="New Products">
                                 <div class="carousel-caption">
                                     <h3>New product launch</h3>
                                     <p>Ancient Runes Series, Available Now</p>
@@ -1413,8 +1781,8 @@
                             </a>
                         </div>
                         <div class="carousel-item">
-                            <a href="promotion.html#member">
-                                <img src="assets/carousel/WechatIMG55.jpg" class="d-block w-100" alt="Members only">
+                            <a href="products.html#member-exclusive">
+                                <img src="assets/carousel/WechatIMG150.jpg" class="d-block w-100" alt="Members only">
                                 <div class="carousel-caption">
                                     <h3>Members only</h3>
                                     <p>Exclusive benefits for VIP members</p>
@@ -1422,8 +1790,8 @@
                             </a>
                         </div>
                         <div class="carousel-item">
-                            <a href="promotion.html#new">
-                                <img src="assets/carousel/WechatIMG11.jpg" class="d-block w-100" alt="New Arrivals">
+                            <a href="products.html#latest-collection">
+                                <img src="assets/carousel/WechatIMG151.jpg" class="d-block w-100" alt="New Arrivals">
                                 <div class="carousel-caption">
                                     <h3>New Arrivals</h3>
                                     <p>Latest magical items in stock</p>
@@ -1442,8 +1810,8 @@
                 <div class="carousel-container">
                     <div class="carousel" id="festivalCarousel">
                         <div class="carousel-item active">
-                            <a href="festival.html#bloodmoon">
-                                <img src="assets/carousel/WechatIMG56.jpg" class="d-block w-100" alt="血月节">
+                            <a href="products.html#blood-moon-collection">
+                                <img src="assets/carousel/WechatIMG151.jpg" class="d-block w-100" alt="Blood Moon Festival">
                                 <div class="carousel-caption">
                                     <h3>Blood Moon Special Event</h3>
                                     <p>Mysterious ritual, waiting for your participation</p>
@@ -1451,8 +1819,8 @@
                             </a>
                         </div>
                         <div class="carousel-item">
-                            <a href="festival.html#darknight">
-                                <img src="assets/carousel/WechatIMG58.jpg" class="d-block w-100" alt="Dark Night Celebration">
+                            <a href="products.html#dark-night-collection">
+                                <img src="assets/carousel/WechatIMG152.jpg" class="d-block w-100" alt="Dark Night Celebration">
                                 <div class="carousel-caption">
                                     <h3>Dark Night Celebration</h3>
                                     <p>A gorgeous dance party not to be missed</p>
@@ -1460,8 +1828,8 @@
                             </a>
                         </div>
                         <div class="carousel-item">
-                            <a href="festival.html#mysteryset">
-                                <img src="assets/carousel/WechatIMG11.jpg" class="d-block w-100" alt="Mysterious Set">
+                            <a href="products.html#ritual-set-collection">
+                                <img src="assets/carousel/WechatIMG153.jpg" class="d-block w-100" alt="Mysterious Set">
                                 <div class="carousel-caption">
                                     <h3>Mystical Ritual Set</h3>
                                     <p>Complete props, limited edition</p>
@@ -1490,11 +1858,6 @@
                         <div class="contact-info">
                             <p>Opening hours: After sunset - before dawn</p>
                             <p>Reservation phone number:666-VAMPIRE</p>
-                            <div class="social-links">
-                                <a href="#" title="Instagram">✧ Instagram</a>
-                                <a href="#" title="Twitter">✧ Twitter</a>
-                                <a href="#" title="Facebook">✧ Facebook</a>
-                            </div>
                         </div>
                     </div>
                     <div class="info-section">
@@ -1517,70 +1880,88 @@
             </div>
         </div>
 
-        <!-- 添加购买建议与教程部分 -->
-        <div class="guide-section">
-            <h2 class="section-title">Buying Guides & Tutorials</h2>
-            <div class="guide-grid">
-                <div class="guide-card">
-                    <div class="guide-image">
-                        <img src="assets/guides/WechatIMG41.jpg" alt="Magic Items Usage Guide">
-                    </div>
-                    <div class="guide-content">
-                        <h3>Magic Items Usage Guide</h3>
-                        <p>Learn how to use various magic props correctly, including key information such as spell activation, energy regulation, safety protection, etc. Our team of professional magicians will provide you with detailed usage tutorials.</p>
-                        <ul class="guide-list">
-                            <li>Spell Activation Method</li>
-                            <li>Energy Regulation Techniques</li>
-                            <li>Safety precautions</li>
-                            <li>Daily maintenance recommendations</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="guide-card">
-                    <div class="guide-image">
-                        <img src="assets/guides/WechatIMG7.jpg" alt="High-end magic props purchase suggestions">
-                    </div>
-                    <div class="guide-content">
-                        <h3>High-end magic props purchase suggestions</h3>
-                        <p>We provide professional purchasing suggestions for different levels of vampires, from entry-level to legendary magic props, to help you choose the most suitable equipment.</p>
-                        <ul class="guide-list">
-                            <li>Entry-level recommendation</li>
-                            <li>Advanced equipment selection</li>
-                            <li>High-end magic props</li>
-                            <li>Legendary Equipment</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="guide-card">
-                    <div class="guide-image">
-                        <img src="assets/guides/WechatIMG44.jpg" alt="Magic effect display">
-                    </div>
-                    <div class="guide-content">
-                        <h3>Magic effect display</h3>
-                        <p>The effects of various magic props are demonstrated through actual cases, including battle scenes, defense effects, auxiliary capabilities, etc., allowing you to intuitively understand the actual application value of each prop.</p>
-                        <ul class="guide-list">
-                            <li>Battle effect display</li>
-                            <li>Defensive capability test</li>
-                            <li>Auxiliary effect demonstration</li>
-                            <li>Special ability display</li>
-                        </ul>
-                    </div>
-                </div>
+        <!-- 社交媒体链接 -->
+        <div class="social-media-section" style="text-align: center; padding: 2rem 0;">
+            <div class="social-links" style="display: flex; justify-content: center; gap: 2rem;">
+                <a href="https://t.me/vampire_shop" target="_blank" class="social-link" style="font-size: 1.5rem; color: #fff; text-decoration: none; transition: all 0.3s ease;">
+                    <i class="fab fa-telegram"></i> Telegram
+                </a>
+                <a href="https://vk.com/id870078514" target="_blank" class="social-link" style="font-size: 1.5rem; color: #fff; text-decoration: none; transition: all 0.3s ease;">
+                    <i class="fab fa-vk"></i> VK
+                </a>
             </div>
         </div>
 
         <div class="footer">
-            <div class="social-links">
-                <a href="https://vk.com/id870078514" target="_blank" class="social-link">
-                    <i class="fab fa-vk"></i> VK
-                </a>
-                <a href="https://t.me/vampire_shop" target="_blank" class="social-link">
-                    <i class="fab fa-telegram"></i> Telegram
-                </a>
-            </div>
             <span>© 2024 Vampire Shop. All rights reserved</span>
+        </div>
+    </div>
+
+    <!-- 登录注册弹窗 -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2 class="auth-title">欢迎来到吸血鬼商店</h2>
+                <button class="close-auth" onclick="closeAuthModal()">&times;</button>
+            </div>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">登录</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">注册</div>
+            </div>
+
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">邮箱</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">密码</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="rememberMe"> 记住我
+                    </label>
+                    <a href="#" style="float: right; color: #ff0000;">忘记密码？</a>
+                </div>
+                <button type="submit" class="auth-btn">登录</button>
+            </form>
+
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName">用户名</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">邮箱</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">密码</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">确认密码</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <button type="submit" class="auth-btn">注册</button>
+            </form>
+
+            <div class="social-login">
+                <p>或使用以下方式登录</p>
+                <div class="social-buttons">
+                    <button class="social-btn">
+                        <i class="fab fa-google"></i>
+                    </button>
+                    <button class="social-btn">
+                        <i class="fab fa-facebook-f"></i>
+                    </button>
+                    <button class="social-btn">
+                        <i class="fab fa-twitter"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1603,10 +1984,10 @@
         document.querySelector('.model-container').appendChild(renderer.domElement);
 
         // 添加环境光和平行光
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);  // 大幅增加环境光强度
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
         scene.add(ambientLight);
         
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);  // 大幅增加平行光强度
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
         directionalLight.position.set(5, 5, 5);
         scene.add(directionalLight);
 
@@ -1615,42 +1996,42 @@
 
         // 添加轨道控制器
         const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
+        controls.enableDamping = true;  // 启用阻尼效果
+        controls.dampingFactor = 0.05;  // 设置阻尼系数
+        controls.enableZoom = false;    // 禁用缩放
+        controls.enablePan = false;     // 禁用平移
+        controls.rotateSpeed = 0.5;     // 降低旋转速度
+        controls.autoRotate = true;     // 启用自动旋转
+        controls.autoRotateSpeed = 2.0;  // 设置自动旋转速度
+        controls.minPolarAngle = Math.PI / 2;     // 限制垂直旋转的最小角度（90度）
+        controls.maxPolarAngle = Math.PI / 2;     // 限制垂直旋转的最大角度（90度）
+
+        let model;  // 声明模型变量
 
         // 加载3D模型
         const loader = new GLTFLoader();
         loader.load(
             'models/homepage/blood-moon.glb',
             function (gltf) {
-                const model = gltf.scene;
+                model = gltf.scene;
                 model.scale.set(3.5, 3.5, 3.5);
                 scene.add(model);
 
-                // 添加多个点光源
-                const pointLight1 = new THREE.PointLight(0xffffff, 2.0, 10);  // 大幅增加点光源强度
-                pointLight1.position.set(5, 5, 5);
-                scene.add(pointLight1);
+                // 添加点光源
+                const pointLights = [
+                    { position: [5, 5, 5], intensity: 2.0 },
+                    { position: [-5, -5, -5], intensity: 2.0 },
+                    { position: [0, 5, -5], intensity: 1.8 },
+                    { position: [0, -5, 5], intensity: 1.8 }
+                ];
 
-                const pointLight2 = new THREE.PointLight(0xffffff, 2.0, 10);  // 大幅增加点光源强度
-                pointLight2.position.set(-5, -5, -5);
-                scene.add(pointLight2);
+                pointLights.forEach(light => {
+                    const pointLight = new THREE.PointLight(0xffffff, light.intensity, 10);
+                    pointLight.position.set(...light.position);
+                    scene.add(pointLight);
+                });
 
-                const pointLight3 = new THREE.PointLight(0xffffff, 1.8, 10);  // 大幅增加点光源强度
-                pointLight3.position.set(0, 5, -5);
-                scene.add(pointLight3);
-
-                const pointLight4 = new THREE.PointLight(0xffffff, 1.8, 10);  // 大幅增加点光源强度
-                pointLight4.position.set(0, -5, 5);
-                scene.add(pointLight4);
-
-                // 自动旋转
-                function animate() {
-                    requestAnimationFrame(animate);
-                    model.rotation.y += 0.005;
-                    controls.update();
-                    renderer.render(scene, camera);
-                }
+                // 开始动画循环
                 animate();
             },
             function (xhr) {
@@ -1661,6 +2042,17 @@
             }
         );
 
+        // 动画循环函数
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (controls) {
+                controls.update();  // 更新控制器
+            }
+            
+            renderer.render(scene, camera);
+        }
+
         // 窗口大小调整
         window.addEventListener('resize', onWindowResize, false);
         function onWindowResize() {
@@ -1668,6 +2060,18 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
+
+        // 添加鼠标事件监听
+        const modelContainer = document.querySelector('.model-container');
+        modelContainer.addEventListener('mousedown', () => {
+            controls.autoRotate = false;  // 用户交互时停止自动旋转
+        });
+
+        modelContainer.addEventListener('mouseup', () => {
+            setTimeout(() => {
+                controls.autoRotate = true;  // 用户停止交互后恢复自动旋转
+            }, 2000);  // 2秒后恢复自动旋转
+        });
     </script>
     <script>
         // 显示加载界面函数
@@ -1984,6 +2388,76 @@
             }
         `;
         document.head.appendChild(style);
+
+        // 显示登录注册弹窗
+        function showAuthModal() {
+            document.getElementById('authModal').style.display = 'block';
+        }
+
+        // 关闭登录注册弹窗
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        // 切换登录/注册标签
+        function switchAuthTab(type) {
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+
+            if (type === 'login') {
+                document.querySelector('.auth-tab:nth-child(1)').classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelector('.auth-tab:nth-child(2)').classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        // 点击弹窗外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('authModal');
+            if (event.target === modal) {
+                closeAuthModal();
+            }
+        }
+
+        // 登录表单提交
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // 这里添加实际的登录逻辑
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userEmail', email);
+            if (rememberMe) {
+                localStorage.setItem('rememberMe', 'true');
+            }
+            closeAuthModal();
+            // 跳转到用户界面
+            window.location.href = 'user.html';
+        });
+
+        // 注册表单提交
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            // 这里添加实际的注册逻辑
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userEmail', email);
+            closeAuthModal();
+            // 跳转到用户界面
+            window.location.href = 'user.html';
+        });
     </script>
 </body>
 </html> 

@@ -1,665 +1,560 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Vampire Shop</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Checkout - Vampire Mystery Shop</title>
     <style>
-        html {
-            cursor: url("https://freight.cargo.site/t/original/i/X1891125108465342991869321415690/cussor-6.png"), auto !important;
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@300;400;600&family=Playfair+Display:wght@400;700&family=EB+Garamond:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-
-        a {
-            cursor: url("https://freight.cargo.site/t/original/i/X1891125108446896247795611864074/cussor-5.png"), auto !important;
-        }
-
+        
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Cormorant Garamond', serif;
             background-color: #000;
             color: #fff;
             min-height: 100vh;
-            overflow-x: hidden;
             line-height: 1.6;
             letter-spacing: 0.5px;
-            position: relative;
-            margin: 0;
-            padding: 0;
         }
-        
+
         .backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('./assets/background-9.jpg') center/cover no-repeat fixed;
-            opacity: 1; 
-            z-index: 0;
-            pointer-events: none;
-            filter: brightness(1.1) contrast(1.1);
+            background: url('assets/background-9.jpg') center/cover no-repeat fixed;
+            opacity: 0.3;
+            z-index: -1;
         }
-        
-        .backdrop::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                rgba(0, 0, 0, 0.5) 0%,
-                rgba(0, 0, 0, 0.2) 50%,
-                rgba(0, 0, 0, 0.5) 100%
-            );
-            z-index: 1;
-        }
-        
+
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 100;
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
-            box-sizing: border-box;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
         }
-        
+
         .logo {
-            font-family: "Gravity Variable", serif;
-            font-size: 3rem;
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
             color: #ff0000;
             text-decoration: none;
             text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-        }
-        
-        .nav-link {
-            font-family: Newsreader;
-            font-size: 1.7rem;
-            color: rgba(255, 255, 255, 0.75);
-            text-decoration: none;
-            font-weight: 800;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: #ff0000;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-        }
-        
-        .content {
-            position: relative;
-            z-index: 2;
-            padding: 120px 40px 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .checkout-container {
-            background: rgba(20, 20, 20, 0.9);
-            backdrop-filter: blur(15px);
-            border-radius: 25px;
-            padding: 50px;
-            border: 2px solid rgba(255, 0, 0, 0.2);
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            margin: 20px;
-        }
-        
-        .checkout-container:hover {
-            box-shadow: 0 0 60px rgba(255, 0, 0, 0.3);
-            transform: translateY(-5px);
-        }
-        
-        .checkout-title {
-            font-family: "Gravity Variable", serif;
-            font-size: 3rem;
-            color: #ff0000;
-            text-align: center;
-            margin-bottom: 40px;
-            text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-            letter-spacing: 3px;
-        }
-
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 40px;
-            position: relative;
-        }
-
-        .step-indicator::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 0, 0, 0.2);
-            z-index: 1;
-        }
-
-        .step {
-            text-align: center;
-            flex: 1;
-            position: relative;
-            z-index: 2;
-        }
-
-        .step-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(255, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 10px;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 2;
-            background: #000;
-        }
-
-        .step.active .step-number {
-            background: #ff0000;
-            border-color: #ff0000;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-        }
-
-        .step.completed .step-number {
-            background: #4CAF50;
-            border-color: #4CAF50;
-        }
-
-        .step-label {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            transition: all 0.3s ease;
-        }
-
-        .step.active .step-label {
-            color: #ff0000;
-            font-weight: bold;
-        }
-
-        .step.completed .step-label {
-            color: #4CAF50;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 5px;
-            background: rgba(255, 0, 0, 0.1);
-            border-radius: 5px;
-            margin: 30px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background: linear-gradient(90deg, #8b0000, #ff0000);
-            width: 25%;
-            transition: width 0.5s ease;
-        }
-        
-        .checkout-content {
-            display: flex;
-            justify-content: space-between;
-            gap: 40px;
-        }
-        
-        .checkout-form {
-            flex: 1;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .form-group input, 
-        .form-group textarea {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(255, 0, 0, 0.2);
-            padding: 18px;
-            border-radius: 12px;
-            color: white;
-            font-size: 1.2rem;
-            outline: none;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.1);
-        }
-        
-        .form-group input:focus, 
-        .form-group textarea:focus {
-            border-color: #ff0000;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3), inset 0 0 15px rgba(255, 0, 0, 0.2);
-            transform: translateY(-2px);
-        }
-        
-        .payment-methods {
-            margin-top: 30px;
-            border-top: 2px solid rgba(255, 0, 0, 0.2);
-            padding-top: 30px;
-        }
-
-        .payment-methods h3 {
-            margin-bottom: 20px;
-            color: #ff0000;
-            font-size: 1.5rem;
-        }
-        
-        .payment-option {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .payment-option:hover {
-            background: rgba(255, 0, 0, 0.1);
-            transform: translateX(5px);
-        }
-        
-        .payment-option.selected {
-            background: rgba(255, 0, 0, 0.2);
-            border-color: rgba(255, 0, 0, 0.4);
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
-        }
-        
-        .payment-icon {
-            font-size: 1.5rem;
-            margin-right: 15px;
-            color: #ff0000;
-        }
-        
-        .place-order-btn {
-            background: linear-gradient(45deg, #8b0000, #ff0000);
-            color: white;
-            border: none;
-            padding: 18px 30px;
-            border-radius: 12px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            width: 100%;
-            margin-top: 25px;
-            transition: all 0.3s ease;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .place-order-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.5s;
-        }
-        
-        .place-order-btn:hover::before {
-            left: 100%;
-        }
-        
-        .place-order-btn:hover {
-            background: linear-gradient(45deg, #ff0000, #8b0000);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(255, 0, 0, 0.6);
             letter-spacing: 4px;
         }
-        
-        .order-summary {
-            flex: 0 0 400px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255, 0, 0, 0.2);
-            height: fit-content;
+
+        .checkout-container {
+            max-width: 1200px;
+            margin: 100px auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
         }
 
-        .order-summary h2 {
-            color: #ff0000;
-            margin-bottom: 30px;
-            font-size: 1.8rem;
-            text-align: center;
+        .checkout-form {
+            background: rgba(26, 5, 5, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(139, 0, 0, 0.3);
         }
-        
-        .summary-items {
-            margin-bottom: 30px;
+
+        .form-group {
+            margin-bottom: 1.5rem;
         }
-        
-        .summary-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .summary-item:hover {
-            background: rgba(255, 0, 0, 0.1);
-            transform: translateX(-5px);
-        }
-        
-        .item-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 10px;
-            object-fit: cover;
-            margin-right: 15px;
-            border: 1px solid rgba(255, 0, 0, 0.2);
-        }
-        
-        .item-details {
-            flex: 1;
-        }
-        
-        .item-name {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            color: #ff0000;
-        }
-        
-        .item-price {
+
+        .form-group label {
+            display: block;
+            color: #fff;
+            margin-bottom: 0.5rem;
             font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.8);
         }
-        
-        .summary-total {
-            margin-top: 30px;
-            padding: 20px;
-            border-top: 2px solid rgba(255, 0, 0, 0.3);
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .order-summary {
+            background: rgba(26, 5, 5, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+        }
+
+        .order-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.2);
         }
 
-        .summary-total span {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .total-amount {
-            font-size: 1.8rem;
+        .order-number {
+            font-family: 'Cinzel', serif;
             color: #ff0000;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
         }
 
-        .delete-item {
-            background: none;
-            border: none;
-            color: rgba(255, 0, 0, 0.7);
-            cursor: pointer;
-            font-size: 1.2rem;
-            padding: 5px;
-            margin-left: 10px;
-            transition: all 0.3s ease;
+        .delivery-options {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
         }
 
-        .delete-item:hover {
-            color: #ff0000;
-            transform: scale(1.1);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .success-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 30px;
-            border-radius: 20px;
-            border: 2px solid #4CAF50;
-            box-shadow: 0 0 50px rgba(76, 175, 80, 0.3);
-            text-align: center;
-            animation: fadeIn 0.5s ease;
-            z-index: 1000;
-            display: none;
-        }
-
-        .success-message i {
-            font-size: 3rem;
-            color: #4CAF50;
-            margin-bottom: 20px;
-        }
-
-        .success-message h3 {
-            color: #4CAF50;
-            margin-bottom: 15px;
-        }
-
-        .success-message p {
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 20px;
-        }
-
-        .success-message button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
+        .delivery-option {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .success-message button:hover {
-            background: #45a049;
+        .delivery-option:hover {
+            background: rgba(139, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        .delivery-option.selected {
+            background: rgba(139, 0, 0, 0.3);
+            border-color: #ff0000;
+        }
+
+        .delivery-option input[type="radio"] {
+            margin-right: 1rem;
+        }
+
+        .delivery-price {
+            margin-left: auto;
+            color: #ff0000;
+        }
+
+        .coupon-section {
+            margin: 2rem 0;
+        }
+
+        .coupon-input {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .coupon-input input {
+            flex: 1;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .apply-coupon {
+            padding: 0.8rem 1.5rem;
+            background: #8B0000;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .apply-coupon:hover {
+            background: #4A0000;
+        }
+
+        .price-breakdown {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .price-row.total {
+            color: #ff0000;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
+        }
+
+        .order-note {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .order-items {
+            margin: 1.5rem 0;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .order-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 1rem;
+        }
+
+        .order-total {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: right;
+            font-size: 1.2rem;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: #8B0000;
+            color: #fff;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background: #4A0000;
             transform: translateY(-2px);
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .payment-method {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            background: rgba(139, 0, 0, 0.2);
+            border-color: #ff0000;
+            transform: translateY(-2px);
+        }
+
+        .payment-method.selected {
+            background: rgba(139, 0, 0, 0.3);
+            border-color: #ff0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+
+        .payment-method img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1rem;
+        }
+
+        .payment-method h3 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                margin-top: 80px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="backdrop"></div>
     
-    <div class="header">
-        <a href="index.html" class="logo">VAMPIRE SHOP</a>
-        <nav>
-            <a href="information.html" class="nav-link">Information</a>
-        </nav>
-    </div>
+    <header class="header">
+        <a href="index.html" class="logo">Vampire Mystery Shop</a>
+    </header>
 
-    <div class="content">
-        <div class="checkout-container">
-            <h1 class="checkout-title">Checkout</h1>
-            
-            <div class="step-indicator">
-                <div class="step completed">
-                    <div class="step-number">1</div>
-                    <div class="step-label">Cart</div>
+    <div class="checkout-container">
+        <div class="checkout-form">
+            <h2>选择支付方式</h2>
+            <div class="payment-methods">
+                <div class="payment-method" data-method="alipay">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSI2NCIgZmlsbD0iIzE2NzdGRiIvPjxwYXRoIGQ9Ik0xMTAgODIuNEM5NS42IDcxLjIgNzQuNCA1NiA3NC40IDU2SDQ0VjY0SDY4QzY4IDY0IDY1LjYgNzEuMiA1Ny42IDc4LjRDNDIuNCA2OCAzMiA2NC44IDI0LjggNjRDMTcuNiA2My4yIDEyIDY0LjggMTIgNjQuOEMxMiA2NC44IDE2IDkyIDQ0IDk2LjhDNzIgMTAxLjYgOTIgOTIgOTIgOTJMMTEwIDgyLjRaTTU3LjYgODQuOEM0OS42IDgyLjQgNDQgNzguNCA0NCA3OC40QzQ0IDc4LjQgNTIgNzQuNCA2MCA3NC40QzY4IDc0LjQgNzQuNCA3OC40IDc0LjQgNzguNEM3NC40IDc4LjQgNjUuNiA4Ny4yIDU3LjYgODQuOFoiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTQ0IDUySDkyVjM2SDQ0VjUyWiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=" alt="支付宝">
+                    <h3>支付宝</h3>
                 </div>
-                <div class="step active">
-                    <div class="step-number">2</div>
-                    <div class="step-label">Shipping</div>
+                <div class="payment-method" data-method="wechat">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSI2NCIgZmlsbD0iIzA3QzE2MCIvPjxwYXRoIGQ9Ik05Mi44IDg0LjhDOTIuOCA3NS4yIDgyLjQgNjcuMiA2OS42IDY3LjJDNTYuOCA2Ny4yIDQ2LjQgNzUuMiA0Ni40IDg0LjhDNDYuNCA5NC40IDU2LjggMTAyLjQgNjkuNiAxMDIuNEM3My42IDEwMi40IDc3LjYgMTAxLjYgODAuOCA5OS4yTDg4IDEwMi40TDg2LjQgOTZDOTAuNCA5My42IDkyLjggODkuNiA5Mi44IDg0LjhaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik04MS42IDI1LjZDNjYuNCAyNS42IDU0LjQgMzUuMiA1NC40IDQ2LjRDNTQuNCA1MiA1OC40IDU3LjYgNjQgNjAuOEw2Mi40IDY4TDcwLjQgNjRDNzMuNiA2NS42IDc3LjYgNjYuNCA4MS42IDY2LjRDOTYuOCA2Ni40IDEwOC44IDU2LjggMTA4LjggNDYuNEMxMDguOCAzNS4yIDk2LjggMjUuNiA4MS42IDI1LjZaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik03My42IDQxLjZDNzMuNiA0My43MDkxIDcxLjgwOTEgNDUuNSA2OS43IDQ1LjVDNjcuNTkwOSA0NS41IDY1LjggNDMuNzA5MSA2NS44IDQxLjZDNjUuOCAzOS40OTA5IDY3LjU5MDkgMzcuNyA2OS43IDM3LjdDNzEuODA5MSAzNy43IDczLjYgMzkuNDkwOSA3My42IDQxLjZaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik05My42IDQxLjZDOTMuNiA0My43MDkxIDkxLjgwOTEgNDUuNSA4OS43IDQ1LjVDODcuNTkwOSA0NS41IDg1LjggNDMuNzA5MSA4NS44IDQxLjZDODUuOCAzOS40OTA5IDg3LjU5MDkgMzcuNyA4OS43IDM3LjdDOTEuODA5MSAzNy43IDkzLjYgMzkuNDkwOSA5My42IDQxLjZaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik02MS42IDgwQzYxLjYgODEuNTQ2NCA2MC4zNDY0IDgyLjggNTguOCA4Mi44QzU3LjI1MzYgODIuOCA1NiA4MS41NDY0IDU2IDgwQzU2IDc4LjQ1MzYgNTcuMjUzNiA3Ny4yIDU4LjggNzcuMkM2MC4zNDY0IDc3LjIgNjEuNiA3OC40NTM2IDYxLjYgODBaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik03Ny42IDgwQzc3LjYgODEuNTQ2NCA3Ni4zNDY0IDgyLjggNzQuOCA4Mi44QzczLjI1MzYgODIuOCA3MiA4MS41NDY0IDcyIDgwQzcyIDc4LjQ1MzYgNzMuMjUzNiA3Ny4yIDc0LjggNzcuMkM3Ni4zNDY0IDc3LjIgNzcuNiA3OC40NTM2IDc3LjYgODBaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==" alt="微信支付">
+                    <h3>微信支付</h3>
                 </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-label">Payment</div>
+                <div class="payment-method" data-method="card">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSI2NCIgZmlsbD0iI0ZGNkI2QiIvPjxwYXRoIGQ9Ik0yNCA0NEMyNCAzOS41ODE3IDI3LjU4MTcgMzYgMzIgMzZIOTZDMTAwLjQxOCAzNiAxMDQgMzkuNTgxNyAxMDQgNDRWODRDMTA0IDg4LjQxODMgMTAwLjQxOCA5MiA5NiA5MkgzMkMyNy41ODE3IDkyIDI0IDg4LjQxODMgMjQgODRWNDRaIiBmaWxsPSJ3aGl0ZSIvPjxyZWN0IHg9IjI0IiB5PSI1MiIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgiIGZpbGw9IiNGRjZCNkIiLz48Y2lyY2xlIGN4PSI4OCIgY3k9Ijc2IiByPSI4IiBmaWxsPSIjRkZEOTNEIi8+PGNpcmNsZSBjeD0iNzYiIGN5PSI3NiIgcj0iOCIgZmlsbD0iI0ZGNkI2QiIvPjwvc3ZnPg==" alt="银行卡">
+                    <h3>银行卡</h3>
                 </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-label">Complete</div>
+            </div>
+            <button class="checkout-btn" onclick="processPayment()">确认支付</button>
+        </div>
+
+        <div class="order-summary">
+            <div class="order-header">
+                <h2>订单摘要</h2>
+                <span class="order-number">订单号：VM<span id="orderNumber"></span></span>
+            </div>
+
+            <div class="order-items" id="checkout-items">
+                <!-- 订单项将通过 JavaScript 动态添加 -->
+            </div>
+
+            <div class="delivery-options">
+                <h3>配送方式</h3>
+                <div class="delivery-option selected" onclick="selectDelivery(this, 0)">
+                    <input type="radio" name="delivery" checked>
+                    <span>普通配送 (3-5天送达)</span>
+                    <span class="delivery-price">免费</span>
+                </div>
+                <div class="delivery-option" onclick="selectDelivery(this, 20)">
+                    <input type="radio" name="delivery">
+                    <span>快速配送 (1-2天送达)</span>
+                    <span class="delivery-price">¥20.00</span>
+                </div>
+                <div class="delivery-option" onclick="selectDelivery(this, 50)">
+                    <input type="radio" name="delivery">
+                    <span>午夜专送 (当天午夜送达)</span>
+                    <span class="delivery-price">¥50.00</span>
                 </div>
             </div>
 
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
+            <div class="coupon-section">
+                <h3>优惠券</h3>
+                <div class="coupon-input">
+                    <input type="text" id="couponCode" placeholder="输入优惠码">
+                    <button class="apply-coupon" onclick="applyCoupon()">应用</button>
+                </div>
             </div>
 
-            <div class="checkout-content">
-                <div class="checkout-form">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" placeholder="Enter your full name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="tel" placeholder="Enter your phone number" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Shipping Address</label>
-                        <textarea rows="3" placeholder="Enter your shipping address" required></textarea>
-                    </div>
-
-                    <div class="payment-methods">
-                        <h3>Payment Method</h3>
-                        <div class="payment-option selected">
-                            <i class="fas fa-credit-card payment-icon"></i>
-                            <span>Credit Card</span>
-                        </div>
-                        <div class="payment-option">
-                            <i class="fab fa-alipay payment-icon"></i>
-                            <span>Alipay</span>
-                        </div>
-                        <div class="payment-option">
-                            <i class="fab fa-weixin payment-icon"></i>
-                            <span>WeChat Pay</span>
-                        </div>
-                    </div>
-
-                    <button class="place-order-btn" onclick="showSuccessMessage()">
-                        Confirm Payment <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
-                    </button>
+            <div class="price-breakdown">
+                <div class="price-row">
+                    <span>商品总价</span>
+                    <span>¥<span id="subtotal">0.00</span></span>
                 </div>
-
-                <div class="order-summary">
-                    <h2>Order Summary</h2>
-                    <div class="summary-items">
-                        <div class="summary-item">
-                            <img src="./assets/products/product1.jpg" class="item-image" alt="Product">
-                            <div class="item-details">
-                                <div class="item-name">Mystic Potion</div>
-                                <div class="item-price">$299.00</div>
-                            </div>
-                            <button class="delete-item" onclick="removeItem(this)">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="summary-item">
-                            <img src="./assets/products/product2.jpg" class="item-image" alt="Product">
-                            <div class="item-details">
-                                <div class="item-name">Ancient Rune Necklace</div>
-                                <div class="item-price">$599.00</div>
-                            </div>
-                            <button class="delete-item" onclick="removeItem(this)">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="summary-total">
-                        <span>Total</span>
-                        <span class="total-amount">$898.00</span>
-                    </div>
+                <div class="price-row">
+                    <span>配送费</span>
+                    <span>¥<span id="delivery-fee">0.00</span></span>
                 </div>
+                <div class="price-row" id="discount-row" style="display: none;">
+                    <span>优惠折扣</span>
+                    <span>-¥<span id="discount-amount">0.00</span></span>
+                </div>
+                <div class="price-row total">
+                    <span>总计</span>
+                    <span>¥<span id="checkout-total-amount">0.00</span></span>
+                </div>
+            </div>
+
+            <div class="order-note">
+                <p>* 午夜专送服务仅限特定区域，由我们的吸血鬼快递员完成配送。</p>
+                <p>* 所有商品均为正品，享受30天无理由退换。</p>
             </div>
         </div>
     </div>
 
-    <div class="success-message" id="successMessage">
-        <i class="fas fa-check-circle"></i>
-        <h3>Payment Successful</h3>
-        <p>Your order has been successfully placed</p>
-        <button onclick="window.location.href='index.html'">Back to Home</button>
-    </div>
-
     <script>
-        // 支付方式选择
-        document.querySelectorAll('.payment-option').forEach(option => {
-            option.addEventListener('click', () => {
-                document.querySelectorAll('.payment-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
-                option.classList.add('selected');
-            });
-        });
+        // 生成随机订单号
+        function generateOrderNumber() {
+            const date = new Date();
+            const year = date.getFullYear().toString().substr(-2);
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            return `${year}${month}${day}${random}`;
+        }
 
-        // 删除商品
-        function removeItem(button) {
-            const item = button.closest('.summary-item');
-            item.style.transform = 'translateX(100%)';
-            item.style.opacity = '0';
-            setTimeout(() => {
-                item.remove();
-                updateTotal();
-            }, 300);
+        // 从 localStorage 获取购物车数据
+        function loadCartData() {
+            const cartData = localStorage.getItem('cartData');
+            return cartData ? JSON.parse(cartData) : [];
+        }
+
+        let subtotal = 0;
+        let deliveryFee = 0;
+        let discount = 0;
+
+        // 显示订单信息
+        function displayOrderItems() {
+            const cart = loadCartData();
+            const checkoutItems = document.getElementById('checkout-items');
+            const subtotalElement = document.getElementById('subtotal');
+            
+            checkoutItems.innerHTML = '';
+            subtotal = 0;
+
+            cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'order-item';
+                const priceInYuan = item.price * 7.2;
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}">
+                    <div>
+                        <h4>${item.title}</h4>
+                        <p>¥${priceInYuan.toFixed(2)}</p>
+                    </div>
+                `;
+                checkoutItems.appendChild(itemElement);
+                subtotal += priceInYuan;
+            });
+
+            subtotalElement.textContent = subtotal.toFixed(2);
+            updateTotal();
+        }
+
+        // 选择配送方式
+        function selectDelivery(element, fee) {
+            document.querySelectorAll('.delivery-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+            deliveryFee = fee;
+            document.getElementById('delivery-fee').textContent = fee.toFixed(2);
+            updateTotal();
+        }
+
+        // 应用优惠券
+        function applyCoupon() {
+            const couponCode = document.getElementById('couponCode').value.toUpperCase();
+            const discountRow = document.getElementById('discount-row');
+            const discountAmount = document.getElementById('discount-amount');
+
+            // 优惠券逻辑
+            switch(couponCode) {
+                case 'VAMPIRE10':
+                    discount = subtotal * 0.1;
+                    alert('优惠券使用成功！享受9折优惠。');
+                    break;
+                case 'BLOOD20':
+                    discount = subtotal * 0.2;
+                    alert('优惠券使用成功！享受8折优惠。');
+                    break;
+                case 'NEWMOON':
+                    discount = 50;
+                    alert('优惠券使用成功！立减50元。');
+                    break;
+                default:
+                    alert('无效的优惠券代码');
+                    discount = 0;
+                    discountRow.style.display = 'none';
+                    updateTotal();
+                    return;
+            }
+
+            discountRow.style.display = 'flex';
+            discountAmount.textContent = discount.toFixed(2);
+            updateTotal();
         }
 
         // 更新总价
         function updateTotal() {
-            const prices = Array.from(document.querySelectorAll('.item-price'))
-                .map(el => parseFloat(el.textContent.replace('$', '')));
-            const total = prices.reduce((sum, price) => sum + price, 0);
-            document.querySelector('.total-amount').textContent = `$${total.toFixed(2)}`;
+            const total = subtotal + deliveryFee - discount;
+            document.getElementById('checkout-total-amount').textContent = total.toFixed(2);
         }
 
-        // 显示支付成功消息
-        function showSuccessMessage() {
-            const message = document.getElementById('successMessage');
-            message.style.display = 'block';
-            
-            // 更新进度条和步骤指示器
-            document.querySelector('.progress-fill').style.width = '100%';
-            document.querySelectorAll('.step').forEach(step => {
-                step.classList.add('completed');
-                step.classList.remove('active');
+        // 处理支付方式选择
+        let selectedPaymentMethod = null;
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method').forEach(m => {
+                    m.classList.remove('selected');
+                });
+                method.classList.add('selected');
+                selectedPaymentMethod = method.dataset.method;
             });
+        });
+
+        // 处理支付
+        function processPayment() {
+            if (!selectedPaymentMethod) {
+                alert('请选择支付方式');
+                return;
+            }
+
+            switch(selectedPaymentMethod) {
+                case 'alipay':
+                    alert('正在跳转到支付宝支付...');
+                    break;
+                case 'wechat':
+                    alert('请使用微信扫描二维码支付...');
+                    break;
+                case 'card':
+                    alert('正在跳转到银行卡支付...');
+                    break;
+            }
+
+            setTimeout(() => {
+                localStorage.removeItem('cartData');
+                alert('支付成功！感谢您的购买。');
+                window.location.href = 'products.html';
+            }, 1500);
         }
+
+        // 页面加载时初始化
+        window.addEventListener('load', () => {
+            document.getElementById('orderNumber').textContent = generateOrderNumber();
+            displayOrderItems();
+        });
     </script>
 </body>
 </html> 

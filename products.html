@@ -1,699 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Products - Vampire Shop</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- 使用ES模块方式加载Three.js -->
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-        }
-    }
-    </script>
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-        
-        // 定义模型路径
-        const modelPaths = {
-            'cloak': '/models/products/cloak.glb',
-            'goblet': '/models/products/goblet.glb',
-            'dagger': '/models/products/dagger.glb',
-            'book': '/models/products/book.glb',
-            'watch': '/models/products/watch.glb',
-            'box': '/models/products/box.glb',
-            'crown': '/models/products/crown.glb',
-            'necklace': '/models/products/necklace.glb',
-            'wand': '/models/products/wand.glb',
-            'ring': '/models/products/ring.glb',
-            'crystal': '/models/products/crystal.glb',
-            'apple': '/models/products/apple.glb',
-            'mirror': '/models/products/mirror.glb'
-        };
-        
-        // 初始化场景存储
-        const scenes = new Map();
-        
-        // 创建场景函数
-        function createScene(containerId, modelPath) {
-            const container = document.getElementById(containerId);
-            if (!container) return null;
-            
-            // 创建场景
-            const scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x000000);
-            
-            // 创建相机
-            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.z = 5;
-            camera.position.y = 2;
-            camera.lookAt(0, 0, 0);
-            
-            // 创建渲染器
-            const renderer = new THREE.WebGLRenderer({
-                antialias: true,
-                alpha: true
-            });
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            renderer.setClearColor(0x000000, 0);
-            renderer.outputColorSpace = THREE.SRGBColorSpace;
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.0;
-            container.appendChild(renderer.domElement);
-            
-            // 创建控制器
-            const controls = new OrbitControls(camera, renderer.domElement);
-            controls.enableZoom = false;  // 禁用缩放
-            controls.enablePan = false;   // 禁用平移
-            controls.autoRotate = true;
-            controls.autoRotateSpeed = 3.0;
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.minDistance = 5;      // 固定距离
-            controls.maxDistance = 5;      // 固定距离
-            controls.target.set(0, 0, 0);
-            
-            // 添加光源
-            const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-            scene.add(ambientLight);
-            
-            const redLight = new THREE.PointLight(0xff0000, 3.0);
-            redLight.position.set(5, 5, 5);
-            redLight.castShadow = true;
-            scene.add(redLight);
-            
-            const whiteLight = new THREE.DirectionalLight(0xffffff, 2.0);
-            whiteLight.position.set(-5, 5, 5);
-            whiteLight.castShadow = true;
-            scene.add(whiteLight);
-            
-            const secondRedLight = new THREE.PointLight(0xff0000, 2.0);
-            secondRedLight.position.set(-5, -5, -5);
-            scene.add(secondRedLight);
-            
-            const haloLight = new THREE.PointLight(0xff0000, 1.5);
-            haloLight.position.set(0, 0, 3);
-            scene.add(haloLight);
-            
-            // 加载模型
-            const loader = new GLTFLoader();
-            
-            loader.load(modelPath,
-                function(gltf) {
-                    const model = gltf.scene;
-                    
-                    // 优化模型缩放和位置
-                    const box = new THREE.Box3().setFromObject(model);
-                    const size = box.getSize(new THREE.Vector3());
-                    const maxDim = Math.max(size.x, size.y, size.z);
-                    const scale = 4.0 / maxDim;
-                    model.scale.multiplyScalar(scale);
-                    
-                    const center = box.getCenter(new THREE.Vector3());
-                    model.position.sub(center.multiplyScalar(scale));
-                    model.position.y += 0.5;
-                    
-                    // 优化材质设置
-                    model.traverse((child) => {
-                        if (child.isMesh) {
-                            if (child.material) {
-                                child.material.emissive = new THREE.Color(0x330000);
-                                child.material.emissiveIntensity = 0.2;
-                                child.material.metalness = 0.8;
-                                child.material.roughness = 0.2;
-                                child.material.envMapIntensity = 1.0;
-                                child.material.needsUpdate = true;
-                            }
-                            child.castShadow = true;
-                            child.receiveShadow = true;
-                        }
-                    });
-                    
-                    scene.add(model);
-                },
-                // 加载进度回调
-                function(xhr) {
-                    console.log(`模型加载进度: ${Math.round(xhr.loaded / xhr.total * 100)}%`);
-                },
-                // 错误回调
-                function(error) {
-                    console.error('模型加载错误:', error);
-                }
-            );
-            
-            // 鼠标移动光效
-            container.addEventListener('mousemove', (event) => {
-                const rect = container.getBoundingClientRect();
-                const x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
-                const y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
-                redLight.position.x = x * 10;
-                redLight.position.y = y * 10;
-                haloLight.position.x = x * 3;
-                haloLight.position.y = y * 3;
-            });
-            
-            // 窗口大小变化适应
-            window.addEventListener('resize', () => {
-                if (container) {
-                    camera.aspect = container.clientWidth / container.clientHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(container.clientWidth, container.clientHeight);
-                }
-            });
-            
-            return {
-                scene,
-                camera,
-                renderer,
-                controls
-            };
-        }
-        
-        // 初始化3D模型
-        document.addEventListener('DOMContentLoaded', () => {
-            // 检查是否有选中的商品
-            const selectedProduct = sessionStorage.getItem('selectedProduct');
-            if (selectedProduct) {
-                const productCard = document.querySelector(`[data-model="${selectedProduct}"]`);
-                if (productCard) {
-                    productCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    // 清除选中状态
-                    sessionStorage.removeItem('selectedProduct');
-                }
-            }
-
-            // 初始化所有产品的3D场景
-            document.querySelectorAll('.product-card').forEach(card => {
-                const modelType = card.dataset.model;
-                const containerId = `model-${modelType}`;
-                const modelPath = modelPaths[modelType];
-                
-                if (modelPath) {
-                    const sceneObj = createScene(containerId, modelPath);
-                    if (sceneObj) {
-                        scenes.set(containerId, sceneObj);
-                    }
-                }
-            });
-            
-            // 开始动画循环
-            animate();
-            
-            // 初始化详情查看按钮
-            initDetailButtons();
-            
-            // 初始化加入购物车按钮
-            initAddToCartButtons();
-        });
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            scenes.forEach(({scene, camera, renderer, controls}) => {
-                if (controls) controls.update();
-                if (scene && camera && renderer) {
-                    renderer.render(scene, camera);
-                }
-            });
-        }
-
-        // 详情查看功能
-        function initDetailButtons() {
-            // 为所有查看详情按钮添加点击事件
-            document.querySelectorAll('.view-details-btn').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const modelType = this.dataset.model;
-                    openProductDetail(modelType);
-                });
-            });
-            
-            // 关闭详情模态框
-            document.querySelector('.modal-close').addEventListener('click', () => {
-                closeProductDetail();
-            });
-            
-            // 点击模态框外部关闭
-            document.getElementById('product-detail-modal').addEventListener('click', (e) => {
-                if (e.target === document.getElementById('product-detail-modal')) {
-                    closeProductDetail();
-                }
-            });
-            
-            // ESC键关闭模态框
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    closeProductDetail();
-                }
-            });
-        }
-        
-        // 创建详情模型
-        function createDetailModel(modelType) {
-            const container = document.getElementById('modal-product-canvas');
-            if (!container) {
-                console.error('找不到模态框容器');
-                return;
-            }
-            
-            // 清除之前的模型
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
-            
-            // 创建场景
-            const scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x000000);
-            
-            // 创建相机
-            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.z = 5;
-            camera.position.y = 2;
-            camera.lookAt(0, 0, 0);
-            
-            // 创建渲染器
-            const renderer = new THREE.WebGLRenderer({
-                antialias: true,
-                alpha: true
-            });
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            renderer.setClearColor(0x000000, 0);
-            renderer.outputEncoding = THREE.sRGBEncoding;
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.0;
-            container.appendChild(renderer.domElement);
-            
-            // 创建控制器
-            const controls = new OrbitControls(camera, renderer.domElement);
-            controls.enableZoom = true;
-            controls.enablePan = true;
-            controls.autoRotate = true;
-            controls.autoRotateSpeed = 3.0;
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.minDistance = 2;
-            controls.maxDistance = 10;
-            controls.target.set(0, 0, 0);
-            
-            // 添加光源
-            const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-            scene.add(ambientLight);
-            
-            const redLight = new THREE.PointLight(0xff0000, 3.0);
-            redLight.position.set(5, 5, 5);
-            redLight.castShadow = true;
-            scene.add(redLight);
-            
-            const whiteLight = new THREE.DirectionalLight(0xffffff, 2.0);
-            whiteLight.position.set(-5, 5, 5);
-            whiteLight.castShadow = true;
-            scene.add(whiteLight);
-            
-            const secondRedLight = new THREE.PointLight(0xff0000, 2.0);
-            secondRedLight.position.set(-5, -5, -5);
-            scene.add(secondRedLight);
-            
-            const haloLight = new THREE.PointLight(0xff0000, 1.5);
-            haloLight.position.set(0, 0, 3);
-            scene.add(haloLight);
-            
-            // 加载模型
-            const loader = new GLTFLoader();
-            const modelPath = modelPaths[modelType];
-            
-            if (!modelPath) {
-                console.error('模型路径不存在:', modelType);
-                return;
-            }
-            
-            console.log('开始加载模型:', modelPath);
-            
-            // 添加加载指示器
-            const loadingIndicator = document.createElement('div');
-            loadingIndicator.className = 'loading-indicator';
-            loadingIndicator.textContent = '加载中...';
-            container.appendChild(loadingIndicator);
-            
-            loader.load(modelPath,
-                function(gltf) {
-                    console.log('模型加载成功');
-                    const model = gltf.scene;
-                    
-                    // 优化模型缩放和位置
-                    const box = new THREE.Box3().setFromObject(model);
-                    const size = box.getSize(new THREE.Vector3());
-                    const maxDim = Math.max(size.x, size.y, size.z);
-                    const scale = 4.0 / maxDim;
-                    model.scale.multiplyScalar(scale);
-                    
-                    const center = box.getCenter(new THREE.Vector3());
-                    model.position.sub(center.multiplyScalar(scale));
-                    model.position.y += 0.5;
-                    
-                    // 优化材质设置
-                    model.traverse((child) => {
-                        if (child.isMesh) {
-                            if (child.material) {
-                                child.material.emissive = new THREE.Color(0x330000);
-                                child.material.emissiveIntensity = 0.2;
-                                child.material.metalness = 0.8;
-                                child.material.roughness = 0.2;
-                                child.material.envMapIntensity = 1.0;
-                                child.material.needsUpdate = true;
-                            }
-                            child.castShadow = true;
-                            child.receiveShadow = true;
-                        }
-                    });
-                    
-                    scene.add(model);
-                    console.log('模型已添加到场景');
-                    
-                    // 移除加载指示器
-                    if (loadingIndicator) {
-                        loadingIndicator.remove();
-                    }
-                    
-                    // 开始渲染循环
-                    function animate() {
-                        requestAnimationFrame(animate);
-                        controls.update();
-                        renderer.render(scene, camera);
-                    }
-                    animate();
-                },
-                // 加载进度回调
-                function(xhr) {
-                    console.log(`模型加载进度: ${Math.round(xhr.loaded / xhr.total * 100)}%`);
-                    if (loadingIndicator) {
-                        loadingIndicator.textContent = `加载中... ${Math.round(xhr.loaded / xhr.total * 100)}%`;
-                    }
-                },
-                // 错误回调
-                function(error) {
-                    console.error('模型加载错误:', error);
-                    if (loadingIndicator) {
-                        loadingIndicator.textContent = '加载失败，请刷新重试';
-                        loadingIndicator.style.color = '#ff0000';
-                    }
-                }
-            );
-            
-            // 鼠标移动光效
-            container.addEventListener('mousemove', (event) => {
-                const rect = container.getBoundingClientRect();
-                const x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
-                const y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
-                redLight.position.x = x * 10;
-                redLight.position.y = y * 10;
-                haloLight.position.x = x * 3;
-                haloLight.position.y = y * 3;
-            });
-            
-            // 窗口大小变化适应
-            window.addEventListener('resize', () => {
-                if (container) {
-                    camera.aspect = container.clientWidth / container.clientHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(container.clientWidth, container.clientHeight);
-                }
-            });
-            
-            // 存储场景对象
-            scenes.set('modal-product-canvas', {
-                scene,
-                camera,
-                renderer,
-                controls
-            });
-            
-            console.log('详情模型创建完成');
-        }
-        
-        // 修改openProductDetail函数
-        function openProductDetail(modelType) {
-            console.log('打开产品详情:', modelType);
-            
-            // 获取产品卡片信息
-            const productCard = document.querySelector(`.product-card[data-model="${modelType}"]`);
-            if (!productCard) {
-                console.error('找不到产品卡片:', modelType);
-                return;
-            }
-            
-            // 获取产品信息
-            const title = productCard.querySelector('h3').textContent;
-            const description = productCard.querySelector('p').textContent;
-            const details = productCard.querySelector('.product-details').innerHTML;
-            const priceValue = productCard.querySelector('.product-price').textContent.replace('¥', '');
-            
-            // 设置模态框内容
-            document.getElementById('modal-product-title').textContent = title;
-            document.getElementById('modal-product-description').textContent = description;
-            document.getElementById('modal-product-details').innerHTML = details;
-            document.getElementById('modal-price-value').textContent = priceValue;
-            
-            // 设置购物车按钮数据
-            const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
-            const modalAddToCartBtn = document.getElementById('modal-add-to-cart');
-            
-            if (addToCartBtn) {
-                modalAddToCartBtn.dataset.name = addToCartBtn.dataset.name;
-                modalAddToCartBtn.dataset.baseprice = addToCartBtn.dataset.baseprice;
-            }
-            
-            // 显示模态框
-            const modal = document.getElementById('product-detail-modal');
-            modal.style.display = 'flex';
-            
-            // 创建3D模型
-            createDetailModel(modelType);
-            
-            // 延迟设置透明度，确保过渡效果正常
-            setTimeout(() => {
-                modal.style.opacity = '1';
-            }, 10);
-            
-            // 禁止背景滚动
-            document.body.style.overflow = 'hidden';
-            
-            console.log('产品详情模态框已打开');
-        }
-        
-        // 修改closeProductDetail函数
-        function closeProductDetail() {
-            const modal = document.getElementById('product-detail-modal');
-            modal.style.opacity = '0';
-            setTimeout(() => {
-                modal.style.display = 'none';
-                
-                // 清除模态框中的3D模型
-                const container = document.getElementById('modal-product-canvas');
-                while (container.firstChild) {
-                    container.removeChild(container.firstChild);
-                }
-                
-                // 清除场景
-                scenes.delete('modal-product-canvas');
-            }, 300);
-            
-            // 恢复背景滚动
-            document.body.style.overflow = '';
-        }
-        
-        // 尺寸选择功能
-        function initSizeOptions() {
-            document.querySelectorAll('.size-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const card = this.closest('.product-card');
-                    
-                    // 更新选中状态
-                    card.querySelectorAll('.size-option').forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    this.classList.add('selected');
-                    
-                    // 更新价格
-                    const price = this.dataset.price;
-                    card.querySelector('.price-value').textContent = price;
-                    
-                    // 更新购物车按钮数据
-                    const button = card.querySelector('.add-to-cart-btn');
-                    if (button) {
-                        button.dataset.price = price;
-                    }
-                    
-                    // 可选：更新3D模型大小
-                    const modelType = card.dataset.model;
-                    const size = this.dataset.size;
-                    const sceneObj = scenes.get(`model-${modelType}`);
-                    if (sceneObj && sceneObj.scene) {
-                        let scale = 1;
-                        switch(size) {
-                            case 'S': scale = 0.9; break;
-                            case 'M': scale = 1.0; break;
-                            case 'L': scale = 1.1; break;
-                        }
-                        
-                        sceneObj.scene.scale.set(scale, scale, scale);
-                    }
-                });
-            });
-        }
-        
-        // 初始化加入购物车按钮
-        function initAddToCartButtons() {
-            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const name = this.dataset.name;
-                    // 获取当前选中的尺寸对应的价格
-                    const card = this.closest('.product-card');
-                    const selectedSize = card.querySelector('.size-option.selected');
-                    const price = selectedSize ? parseInt(selectedSize.dataset.price) : parseInt(this.dataset.baseprice);
-                    
-                    addToCart(name, price);
-                });
-            });
-        }
-        
-        // 购物车功能
-        // let cart = [];  // 删除这一行
-        
-        // 添加商品到购物车
-        function addToCart(name, price) {
-            // 查找商品是否已经在购物车中
-            const existingItem = cart.find(item => item.name === name);
-            
-            if (existingItem) {
-                // 如果商品已存在，增加数量
-                existingItem.quantity = (existingItem.quantity || 1) + 1;
-            } else {
-                // 如果商品不存在，添加新商品
-                cart.push({
-                    name: name,
-                    price: price,
-                    quantity: 1
-                });
-            }
-            
-            // 保存购物车到localStorage
-            localStorage.setItem('cart', JSON.stringify(cart));
-            
-            // 更新购物车计数
-            updateCartCount();
-            
-            // 更新购物车商品显示
-            updateCartItems();
-            
-            // 显示提示信息
-            showToast('已添加到购物车');
-            
-            // 购物车图标动画
-            const cartIcon = document.querySelector('.cart-icon');
-            cartIcon.classList.add('bounce');
-            setTimeout(() => {
-                cartIcon.classList.remove('bounce');
-            }, 500);
-            
-            // 自动打开购物车
-            document.getElementById('cart-modal').classList.add('active');
-        }
-        
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartCount();
-            updateCartItems();
-            showToast('已从购物车移除');
-        }
-        
-        function updateCartCount() {
-            const cartCount = document.querySelector('.cart-count');
-            cartCount.textContent = cart.length;
-        }
-        
-        function updateCartItems() {
-            const cartItems = document.querySelector('.cart-items');
-            const cartTotal = document.querySelector('.cart-total span:last-child');
-            
-            // 清空购物车列表
-            cartItems.innerHTML = '';
-            
-            // 计算总价
-            let total = 0;
-            
-            // 添加购物车商品
-            cart.forEach((item, index) => {
-                const cartItem = document.createElement('div');
-                cartItem.className = 'cart-item';
-                cartItem.innerHTML = `
-                    <div class="cart-item-info">
-                        <div class="cart-item-title">${item.name}</div>
-                        <div class="cart-item-price">¥${item.price}</div>
-                    </div>
-                    <div class="remove-item" onclick="removeFromCart(${index})">×</div>
-                `;
-                cartItems.appendChild(cartItem);
-                total += item.price;
-            });
-            
-            // 更新总价
-            cartTotal.textContent = `¥${total}`;
-            
-            // 更新结算按钮状态
-            const checkoutButton = document.querySelector('.checkout-button');
-            checkoutButton.disabled = cart.length === 0;
-        }
-        
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 2000);
-        }
-        
-        function toggleCart() {
-            const cartModal = document.getElementById('cart-modal');
-            cartModal.classList.toggle('active');
-        }
-        
-        // 结算功能
-        function checkout() {
-            // 跳转到结账页面
-            window.location.href = 'checkout.html';
-        }
-        
-        // 关闭购物车
-        document.querySelector('.close-cart').addEventListener('click', () => {
-            document.getElementById('cart-modal').classList.remove('active');
-        });
-        
-        // 点击购物车外部关闭
-        document.getElementById('cart-modal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('cart-modal')) {
-                document.getElementById('cart-modal').classList.remove('active');
-            }
-        });
-        
-        // 结算按钮点击事件
-        document.querySelector('.checkout-button').addEventListener('click', checkout);
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Vampire Mystery Shop</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@300;400;600&family=Playfair+Display:wght@400;700&family=EB+Garamond:wght@400;700&display=swap');
+        
         html {
             cursor: url("https://freight.cargo.site/t/original/i/X1891125108465342991869321415690/cussor-6.png"), auto !important;
         }
@@ -702,1336 +15,1240 @@
             cursor: url("https://freight.cargo.site/t/original/i/X1891125108446896247795611864074/cussor-5.png"), auto !important;
         }
         
-        body {
-            background-color: #000000;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background-color: #000;
+            color: #fff;
             min-height: 100vh;
-            font-family: "Diatype Variable", sans-serif;
-            color: white;
-            position: relative;
             overflow-x: hidden;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('assets/background-9.jpg') center/cover no-repeat fixed;
+            opacity: 1;
+            z-index: 0;
         }
 
         .header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
         }
 
         .logo {
-            font-family: "Gravity Variable", serif;
-            font-size: 3rem;
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
             color: #ff0000;
             text-decoration: none;
             text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            letter-spacing: 4px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
         }
 
         .nav-link {
-            font-family: Newsreader;
-            font-size: 1.7rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
             color: rgba(255, 255, 255, 0.75);
             text-decoration: none;
-            font-weight: 800;
-        }
-
-        .cart-icon {
-            position: relative;
-            font-size: 2rem;
-            color: rgba(255, 255, 255, 0.75);
-            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 2px;
             transition: all 0.3s ease;
         }
 
-        .cart-icon:hover {
+        .nav-link:hover {
             color: #ff0000;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .category-nav {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 1rem;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .category-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid #fff;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .category-nav a:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .products-container {
+            margin-top: 160px;
+            padding: 2rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .product-card {
+            background: rgba(26, 5, 5, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(139, 0, 0, 0.4);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(26, 5, 5, 0.9) 90%, rgba(26, 5, 5, 0.8));
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .product-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .view-details {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #8B0000;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-details:hover {
+            background: rgba(139, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        .add-to-cart {
+            background: #8B0000;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-price {
+            color: #ff0000;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 0.9em;
+            margin-left: 0.5rem;
+        }
+
+        .discount-badge {
+            background: #ff0000;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 0.5rem;
+        }
+
+        /* 产品详情弹窗样式 */
+        .product-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: rgba(26, 5, 5, 0.95);
+            margin: 2rem auto;
+            padding: 3rem;
+            width: 95%;
+            max-width: 1400px;
+            border-radius: 15px;
+            position: relative;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.2);
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #ff0000;
+        }
+
+        .product-details {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .product-gallery {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 600px;
+            object-fit: cover;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(139, 0, 0, 0.2);
+        }
+
+        .gallery-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            padding: 0.5rem;
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(139, 0, 0, 0.2);
+        }
+
+        .thumbnail:hover, .gallery-image:hover {
+            transform: scale(1.02);
+            border-color: rgba(139, 0, 0, 0.5);
+            box-shadow: 0 12px 35px rgba(139, 0, 0, 0.4);
+        }
+
+        .product-description {
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .product-description h2 {
+            font-family: 'Cinzel', serif;
+            color: #ff0000;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+            letter-spacing: 2px;
+        }
+
+        .product-description .product-price {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .product-details-text {
+            color: #fff;
+            font-size: 1.2rem;
+            line-height: 2;
+            margin-bottom: 2rem;
+            font-family: 'Cormorant Garamond', serif;
+            letter-spacing: 0.5px;
+        }
+
+        /* 购物车样式 */
+        .cart-icon {
+            position: fixed;
+            right: 2rem;
+            bottom: 2rem;
+            background: #8B0000;
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .cart-icon:hover {
             transform: scale(1.1);
+            background: #4A0000;
         }
 
         .cart-count {
             position: absolute;
-            top: -8px;
-            right: -8px;
-            background: linear-gradient(45deg, #8b0000, #ff0000);
+            top: -5px;
+            right: -5px;
+            background: #ff0000;
             color: white;
-            font-size: 0.8rem;
+            border-radius: 50%;
             width: 20px;
             height: 20px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 10px rgba(255,0,0,0.3);
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5rem 4rem;
-            padding: 4rem 5rem;
-            margin-top: 100px;
-            position: relative;
-            z-index: 2;
-            max-width: 1500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .product-card {
-            background: transparent;
-            backdrop-filter: none;
-            border: none;
-            border-radius: 0;
-            padding: 2rem 0.5rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-card:hover {
-            background: transparent;
-            transform: translateY(-8px);
-            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.15));
-        }
-
-        .product-canvas-wrapper {
-            width: 100%;
-            height: 320px;
-            margin-bottom: 1rem;
-            position: relative;
-            overflow: hidden;
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        .loading-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #ff0000;
-            font-size: 1.2rem;
-            text-align: center;
-            z-index: 1;
-        }
-
-        .error-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #ff0000;
-            font-size: 1.2rem;
-            text-align: center;
-            z-index: 1;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 1rem;
-            border-radius: 5px;
-        }
-
-        .product-canvas {
-            width: 100%;
-            height: 320px;
-            margin-bottom: 0;
-            border-radius: 0;
-            overflow: hidden;
-            background: transparent;
-            position: relative;
-            transition: transform 0.5s ease;
-        }
-
-        .product-card:hover .product-canvas {
-            transform: scale(1.08);
-        }
-        
-        /* 缩放指示器样式 */
-        .zoom-indicator {
-            position: absolute;
-            right: 10px;
-            top: 10px;
-            background: rgba(255, 0, 0, 0.2);
-            color: white;
-            padding: 5px;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 10;
-            pointer-events: none;
-        }
-        
-        .product-canvas:hover .zoom-indicator {
-            opacity: 1;
-        }
-        
-        /* 颜色选择器样式 */
-        .color-options {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .color-option {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            margin: 0 5px;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .color-option:hover {
-            transform: scale(1.2);
-        }
-        
-        .color-option.selected {
-            border: 2px solid #ff0000;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-        }
-        
-        /* 尺寸选择器样式 */
-        .size-options {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .size-option {
-            padding: 5px 12px;
-            margin: 0 5px 5px 0;
-            border-radius: 15px;
-            background: rgba(20, 0, 0, 0.3);
-            color: rgba(255, 255, 255, 0.8);
-            cursor: pointer;
-            transition: all 0.3s ease;
             font-size: 0.8rem;
-            border: 1px solid rgba(255, 0, 0, 0.1);
-        }
-        
-        .size-option:hover {
-            background: rgba(139, 0, 0, 0.4);
-            color: white;
-        }
-        
-        .size-option.selected {
-            background: rgba(255, 0, 0, 0.4);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
-        }
-        
-        /* 查看详情按钮 - 新样式 */
-        .view-details-btn {
-            display: inline-block;
-            background: rgba(255, 0, 0, 0.7);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            margin: 10px auto;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            text-align: center;
-            width: auto;
-        }
-        
-        .view-details-btn:hover {
-            background: rgba(255, 0, 0, 0.9);
-            transform: scale(1.05);
-        }
-        
-        .product-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-            padding: 0 10px;
-            gap: 10px;
-        }
-        
-        .product-actions button {
-            flex: 1;
-            min-width: 120px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .view-details-btn {
-            background: rgba(255, 0, 0, 0.3);
-            border: 1px solid rgba(255, 0, 0, 0.5);
-        }
-        
-        .view-details-btn:hover {
-            background: rgba(255, 0, 0, 0.5);
-            border-color: rgba(255, 0, 0, 0.8);
-        }
-        
-        .add-to-cart-btn {
-            background: rgba(255, 0, 0, 0.7);
-            border: none;
-        }
-        
-        .add-to-cart-btn:hover {
-            background: rgba(255, 0, 0, 0.9);
-        }
-        
-        /* 商品详情模态框 */
-        .product-detail-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(10px);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .modal-content {
-            position: relative;
-            width: 90%;
-            max-width: 1400px;
-            height: 80vh;
-            background: rgba(10, 0, 0, 0.8);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 0, 0, 0.3);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .modal-product-container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        
-        .modal-product-canvas {
-            flex: 1;
-            height: 100%;
-            background: black;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-product-info {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .modal-product-info .product-title {
-            font-size: 2.5rem;
-            color: #ff0000;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
-        }
-        
-        .modal-product-info .product-description {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 2rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .modal-product-info .product-details {
-            margin-bottom: 2rem;
-        }
-        
-        .modal-product-info .product-price {
-            font-size: 2rem;
-            color: #ff0000;
-            margin-bottom: 2rem;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
-        }
-        
-        .modal-product-info .add-to-cart-btn {
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            background: rgba(255, 0, 0, 0.7);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .modal-product-info .add-to-cart-btn:hover {
-            background: rgba(255, 0, 0, 0.9);
-            transform: translateY(-2px);
-        }
-        
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 2.5rem;
-            cursor: pointer;
-            z-index: 10;
-            transition: color 0.3s ease;
-        }
-        
-        .modal-close:hover {
-            color: #ff0000;
-        }
-
-        .highlight-product {
-            animation: highlight-pulse 2s ease;
-        }
-        
-        @keyframes highlight-pulse {
-            0%, 100% { box-shadow: 0 0 0 rgba(255, 0, 0, 0); }
-            50% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
-        }
-
-        .product-card h3 {
-            color: #ff0000;
-            font-size: 2.2rem;
-            margin: 0.8rem 0;
-            text-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
-            font-weight: 600;
-            letter-spacing: 2px;
-            font-family: "Gravity Variable", serif;
-            transition: text-shadow 0.3s ease;
-        }
-
-        .product-card:hover h3 {
-            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-        }
-
-        .product-card p {
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 1.2rem;
-            min-height: 70px;
-            line-height: 1.6;
-            font-size: 1.05rem;
-            padding: 0 0.8rem;
-            font-family: "Newsreader", serif;
-        }
-
-        .product-details {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 1.2rem;
-            padding: 0 0.8rem;
-            transition: opacity 0.3s ease;
-            opacity: 0.85;
-        }
-        
-        .product-card:hover .product-details {
-            opacity: 1;
-        }
-
-        .product-origin, .product-age, .product-magic-level {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin: 0.2rem 0;
-            font-family: "Diatype Variable", sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .product-origin i, .product-age i, .product-magic-level i {
-            margin-right: 8px;
-            color: rgba(255, 0, 0, 0.7);
-        }
-
-        .product-tags {
-            margin-top: 0.6rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .product-tag {
-            display: inline-block;
-            background: rgba(139, 0, 0, 0.15);
-            padding: 0.25rem 0.7rem;
-            margin: 0.3rem 0.2rem;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.8);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 0, 0, 0.1);
-        }
-
-        .product-card:hover .product-tag {
-            background: rgba(139, 0, 0, 0.3);
-            color: rgba(255, 255, 255, 0.95);
-        }
-
-        .product-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ff0000;
-            margin: 0.8rem 0;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
-            font-family: "Gravity Variable", serif;
-        }
-
-        .product-card button {
-            background: rgba(255, 0, 0, 0.5);
-            color: white;
-            border: none;
-            padding: 0.7rem 1.4rem;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-family: "Diatype Variable", sans-serif;
-            margin-top: auto;
-            align-self: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .product-card button:hover {
-            background: rgba(205, 0, 0, 0.8);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
-        }
-
-        .product-card button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.5s;
-        }
-
-        .product-card button:hover::before {
-            left: 100%;
-        }
-
-        /* 添加购物车弹窗样式 */
         .cart-modal {
+            display: none;
             position: fixed;
             top: 0;
-            right: -400px;
-            width: 400px;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            transition: right 0.3s ease;
-            border-left: 1px solid rgba(255, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cart-modal.active {
             right: 0;
-        }
-
-        .cart-header {
-            padding: 20px;
-            border-bottom: 1px solid rgba(255, 0, 0, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cart-title {
-            font-size: 1.5rem;
-            color: #ff0000;
-            font-family: "Gravity Variable", serif;
-        }
-
-        .close-cart {
-            font-size: 2rem;
-            color: rgba(255, 255, 255, 0.7);
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .close-cart:hover {
-            color: #ff0000;
-        }
-
-        .cart-items {
-            flex: 1;
+            width: 400px;
+            height: 100%;
+            background: rgba(26, 5, 5, 0.95);
+            z-index: 2000;
+            padding: 2rem;
             overflow-y: auto;
-            padding: 20px;
         }
 
         .cart-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
-            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 1rem;
         }
 
         .cart-item-info {
             flex: 1;
         }
 
-        .cart-item-title {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            color: #ff0000;
+        .cart-total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: right;
         }
 
-        .cart-item-price {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
+        /* 图片放大功能 */
+        .image-zoom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 3000;
         }
 
-        .remove-item {
-            font-size: 1.5rem;
-            color: rgba(255, 255, 255, 0.5);
+        .image-zoom-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoomed-image {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .close-zoom {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            z-index: 3001;
+        }
+
+        /* 结算界面样式 */
+        .checkout-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2001;
+            overflow-y: auto;
+        }
+
+        .checkout-content {
+            background: rgba(26, 5, 5, 0.95);
+            margin: 2rem auto;
+            padding: 3rem;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 15px;
+            position: relative;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.2);
+        }
+
+        .close-checkout {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 2rem;
+            color: #fff;
             cursor: pointer;
             transition: color 0.3s ease;
-            padding: 0 10px;
         }
 
-        .remove-item:hover {
+        .close-checkout:hover {
             color: #ff0000;
         }
 
-        .cart-footer {
-            padding: 20px;
-            border-top: 1px solid rgba(255, 0, 0, 0.2);
-            background: rgba(0, 0, 0, 0.5);
+        .checkout-form {
+            margin-top: 2rem;
         }
 
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            color: #ff0000;
-            font-size: 1.2rem;
-            font-family: "Gravity Variable", serif;
+        .form-group {
+            margin-bottom: 1.5rem;
         }
 
-        .checkout-button {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(45deg, #8b0000, #ff0000);
-            border: none;
-            border-radius: 25px;
-            color: white;
+        .form-group label {
+            display: block;
+            color: #fff;
+            margin-bottom: 0.5rem;
             font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .checkout-summary {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .checkout-items {
+            margin: 1rem 0;
+        }
+
+        .checkout-total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: right;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: #8B0000;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: "Diatype Variable", sans-serif;
+            text-align: center;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 1px;
-        }
-
-        .checkout-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
-        }
-
-        .checkout-button:disabled {
-            background: rgba(255, 0, 0, 0.3);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: rgba(255, 0, 0, 0.9);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            z-index: 1000;
-            opacity: 0;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
-        }
-        
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 1rem;
         }
 
-        .cart-icon.bounce {
-            animation: bounce 0.5s ease;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        
-        /* 新增的购物车样式 */
-        .empty-cart {
-            text-align: center;
-            padding: 30px 0;
-            color: rgba(255, 255, 255, 0.7);
-            font-style: italic;
-        }
-        
-        .cart-item {
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .item-name {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: #ff0000;
-        }
-        
-        .item-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .item-price {
-            color: rgba(255, 255, 255, 0.7);
-            margin-right: 10px;
-        }
-        
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            margin: 0 10px;
-        }
-        
-        .quantity-btn {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: rgba(255, 0, 0, 0.3);
-            border: none;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-        
-        .quantity-btn:hover {
-            background: rgba(255, 0, 0, 0.6);
-        }
-        
-        .item-quantity {
-            margin: 0 8px;
-            min-width: 20px;
-            text-align: center;
-        }
-        
-        .item-total {
-            color: #ff0000;
-            font-weight: bold;
-            margin: 0 10px;
-        }
-        
-        .remove-btn {
-            background: rgba(255, 0, 0, 0.2);
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .remove-btn:hover {
-            background: rgba(255, 0, 0, 0.5);
-        }
-        
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            border-top: 1px solid rgba(255, 0, 0, 0.2);
-            font-size: 1.2rem;
-            color: #ff0000;
-            margin-top: 10px;
-        }
-        
-        .checkout-btn {
-            width: calc(100% - 30px);
-            margin: 10px 15px;
-            padding: 12px;
-            background: linear-gradient(45deg, #8b0000, #ff0000);
-            border: none;
-            border-radius: 25px;
-            color: white;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
         .checkout-btn:hover {
+            background: #4A0000;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
-        
-        .continue-shopping {
-            display: block;
-            text-align: center;
-            padding: 10px;
-            margin: 5px 15px 15px;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .continue-shopping:hover {
-            color: #ff0000;
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.8rem 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-link {
+                font-size: 1rem;
+            }
+
+            .products-container {
+                padding: 6rem 1rem 1rem;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .product-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-modal {
+                width: 100%;
+            }
+
+            .gallery-image {
+                height: 400px;
+            }
+
+            .thumbnail {
+                height: 300px;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+                width: 100%;
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .checkout-content {
+                width: 95%;
+                padding: 2rem;
+                margin: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="backdrop"></div>
     
-    <div class="header">
-        <a href="index.html" class="nav-link">✧ Home ✧</a>
-        <a href="index.html" class="logo">VAMPIRE SHOP</a>
-        <div class="cart-icon" onclick="toggleCart()">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-count">0</span>
+    <header class="header">
+        <a href="index.html" class="logo">Vampire Mystery Shop</a>
+        <nav>
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="products.html" class="nav-link">Products</a>
+            <a href="about.html" class="nav-link">About</a>
+            <a href="contact.html" class="nav-link">Contact</a>
+        </nav>
+    </header>
+
+    <div class="category-nav">
+        <a href="#necklaces">Necklaces</a>
+        <a href="#rings">Rings</a>
+        <a href="#earrings">Earrings</a>
+        <a href="#bracelets">Bracelets</a>
+        <a href="#accessories">Accessories</a>
+    </div>
+
+    <div class="cart-icon">
+        🛒
+        <span class="cart-count">0</span>
+    </div>
+
+    <div class="cart-modal">
+        <h2>Your Cart</h2>
+        <div class="cart-items">
+            <!-- 购物车商品将在这里动态添加 -->
+        </div>
+        <div class="cart-total">
+            <p>Total: $<span id="cart-total-amount">0.00</span></p>
+            <button class="checkout-btn" onclick="showCheckout()">Checkout</button>
         </div>
     </div>
 
-    <div class="content">
-        <div id="cart-modal" class="cart-modal">
-            <div class="cart-header">
-                <div class="cart-title">购物车</div>
-                <div class="close-cart">×</div>
-            </div>
-            <div class="cart-items">
-                <!-- 购物车商品将在这里动态添加 -->
-            </div>
-            <div class="cart-footer">
-                <div class="cart-total">
-                    <span>总计:</span>
-                    <span>¥0</span>
+    <div class="products-container">
+        <section id="necklaces" class="product-section">
+            <h2 class="section-title">Necklaces</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="models/products/necklace/New Year's Snake Leather Double-Layer Clavicle Necklace.jpg" alt="Snake Leather Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Snake Leather Necklace ❧</h3>
+                        <p class="product-price">$129.99 <span class="original-price">$159.99</span> <span class="discount-badge">-19%</span></p>
+                        <div class="product-buttons">
+                            <button class="view-details">View Details</button>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
                 </div>
-                <button class="checkout-button" onclick="checkout()">结算</button>
-                <a href="javascript:void(0)" onclick="toggleCart()" class="continue-shopping">继续购物</a>
+                <div class="product-card">
+                    <img src="models/products/necklace/Mandala Necklace.jpg" alt="Mandala Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Mandala Necklace ❧</h3>
+                        <p class="product-price">$99.99 <span class="original-price">$129.99</span> <span class="discount-badge">-23%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Wind erosion necklace clavicle chain.jpg" alt="Wind Erosion Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Wind Erosion Necklace ❧</h3>
+                        <p class="product-price">$119.99 <span class="original-price">$149.99</span> <span class="discount-badge">-20%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Butterfly clavicle necklace.jpg" alt="Butterfly Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Butterfly Necklace ❧</h3>
+                        <p class="product-price">$89.99 <span class="original-price">$109.99</span> <span class="discount-badge">-18%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Zodiac Year Star Necklace.jpg" alt="Zodiac Star Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Zodiac Star Necklace ❧</h3>
+                        <p class="product-price">$119.99 <span class="original-price">$139.99</span> <span class="discount-badge">-14%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Decorative sweet cool hot girl accessories.jpg" alt="Decorative Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Decorative Necklace ❧</h3>
+                        <p class="product-price">$99.99 <span class="original-price">$119.99</span> <span class="discount-badge">-17%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Butterfly Vintage Button Necklace.jpg" alt="Butterfly Vintage Button Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Butterfly Vintage Button Necklace ❧</h3>
+                        <p class="product-price">$109.99 <span class="original-price">$129.99</span> <span class="discount-badge">-15%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Taboo Rose Button Necklace.jpg" alt="Taboo Rose Button Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Taboo Rose Button Necklace ❧</h3>
+                        <p class="product-price">$119.99 <span class="original-price">$139.99</span> <span class="discount-badge">-14%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Dream Core Double Necklace Clavicle Necklace.jpg" alt="Dream Core Double Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Dream Core Double Necklace ❧</h3>
+                        <p class="product-price">$129.99 <span class="original-price">$159.99</span> <span class="discount-badge">-19%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Double cross necklace.jpg" alt="Double Cross Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Double Cross Necklace ❧</h3>
+                        <p class="product-price">$109.99 <span class="original-price">$129.99</span> <span class="discount-badge">-15%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Dark relief red beaded necklace.jpg" alt="Dark Relief Red Beaded Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Dark Relief Red Beaded Necklace ❧</h3>
+                        <p class="product-price">$159.99 <span class="original-price">$189.99</span> <span class="discount-badge">-16%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Crown of Thorns.jpg" alt="Crown of Thorns" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Crown of Thorns ❧</h3>
+                        <p class="product-price">$169.99 <span class="original-price">$199.99</span> <span class="discount-badge">-15%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="products-grid">
-            <div class="product-card" data-model="cloak">
-                <div class="product-canvas-wrapper">
-                    <div id="model-cloak" class="product-canvas model-container"></div>
-                </div>
-                <h3>Shadow Cloak</h3>
-                <p>Legendary cloak woven from pure shadows</p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Flight and Invisibility, Enhanced Night Vision</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Black Redstone and Moonstone, Enhancing Night Magic</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Advanced</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Invisibility</span>
-                        <span class="product-tag">Night Travel</span>
-                        <span class="product-tag">Noble</span>
+        <section id="rings" class="product-section">
+            <h2 class="section-title">Rings</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="models/products/necklace/Forbidden Love Sterling Silver Ring.jpg" alt="Forbidden Love Ring" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Forbidden Love Ring ❧</h3>
+                        <p class="product-price">$109.99 <span class="original-price">$129.99</span> <span class="discount-badge">-15%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
                     </div>
                 </div>
-                <div class="product-price">¥3250</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="cloak">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Mystic Cloak" data-baseprice="3250">Add to Cart</button>
+                <div class="product-card">
+                    <img src="models/products/necklace/Crow wearing armor nail.jpg" alt="Crow Armor Ring" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Crow Armor Ring ❧</h3>
+                        <p class="product-price">$99.99 <span class="original-price">$119.99</span> <span class="discount-badge">-17%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Original Fairy Cool Manicure nail.jpg" alt="Fairy Ring" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Fairy Ring ❧</h3>
+                        <p class="product-price">$89.99 <span class="original-price">$109.99</span> <span class="discount-badge">-18%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
                 </div>
             </div>
-            <div class="product-card" data-model="goblet">
-                <div class="product-canvas-wrapper">
-                    <div id="model-goblet" class="product-canvas model-container"></div>
-                </div>
-                <h3>Eternal Chalice</h3>
-                <div class="size-options">
-                    <div class="size-option selected" data-size="S" data-price="2800">S</div>
-                    <div class="size-option" data-size="M" data-price="3000">M</div>
-                    <div class="size-option" data-size="L" data-price="3200">L</div>
-                </div>
-                <p>This bag is designed uniquely, featuring white bone decorations, as if extracted from the grave. The texture of bones shows the traces of time, emitting a faint glow. It's not only a fashionable accessory but also a container of vampire power, enhancing the holder's ability to sense death and hear the whispers of souls.
-                </p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Communication with the Undead and Perception of the Dead, Strengthening Shadow Magic.
-                    </div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Blue Moonstone and Obsidian, Enhancing Ability to Communicate with the Undead.</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Intermediate</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Transformation</span>
-                        <span class="product-tag">Holy Artifact</span>
-                        <span class="product-tag">Noble</span>
+        </section>
+
+        <section id="earrings" class="product-section">
+            <h2 class="section-title">Earrings</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="models/products/necklace/Snake-shaped high-end dark earrings.jpg" alt="Snake Earrings" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Snake Earrings ❧</h3>
+                        <p class="product-price">$69.99 <span class="original-price">$79.99</span> <span class="discount-badge">-13%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
                     </div>
                 </div>
-                <div class="product-price">¥<span class="price-value">2800</span></div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="goblet">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Blood Chalice" data-baseprice="2800">Add to Cart</button>
+                <div class="product-card">
+                    <img src="models/products/necklace/Taboo Apple Earrings 925 Silver Needle.jpg" alt="Taboo Apple Earrings" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Taboo Apple Earrings ❧</h3>
+                        <p class="product-price">$79.99 <span class="original-price">$89.99</span> <span class="discount-badge">-11%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
                 </div>
             </div>
-            <div class="product-card" data-model="dagger">
-                <div class="product-canvas-wrapper">
-                    <div id="model-dagger" class="product-canvas model-container"></div>
-                </div>
-                <h3>Dragon's Wings</h3>
-                <p>This bag is inspired by the wings of angels and the tail of dragons. The delicate feathers of angel wings flutter to one side of the bag, while the dragon tail wraps around the bag in a fierce form. Wings symbolize purity and flight, while the dragon tail represents strength and protection. This bag can balance the vampire's power, enhancing both flight and combat abilities.
-                </p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Balancing Flight and Strength, Strengthening Defense and Attack</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Fire Redstone and Angel Feather Crystal, Strengthening Flight Speed and Strength</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Advanced</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Sharp</span>
-                        <span class="product-tag">Rune</span>
-                        <span class="product-tag">Defense</span>
+        </section>
+
+        <section id="bracelets" class="product-section">
+            <h2 class="section-title">Bracelets</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="models/products/necklace/Snake Bracelet New Year Sweet Cool Bracelet.jpg" alt="Snake Bracelet" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Snake Bracelet ❧</h3>
+                        <p class="product-price">$59.99 <span class="original-price">$69.99</span> <span class="discount-badge">-14%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
                     </div>
-                </div>
-                <div class="product-price">¥3500</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="dagger">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Night Dagger" data-baseprice="3500">Add to Cart</button>
                 </div>
             </div>
-            <div class="product-card" data-model="book">
-                <div class="product-canvas-wrapper">
-                    <div id="model-book" class="product-canvas model-container"></div>
-                </div>
-                <h3>Wing of Death</h3>
-                <div class="size-options">
-                    <div class="size-option selected" data-size="S" data-price="3000">S</div>
-                    <div class="size-option" data-size="M" data-price="3250">M</div>
-                    <div class="size-option" data-size="L" data-price="3500">L</div>
-                </div>
-                <p>This bag cleverly combines bones with bat wings, presenting a cold and mysterious atmosphere. The details of bones intertwine with the streamlined design of bat wings, as if signaling the boundary between life and death. It imbues vampires with stronger agility and nighttime perception, allowing them to roam like ghosts in the dark.
-                </p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Invisibility and Agility, Strengthening Magic Ability for Nighttime Actions</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Silver Ash and Blood Crystal, Enhancing Invisibility Effect</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Top</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Taboo</span>
-                        <span class="product-tag">Spell</span>
-                        <span class="product-tag">Blood Magic</span>
+        </section>
+
+        <section id="accessories" class="product-section">
+            <h2 class="section-title">Accessories</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="models/products/necklace/AirPods Max metal earphone cover.jpg" alt="AirPods Max Metal Cover" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ AirPods Max Metal Cover ❧</h3>
+                        <p class="product-price">$69.99 <span class="original-price">$79.99</span> <span class="discount-badge">-13%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
                     </div>
                 </div>
-                <div class="product-price">¥<span class="price-value">3000</span></div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="book">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Taboo Grimoire" data-baseprice="3000">Add to Cart</button>
+                <div class="product-card">
+                    <img src="models/products/necklace/Rose Kunai Knife.jpg" alt="Rose Kunai Knife" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Rose Kunai Knife ❧</h3>
+                        <p class="product-price">$99.99 <span class="original-price">$119.99</span> <span class="discount-badge">-17%</span></p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
                 </div>
             </div>
-            <div class="product-card" data-model="watch">
-                <div class="product-canvas-wrapper">
-                    <div id="model-watch" class="product-canvas model-container"></div>
-                </div>
-                <h3>Blood Moon's Whisper</h3>
-                <p>This bag is based on pure white ribbons, with blood thistles embedded inside. The ribbons represent grace and beauty, while the thistles are the cold and dangerous symbol of vampires. Wearing this bag, vampires will have the ability to absorb the life force of others, sensing the pulse of others' blood every time they touch the thistles.
-                </p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Blood Sucking and Control of Life Force</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Bloodstone and Blood Crystal, Enhancing Blood Sucking Effect</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Advanced</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Time</span>
-                        <span class="product-tag">Night</span>
-                        <span class="product-tag">Silver</span>
-                    </div>
-                </div>
-                <div class="product-price">¥3380</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="watch">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Eternal Watch" data-baseprice="3380">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card" data-model="box">
-                <div class="product-canvas-wrapper">
-                    <div id="model-box" class="product-canvas model-container"></div>
-                </div>
-                <h3>Sacred Dawn</h3>
-                <p>This backpack is designed with white gold feather wings as its core. The metal reflections on the wings emit a pure glow. It symbolizes the power of holiness and ascension. Wearing this backpack, the holder can obtain part of the angel's power, enhancing recovery ability and self-healing speed. This backpack is suitable for those who pursue power and purity, helping them balance their inner darkness and light.
-                </p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Self-healing and Resurrection, Strengthening Ability to Resist Negative Magic</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Pure Jade and Golden Sunstone, Enhancing Recovery Speed</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Top</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Curse</span>
-                        <span class="product-tag">Seal</span>
-                        <span class="product-tag">Ancient</span>
-                    </div>
-                </div>
-                <div class="product-price">¥2950</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="box">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Soul Box" data-baseprice="2950">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card" data-model="crown">
-                <div class="product-canvas-wrapper">
-                    <div id="model-crown" class="product-canvas model-container"></div>
-                </div>
-                <h3>Angel's Arrival</h3>
-                <p>This backpack is made of pure silver and white gold, with the holy fire burning at the edge never extinguished. It's the product of the union between angels and vampires, representing the perfect fusion of light and darkness. Wearing this backpack, the holder can obtain divine protection, enhancing resistance to sunlight damage, and sensing the presence of angels from afar.
-                </p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Divine Resistance and Sunlight Protection</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Angel Feather Fossil and Moonstone, Enhancing Ability to Move During the Day</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Legendary</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Royal</span>
-                        <span class="product-tag">Noble</span>
-                        <span class="product-tag">Jewelry</span>
-                    </div>
-                </div>
-                <div class="product-price">¥4800</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="crown">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Vampire Crown" data-baseprice="4800">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card" data-model="necklace">
-                <div class="product-canvas-wrapper">
-                    <div id="model-necklace" class="product-canvas model-container"></div>
-                </div>
-                <h3>Blood Rose</h3>
-                <p>This backpack is covered with vivid red blood rose patterns, each rose as lifelike as real flowers. The dew drops on the petals are actually coagulated blood. The pattern around the backpack is surrounded by thorns, symbolizing both the pain and beauty of vampires. This bag can enhance the vampire's charm, making their speech as bewitching as a charm.
-                </p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Blood Charm and Mental Control</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: True Blood Crystal and Rose Bud, Enhancing Charm Effect</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Intermediate</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Visual</span>
-                        <span class="product-tag">Moonlight</span>
-                        <span class="product-tag">Shadow</span>
-                    </div>
-                </div>
-                <div class="product-price">¥5999</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="necklace">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Blood Stone Necklace" data-baseprice="3600">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card" data-model="wand">
-                <div class="product-canvas-wrapper">
-                    <div id="model-wand" class="product-canvas model-container"></div>
-                </div>
-                <h3>Iron Wing Vengeance</h3>
-                <p>This black backpack is decorated with rivets and bat wings, with a bold and punk style. The sharp edges of the rivets combined with the wide spread of bat wings emit a formidable presence. The wearer's combat power is greatly enhanced, and they can also use magic in their backpack to enhance their calmness and accuracy in combat.</p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Combat Power and Decision-making Ability</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Red Jasper and Obsidian, Strengthening Calmness and Strength in Combat</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Advanced</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Blood Magic</span>
-                        <span class="product-tag">Guidance</span>
-                        <span class="product-tag">Amplification</span>
-                    </div>
-                </div>
-                <div class="product-price">¥3888</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="wand">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Blood Magic Wand" data-baseprice="3888">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card" data-model="ring">
-                <div class="product-canvas-wrapper">
-                    <div id="model-ring" class="product-canvas model-container"></div>
-                </div>
-                <h3>Blood Bone's Wings</h3>
-                <p>This backpack combines bones with the red color of blood, with the red color of bat wings symbolizing the vampire's bloodline and revenge. The hardness of bones contrasted with the lightness of wings imbues the wearer with great strength and speed. Suitable for those who crave revenge and want to master a more powerful ability.</p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Revenge Power and Speed Boost
-                    </div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Blood Redstone and Bone Crystal, Strengthening Combat Power and Speed</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Advanced</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Self-healing</span>
-                        <span class="product-tag">Life Force</span>
-                        <span class="product-tag">Essence of Blood</span>
-                    </div>
-                </div>
-                <div class="product-price">¥4999</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="ring">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Eternal Ring" data-baseprice="4999">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card" data-model="crystal">
-                <div class="product-canvas-wrapper">
-                    <div id="model-crystal" class="product-canvas model-container"></div>
-                </div>
-                <h3>Dark Magic Eye</h3>
-                <p>This backpack is embedded with a large purple crystal, with smoke swirling inside as if it's an eye that never closes. It represents the vampire's foresight and long-distance vision. The wearer can foresee danger, sense the vague outline of the future, and see through darkness to discover hidden enemies and secrets.</p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Foreseeing and Long-distance Vision</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Purple Crystal and Shadow Crystal, Strengthening Foreseeing Ability</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Advanced</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Crystal</span>
-                        <span class="product-tag">Gemstone</span>
-                        <span class="product-tag">Magic</span>
-                    </div>
-                </div>
-                <div class="product-price">¥3900</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="crystal">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Crystal of Knowing" data-baseprice="3900">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card" data-model="mirror">
-                <div class="product-canvas-wrapper">
-                    <div id="model-mirror" class="product-canvas model-container"></div>
-                </div>
-                <h3>Mirror of Truth</h3>
-                <p>This backpack is embedded with an ancient silver mirror, with a seemingly ordinary surface, but it can project the true nature of the vampire wearer under the full moon. It's a bridge connecting reality and the spiritual world, helping the vampire see the souls and ghosts of the deceased, even communicating with their vampire ancestors.</p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Spiritual Vision and Communication with the Spiritual World</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Silver Glass and Soul Silver, Enhancing Spiritual Perception</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Advanced</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Mirror</span>
-                        <span class="product-tag">Soul</span>
-                        <span class="product-tag">Antique</span>
-                    </div>
-                </div>
-                <div class="product-price">¥3750</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="mirror">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Mirror of Truth" data-baseprice="3750">Add to Cart</button>
-                </div>
-            </div>
-            <div class="product-card" data-model="apple">
-                <div class="product-canvas-wrapper">
-                    <div id="model-apple" class="product-canvas model-container"></div>
-                </div>
-                <h3>Poisonous Apple</h3>
-                <p>This bag is designed around a red apple, with ancient vampire runes engraved on the surface. It's said to be the forbidden fruit of Eden, infused with the original energy of vampires. Wearing this bag, the wearer can obtain long life, while also emitting a deadly charm, attracting prey like the forbidden fruit.</p>
-                <div class="product-details">
-                    <div class="product-origin"><i class="fas fa-map-marker-alt"></i> Enhanced abilities: Charm and Immortality</div>
-                    <div class="product-age"><i class="fas fa-hourglass-half"></i> Inset: Ruby Essence and Life Resin, Enhancing Charm Effect</div>
-                    <div class="product-magic-level"><i class="fas fa-magic"></i> Magic Level: Legendary</div>
-                    <div class="product-tags">
-                        <span class="product-tag">Taboo</span>
-                        <span class="product-tag">Poison</span>
-                        <span class="product-tag">Life</span>
-                    </div>
-                </div>
-                <div class="product-price">¥3399</div>
-                <div class="product-actions">
-                    <button class="view-details-btn" data-model="apple">View Details</button>
-                    <button class="add-to-cart-btn" data-name="Red Apple" data-baseprice="3399">Add to Cart</button>
-                </div>
-            </div>
-        </div>
+        </section>
     </div>
 
-    <div id="product-modal">
-        <div class="close-modal">×</div>
+    <div class="product-modal">
         <div class="modal-content">
-            <div id="modal-canvas-container"></div>
-            <div class="modal-info">
-                <h2 class="product-title"></h2>
-                <p class="product-description"></p>
-                <button class="buy-button">Add to Cart</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 修改商品详情模态框 -->
-    <div id="product-detail-modal" class="product-detail-modal">
-        <div class="modal-content">
-            <div class="modal-close">×</div>
-            <div class="modal-product-container">
-                <div id="modal-product-canvas" class="modal-product-canvas" style="width: 100%; height: 100%; position: relative;"></div>
-                <div class="modal-product-info">
-                    <h2 id="modal-product-title" class="product-title"></h2>
-                    <p id="modal-product-description" class="product-description"></p>
-                    <div id="modal-product-details" class="product-details"></div>
-                    <div class="product-price">¥<span id="modal-price-value">0</span></div>
-                    <button id="modal-add-to-cart" class="add-to-cart-btn" data-name="" data-baseprice="0">Add to Cart</button>
+            <span class="close-modal">&times;</span>
+            <div class="product-details">
+                <div class="product-gallery">
+                    <img src="" alt="Product Image" class="gallery-image">
+                    <div class="gallery-thumbnails">
+                        <img src="" alt="Detail Image 1" class="thumbnail">
+                        <img src="" alt="Detail Image 2" class="thumbnail">
+                    </div>
+                </div>
+                <div class="product-description">
+                    <h2 class="product-title"></h2>
+                    <p class="product-price"></p>
+                    <p class="product-details-text"></p>
+                    <button class="add-to-cart">Add to Cart</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="footer">
-        © 2024 Vampire Shop. All rights reserved.
+    <div class="image-zoom-modal">
+        <span class="close-zoom">&times;</span>
+        <img src="" alt="Zoomed Image" class="zoomed-image">
+    </div>
+
+    <!-- 添加结算界面 -->
+    <div class="checkout-modal">
+        <div class="checkout-content">
+            <span class="close-checkout">&times;</span>
+            <h2>Checkout</h2>
+            <div class="checkout-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="checkout-name" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="checkout-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Shipping Address</label>
+                    <textarea id="checkout-address" placeholder="Enter your shipping address"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" id="checkout-card" placeholder="Enter your card number">
+                </div>
+                <div class="checkout-summary">
+                    <h3>Order Summary</h3>
+                    <div class="checkout-items"></div>
+                    <div class="checkout-total">
+                        <p>Total: $<span id="checkout-total-amount">0.00</span></p>
+                    </div>
+                </div>
+                <button class="checkout-btn" onclick="processPayment()">Complete Payment</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // 购物车功能实现
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        
-        // 添加商品到购物车
-        function addToCart(name, price) {
-            // 查找商品是否已经在购物车中
-            const existingItem = cart.find(item => item.name === name);
-            
-            if (existingItem) {
-                // 如果商品已存在，增加数量
-                existingItem.quantity = (existingItem.quantity || 1) + 1;
-            } else {
-                // 如果商品不存在，添加新商品
-                cart.push({
-                    name: name,
-                    price: price,
-                    quantity: 1
-                });
+        // 初始化购物车变量
+        let cart = [];
+        const cartIcon = document.querySelector('.cart-icon');
+        const cartModal = document.querySelector('.cart-modal');
+        const cartCount = document.querySelector('.cart-count');
+        const cartItems = document.querySelector('.cart-items');
+        const cartTotal = document.getElementById('cart-total-amount');
+
+        // 打开购物车
+        cartIcon.addEventListener('click', () => {
+            cartModal.style.display = 'block';
+            updateCart();
+        });
+
+        // 关闭购物车（点击空白处关闭）
+        document.addEventListener('click', (e) => {
+            if (e.target === cartModal) {
+                cartModal.style.display = 'none';
             }
-            
-            // 保存购物车到localStorage
-            localStorage.setItem('cart', JSON.stringify(cart));
-            
-            // 更新购物车计数
-            updateCartCount();
-            
-            // 更新购物车商品显示
-            updateCartItems();
-            
-            // 显示提示信息
-            showToast('已添加到购物车');
-            
-            // 购物车图标动画
-            const cartIcon = document.querySelector('.cart-icon');
-            cartIcon.classList.add('bounce');
-            setTimeout(() => {
-                cartIcon.classList.remove('bounce');
-            }, 500);
-            
-            // 自动打开购物车
-            document.getElementById('cart-modal').classList.add('active');
-        }
-        
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartCount();
-            updateCartItems();
-            showToast('已从购物车移除');
-        }
-        
-        function updateCartCount() {
-            const cartCount = document.querySelector('.cart-count');
-            cartCount.textContent = cart.length;
-        }
-        
-        function updateCartItems() {
-            const cartItems = document.querySelector('.cart-items');
-            const cartTotal = document.querySelector('.cart-total span:last-child');
-            
-            // 清空购物车列表
+        });
+
+        // 更新购物车
+        function updateCart() {
+            console.log('Updating cart:', cart);
             cartItems.innerHTML = '';
-            
-            // 计算总价
             let total = 0;
             
-            // 添加购物车商品
-            cart.forEach((item, index) => {
+            cart.forEach(item => {
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
                 cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}">
                     <div class="cart-item-info">
-                        <div class="cart-item-title">${item.name}</div>
-                        <div class="cart-item-price">¥${item.price}</div>
+                        <h3>${item.title}</h3>
+                        <p>$${item.price.toFixed(2)}</p>
                     </div>
-                    <div class="remove-item" onclick="removeFromCart(${index})">×</div>
+                    <button class="remove-item" onclick="removeFromCart(${item.id})">×</button>
                 `;
                 cartItems.appendChild(cartItem);
-                total += item.price;
+                total += parseFloat(item.price);
             });
-            
-            // 更新总价
-            cartTotal.textContent = `¥${total}`;
-            
-            // 更新结算按钮状态
-            const checkoutButton = document.querySelector('.checkout-button');
-            checkoutButton.disabled = cart.length === 0;
+
+            cartCount.textContent = cart.length;
+            cartTotal.textContent = total.toFixed(2);
         }
-        
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
+
+        // 添加到购物车
+        function addToCart(product) {
+            console.log('Adding to cart:', product);
+            cart.push({
+                id: Date.now(),
+                title: product.title,
+                price: product.price,
+                image: product.image
+            });
+            updateCart();
+            
+            // 显示添加成功提示
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 80px;
+                right: 20px;
+                background: rgba(139, 0, 0, 0.9);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 8px;
+                z-index: 2001;
+                animation: fadeInOut 2s forwards;
+            `;
+            notification.textContent = 'Added to cart successfully!';
+            document.body.appendChild(notification);
             
             setTimeout(() => {
-                toast.remove();
+                notification.remove();
             }, 2000);
         }
-        
-        function toggleCart() {
-            const cartModal = document.getElementById('cart-modal');
-            cartModal.classList.toggle('active');
+
+        // 从购物车移除
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCart();
         }
-        
-        // 结算功能
-        function checkout() {
-            // 跳转到结账页面
-            window.location.href = 'checkout.html';
-        }
-        
-        // 关闭购物车
-        document.querySelector('.close-cart').addEventListener('click', () => {
-            document.getElementById('cart-modal').classList.remove('active');
+
+        // 添加动画样式
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translateY(20px); }
+                20% { opacity: 1; transform: translateY(0); }
+                80% { opacity: 1; transform: translateY(0); }
+                100% { opacity: 0; transform: translateY(-20px); }
+            }
+            
+            .cart-item .remove-item {
+                background: none;
+                border: none;
+                color: #ff0000;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0.5rem;
+                transition: all 0.3s ease;
+            }
+            
+            .cart-item .remove-item:hover {
+                color: #ff3333;
+                transform: scale(1.1);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 产品详情弹窗
+        const productModal = document.querySelector('.product-modal');
+        const closeModal = document.querySelector('.close-modal');
+        const modalTitle = document.querySelector('.product-modal .product-title');
+        const modalPrice = document.querySelector('.product-modal .product-price');
+        const modalDetails = document.querySelector('.product-modal .product-details-text');
+        const modalImage = document.querySelector('.product-modal .gallery-image');
+
+        // 关闭产品详情
+        closeModal.addEventListener('click', () => {
+            productModal.style.display = 'none';
         });
-        
-        // 点击购物车外部关闭
-        document.getElementById('cart-modal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('cart-modal')) {
-                document.getElementById('cart-modal').classList.remove('active');
+
+        // 修改产品详情显示
+        function openProductDetails(product) {
+            modalTitle.textContent = product.title;
+            modalPrice.innerHTML = product.priceHtml;
+            modalDetails.textContent = product.description;
+            
+            // 获取产品名称（移除装饰符号）
+            const cleanTitle = product.title.replace('❧ ', '').replace(' ❧', '');
+            console.log('Opening details for product:', cleanTitle);
+            
+            // 设置主图
+            const mainImage = document.querySelector('.gallery-image');
+            mainImage.src = product.image;
+            mainImage.alt = cleanTitle;
+            
+            // 设置细节图
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            
+            // 尝试加载细节图
+            thumbnails.forEach((thumb, index) => {
+                const detailImagePath = `models/products/necklace/details/${cleanTitle}/${cleanTitle}${index + 1}.jpg`;
+                console.log(`Loading detail image ${index + 1}:`, detailImagePath);
+                thumb.src = detailImagePath;
+                thumb.alt = `${cleanTitle} Detail ${index + 1}`;
+                
+                // 添加错误处理
+                thumb.onerror = () => {
+                    console.log(`Failed to load detail image ${index + 1}, trying alternative path`);
+                    // 尝试使用替代路径格式
+                    const alternativePath = `models/products/necklace/details/${cleanTitle}/${cleanTitle} ${index + 1}.jpg`;
+                    thumb.src = alternativePath;
+                    
+                    // 如果替代路径也失败，使用主图
+                    thumb.onerror = () => {
+                        console.log(`Failed to load alternative path, using main image`);
+                        thumb.src = product.image;
+                    };
+                };
+            });
+            
+            // 添加点击事件
+            mainImage.addEventListener('click', () => {
+                showZoomedImage(product.image);
+            });
+            
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    showZoomedImage(thumb.src);
+                });
+            });
+
+            // 为详情页的 Add to Cart 按钮添加点击事件
+            const modalAddToCartBtn = document.querySelector('.product-description .add-to-cart');
+            // 移除之前的事件监听器
+            modalAddToCartBtn.replaceWith(modalAddToCartBtn.cloneNode(true));
+            const newModalAddToCartBtn = document.querySelector('.product-description .add-to-cart');
+            
+            // 添加新的事件监听器
+            newModalAddToCartBtn.addEventListener('click', () => {
+                addToCart({
+                    title: product.title,
+                    price: parseFloat(product.priceHtml.match(/\d+\.\d+/)[0]),
+                    image: product.image
+                });
+                cartModal.style.display = 'block';
+            });
+
+            productModal.style.display = 'block';
+        }
+
+        // 为所有产品卡片添加查看细节按钮
+        document.querySelectorAll('.product-card').forEach((card) => {
+            const productInfo = card.querySelector('.product-info');
+            const addToCartBtn = card.querySelector('.add-to-cart');
+            
+            // 移除现有的 View Details 按钮
+            const existingViewDetailsBtn = productInfo.querySelector('.view-details');
+            if (existingViewDetailsBtn) {
+                existingViewDetailsBtn.remove();
+            }
+            
+            // 创建查看细节按钮
+            const viewDetailsBtn = document.createElement('button');
+            viewDetailsBtn.className = 'view-details';
+            viewDetailsBtn.textContent = 'View Details';
+            
+            // 创建按钮容器
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'product-buttons';
+            buttonsContainer.appendChild(viewDetailsBtn);
+            buttonsContainer.appendChild(addToCartBtn);
+            
+            // 替换原来的添加到购物车按钮
+            addToCartBtn.remove();
+            productInfo.appendChild(buttonsContainer);
+            
+            // 添加查看细节点击事件
+            const title = card.querySelector('.product-title').textContent;
+            const priceHtml = card.querySelector('.product-price').innerHTML;
+            const image = card.querySelector('.product-image').src;
+            
+            viewDetailsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openProductDetails({
+                    title,
+                    priceHtml,
+                    image,
+                    description: `This exquisite ${title.toLowerCase()} is crafted with the finest materials and attention to detail. Perfect for those who appreciate dark elegance and unique style.`
+                });
+            });
+            
+            // 添加到购物车点击事件
+            addToCartBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addToCart({
+                    title,
+                    price: parseFloat(priceHtml.match(/\d+\.\d+/)[0]),
+                    image
+                });
+                cartModal.style.display = 'block';
+            });
+        });
+
+        // 图片放大功能
+        const zoomModal = document.querySelector('.image-zoom-modal');
+        const zoomedImage = document.querySelector('.zoomed-image');
+        const closeZoom = document.querySelector('.close-zoom');
+
+        function showZoomedImage(imgSrc) {
+            zoomedImage.src = imgSrc;
+            zoomModal.classList.add('active');
+        }
+
+        function hideZoomedImage() {
+            zoomModal.classList.remove('active');
+        }
+
+        // 关闭放大图片
+        closeZoom.addEventListener('click', hideZoomedImage);
+        zoomModal.addEventListener('click', (e) => {
+            if (e.target === zoomModal) {
+                hideZoomedImage();
             }
         });
-        
-        // 结算按钮点击事件
-        document.querySelector('.checkout-button').addEventListener('click', checkout);
+
+        // 显示结算界面
+        function showCheckout() {
+            console.log('Opening checkout...');
+            
+            // 检查购物车是否为空
+            if (cart.length === 0) {
+                alert('购物车是空的！');
+                return;
+            }
+            
+            // 将购物车数据保存到 localStorage
+            localStorage.setItem('cartData', JSON.stringify(cart));
+            
+            // 跳转到结算页面
+            window.location.href = 'checkout.html';
+        }
+
+        // 关闭结算界面
+        document.querySelector('.close-checkout').addEventListener('click', () => {
+            document.querySelector('.checkout-modal').style.display = 'none';
+        });
+
+        // 处理支付
+        function processPayment() {
+            const name = document.getElementById('checkout-name').value;
+            const email = document.getElementById('checkout-email').value;
+            const address = document.getElementById('checkout-address').value;
+            const card = document.getElementById('checkout-card').value;
+
+            // 简单的表单验证
+            if (!name || !email || !address || !card) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // 显示支付成功提示
+            alert('Payment successful! Thank you for your purchase.');
+            
+            // 清空购物车
+            cart = [];
+            updateCart();
+            
+            // 关闭结算界面
+            document.querySelector('.checkout-modal').style.display = 'none';
+        }
     </script>
 </body>
 </html> 

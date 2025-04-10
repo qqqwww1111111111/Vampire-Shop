@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Vampire Mystery Shop</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@300;400;600&family=Playfair+Display:wght@400;700&family=EB+Garamond:wght@400;700&display=swap');
+        
+        html {
+            cursor: url("https://freight.cargo.site/t/original/i/X1891125108465342991869321415690/cussor-6.png"), auto !important;
+        }
+
+        a {
+            cursor: url("https://freight.cargo.site/t/original/i/X1891125108446896247795611864074/cussor-5.png"), auto !important;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('assets/background-9.jpg') center/cover no-repeat fixed;
+            opacity: 1;
+            z-index: 0;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: #ff0000;
+            text-decoration: none;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            letter-spacing: 4px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #ff0000;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .category-nav {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 1rem;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .category-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid #fff;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .category-nav a:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .products-container {
+            margin-top: 160px;
+            padding: 2rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .product-card {
+            background: rgba(26, 5, 5, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(139, 0, 0, 0.4);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(26, 5, 5, 0.9) 90%, rgba(26, 5, 5, 0.8));
+        }
+
+        .product-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-price {
+            color: #ff0000;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .add-to-cart {
+            background: #8B0000;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-to-cart:hover {
+            background: #4A0000;
+            box-shadow: 0 6px 12px rgba(139, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.8rem 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-link {
+                font-size: 1rem;
+            }
+
+            .products-container {
+                padding: 6rem 1rem 1rem;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="backdrop"></div>
+    
+    <header class="header">
+        <a href="index.html" class="logo">Vampire Mystery Shop</a>
+        <nav>
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="products.html" class="nav-link">Products</a>
+            <a href="about.html" class="nav-link">About</a>
+            <a href="contact.html" class="nav-link">Contact</a>
+        </nav>
+    </header>
+
+    <div class="category-nav">
+        <a href="#necklaces">Necklaces</a>
+        <a href="#rings">Rings</a>
+        <a href="#earrings">Earrings</a>
+        <a href="#bracelets">Bracelets</a>
+        <a href="#accessories">Accessories</a>
+    </div>
+
+    <div class="products-container">
+        <section id="necklaces" class="product-section">
+            <h2 class="section-title">Necklaces</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="models/products/necklace/New Year's Snake Leather Double-Layer Clavicle Necklace.jpg" alt="Snake Leather Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Snake Leather Necklace ❧</h3>
+                        <p class="product-price">$89.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Mandala Necklace.jpg" alt="Mandala Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Mandala Necklace ❧</h3>
+                        <p class="product-price">$79.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Wind erosion necklace clavicle chain.jpg" alt="Wind Erosion Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Wind Erosion Necklace ❧</h3>
+                        <p class="product-price">$99.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Butterfly clavicle necklace.jpg" alt="Butterfly Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Butterfly Necklace ❧</h3>
+                        <p class="product-price">$69.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Zodiac Year Star Necklace.jpg" alt="Zodiac Star Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Zodiac Star Necklace ❧</h3>
+                        <p class="product-price">$89.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Decorative sweet cool hot girl accessories.jpg" alt="Decorative Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Decorative Necklace ❧</h3>
+                        <p class="product-price">$79.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Butterfly Vintage Button Necklace.jpg" alt="Butterfly Vintage Button Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Butterfly Vintage Button Necklace ❧</h3>
+                        <p class="product-price">$89.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Taboo Rose Button Necklace.jpg" alt="Taboo Rose Button Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Taboo Rose Button Necklace ❧</h3>
+                        <p class="product-price">$99.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Dream Core Double Necklace Clavicle Necklace.jpg" alt="Dream Core Double Necklace" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Dream Core Double Necklace ❧</h3>
+                        <p class="product-price">$109.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="rings" class="product-section">
+            <h2 class="section-title">Rings</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="models/products/necklace/Forbidden Love Sterling Silver Ring.jpg" alt="Forbidden Love Ring" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Forbidden Love Ring ❧</h3>
+                        <p class="product-price">$129.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Crow wearing armor nail.jpg" alt="Crow Armor Ring" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Crow Armor Ring ❧</h3>
+                        <p class="product-price">$119.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Original Fairy Cool Manicure nail.jpg" alt="Fairy Ring" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Fairy Ring ❧</h3>
+                        <p class="product-price">$109.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="earrings" class="product-section">
+            <h2 class="section-title">Earrings</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="models/products/necklace/Snake-shaped high-end dark earrings.jpg" alt="Snake Earrings" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Snake Earrings ❧</h3>
+                        <p class="product-price">$79.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Taboo Apple Earrings 925 Silver Needle.jpg" alt="Taboo Apple Earrings" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Taboo Apple Earrings ❧</h3>
+                        <p class="product-price">$89.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="bracelets" class="product-section">
+            <h2 class="section-title">Bracelets</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="models/products/necklace/Snake Bracelet New Year Sweet Cool Bracelet.jpg" alt="Snake Bracelet" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Snake Bracelet ❧</h3>
+                        <p class="product-price">$69.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="accessories" class="product-section">
+            <h2 class="section-title">Accessories</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="models/products/necklace/AirPods Max metal earphone cover.jpg" alt="AirPods Max Metal Cover" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ AirPods Max Metal Cover ❧</h3>
+                        <p class="product-price">$79.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="models/products/necklace/Rose Kunai Knife.jpg" alt="Rose Kunai Knife" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">❧ Rose Kunai Knife ❧</h3>
+                        <p class="product-price">$119.99</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html> 
