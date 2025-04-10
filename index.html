@@ -699,13 +699,13 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, rgba(20, 0, 0, 0.95), rgba(40, 0, 0, 0.95));
-            padding: 2.5rem;
-            border-radius: 25px;
+            padding: 2rem;
+            border-radius: 20px;
             border: 2px solid rgba(255, 0, 0, 0.4);
             box-shadow: 
                 0 0 50px rgba(255, 0, 0, 0.3),
                 0 0 100px rgba(255, 0, 0, 0.1);
-            max-width: 600px;
+            max-width: 400px;  /* 减小最大宽度 */
             width: 90%;
             text-align: center;
             animation: modalPop 0.5s ease;
@@ -718,10 +718,10 @@
 
         .discount-image {
             width: 100%;
-            height: 300px;
+            height: 200px;  /* 减小图片高度 */
             object-fit: cover;
-            border-radius: 15px;
-            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
             border: 2px solid rgba(255, 0, 0, 0.3);
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
             transition: transform 0.3s ease;
@@ -733,9 +733,9 @@
 
         .discount-title {
             font-family: "Cinzel", serif;
-            font-size: 3rem;
+            font-size: 2rem;  /* 减小标题字体大小 */
             color: #ff0000;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             text-shadow: 
                 0 0 20px rgba(255, 0, 0, 0.4),
                 0 0 40px rgba(255, 0, 0, 0.2);
@@ -744,29 +744,29 @@
 
         .discount-text {
             font-family: "Cormorant Garamond", serif;
-            font-size: 1.4rem;
+            font-size: 1.2rem;  /* 减小文本字体大小 */
             color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             line-height: 1.6;
             letter-spacing: 1px;
         }
 
         .discount-code {
             background: rgba(255, 0, 0, 0.15);
-            padding: 1.5rem;
-            border-radius: 15px;
-            margin: 1.5rem 0;
+            padding: 1rem;  /* 减小内边距 */
+            border-radius: 12px;
+            margin: 1rem 0;
             border: 1px solid rgba(255, 0, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1.5rem;
+            gap: 1rem;
             position: relative;
         }
 
         .discount-code span {
             font-family: "Cinzel", serif;
-            font-size: 1.3rem;
+            font-size: 1.1rem;  /* 减小优惠码字体大小 */
             color: #fff;
             letter-spacing: 2px;
             text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
@@ -1659,6 +1659,237 @@
         .lookbook-item {
             margin-bottom: 4rem;
         }
+
+        /* 添加汉堡菜单按钮样式 */
+        .menu-toggle {
+            display: none;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.8rem;
+            color: #fff;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        /* 移动端导航样式 */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                backdrop-filter: blur(10px);
+                padding: 20px;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+                border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-link {
+                font-size: 1.2rem;
+                padding: 10px 0;
+                width: 100%;
+                text-align: center;
+                border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            }
+
+            .nav-link:last-child {
+                border-bottom: none;
+            }
+
+            .logo {
+                font-size: 2rem;
+                left: 20px;
+                transform: none;
+            }
+        }
+
+        /* 热门商品响应式样式 */
+        @media (max-width: 1024px) {
+            .hot-products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hot-products {
+                padding: 2rem 1rem;
+            }
+
+            .hot-products h2 {
+                font-size: 2.4rem;
+            }
+
+            .hot-products-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .hot-product-card {
+                height: 350px;
+            }
+
+            .hot-product-overlay {
+                transform: translateY(0);
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 50%, transparent 100%);
+            }
+
+            .hot-product-title {
+                font-size: 1.6rem;
+            }
+
+            .hot-product-description {
+                font-size: 1rem;
+            }
+
+            .view-all-button {
+                font-size: 1.2rem;
+                padding: 12px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hot-product-card {
+                height: 300px;
+            }
+
+            .hot-product-title {
+                font-size: 1.4rem;
+            }
+
+            .hot-product-description {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* 视频区域样式 */
+        .video-section {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 3rem 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 4rem;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+        }
+
+        .video-section h2 {
+            font-family: 'Cinzel', serif;
+            color: #ff0000;
+            font-size: 3.2rem;
+            margin-bottom: 2.5rem;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+            letter-spacing: 4px;
+            font-weight: 700;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+        }
+
+        #mysteryVideo {
+            width: 100%;
+            display: block;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 0, 0, 0.8);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .play-button i {
+            color: white;
+            font-size: 2rem;
+            margin-left: 5px;
+        }
+
+        .video-overlay:hover .play-button {
+            transform: scale(1.1);
+            background: #ff0000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        }
+
+        .video-description {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 2rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .video-section {
+                padding: 2rem 1rem;
+            }
+
+            .video-section h2 {
+                font-size: 2.4rem;
+            }
+
+            .play-button {
+                width: 60px;
+                height: 60px;
+            }
+
+            .play-button i {
+                font-size: 1.5rem;
+            }
+
+            .video-description {
+                font-size: 1.2rem;
+            }
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -1696,6 +1927,7 @@
     <div class="model-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1;"></div>
 
     <div class="header">
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
         <a href="index.html" class="logo">Vampire Mystery Shop</a>
         <div class="nav-links">
             <a href="index.html" class="nav-link">Home</a>
@@ -1721,36 +1953,53 @@
         </div>
 
         <div class="main-content">
+            <!-- 添加视频区域 -->
+            <div class="video-section" style="margin-top: 8rem;">
+                <h2>✧ Mystery Video ✧</h2>
+                <div class="video-container">
+                    <video id="mysteryVideo" controls playsinline>
+                        <source src="assets/mystery-video.mp4" type="video/mp4">
+                        Your browser does not support video playback.
+                    </video>
+                    <div class="video-overlay">
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="video-description">Explore the magical world of our mysterious shop, feel the charm in the darkness</p>
+            </div>
+
             <div class="hot-products">
                 <h2>✧ Hot Items ✧</h2>
                 <div class="hot-products-grid">
-                    <div class="hot-product-card" data-product="goblet">
-                        <div class="hot-product-image-container">
-                            <img src="assets/hot_items/WechatIMG145.jpg" alt="Whisper of the Dead" class="hot-product-image">
+                    <div class="hot-product-card">
+                        <div class="hot-product-image-container" onclick="window.location.href='products.html?product=butterfly-vintage'">
+                            <img src="assets/hot_items/WechatIMG145.jpg" alt="Butterfly Vintage" class="hot-product-image">
                             <div class="hot-product-overlay">
-                                <div class="hot-product-title">❧ Whisper of the Dead ❧</div>
-                                <div class="hot-product-description">This bag is uniquely designed and decorated with white bones, as if it were a relic extracted from a sleeping cemetery.</div>
-                                <div class="hot-product-tag">Communication with the Dead</div>
+                                <div class="hot-product-title">❧ Butterfly Vintage ❧</div>
+                                <div class="hot-product-description">A vintage-style handbag with delicate butterfly patterns, each detail tells a story from the past.</div>
+                                <div class="hot-product-tag">Vintage Collection</div>
                             </div>
                         </div>
                     </div>
-                    <div class="hot-product-card" data-product="book">
-                        <div class="hot-product-image-container">
-                            <img src="assets/hot_items/WechatIMG146.jpg" alt="Wings of Death" class="hot-product-image">
+                    <div class="hot-product-card">
+                        <div class="hot-product-image-container" onclick="window.location.href='products.html?product=dream-core'">
+                            <img src="assets/hot_items/WechatIMG146.jpg" alt="Dream Core" class="hot-product-image">
                             <div class="hot-product-overlay">
-                                <div class="hot-product-title">❧ Wings of Death ❧</div>
-                                <div class="hot-product-description">This handbag cleverly combines bones and bat wings, presenting a cold and mysterious atmosphere.</div>
-                                <div class="hot-product-tag">Stealth Agility</div>
+                                <div class="hot-product-title">❧ Dream Core ❧</div>
+                                <div class="hot-product-description">Inspired by dreamlike elements, this handbag features ethereal patterns and mysterious symbols.</div>
+                                <div class="hot-product-tag">Dream Series</div>
                             </div>
                         </div>
                     </div>
-                    <div class="hot-product-card" data-product="apple">
-                        <div class="hot-product-image-container">
-                            <img src="assets/hot_items/WechatIMG147.jpg" alt="Angels Descend" class="hot-product-image">
+                    <div class="hot-product-card">
+                        <div class="hot-product-image-container" onclick="window.location.href='products.html?product=double-cross'">
+                            <img src="assets/hot_items/WechatIMG147.jpg" alt="Double Cross" class="hot-product-image">
                             <div class="hot-product-overlay">
-                                <div class="hot-product-title">❧ Angels Descend ❧</div>
-                                <div class="hot-product-description">The design of this handbag is inspired by the wings of an angel, whose wings are spread out in a posture full of holiness and glory.</div>
-                                <div class="hot-product-tag">Healing ability</div>
+                                <div class="hot-product-title">❧ Double Cross ❧</div>
+                                <div class="hot-product-description">A gothic-style handbag featuring intricate cross patterns, perfect for those who appreciate dark elegance.</div>
+                                <div class="hot-product-tag">Gothic Style</div>
                             </div>
                         </div>
                     </div>
@@ -1986,7 +2235,7 @@
         // 添加环境光和平行光
         const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
         scene.add(ambientLight);
-        
+
         const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
         directionalLight.position.set(5, 5, 5);
         scene.add(directionalLight);
@@ -2002,7 +2251,7 @@
         controls.enablePan = false;     // 禁用平移
         controls.rotateSpeed = 0.5;     // 降低旋转速度
         controls.autoRotate = true;     // 启用自动旋转
-        controls.autoRotateSpeed = 2.0;  // 设置自动旋转速度
+        controls.autoRotateSpeed = -2.0;  // 设置自动旋转速度为负值，实现反向旋转
         controls.minPolarAngle = Math.PI / 2;     // 限制垂直旋转的最小角度（90度）
         controls.maxPolarAngle = Math.PI / 2;     // 限制垂直旋转的最大角度（90度）
 
@@ -2093,10 +2342,8 @@
         // 商品卡片点击事件处理
         document.querySelectorAll('.hot-product-card').forEach(card => {
             card.addEventListener('click', function(e) {
-                e.preventDefault();
                 const productId = this.getAttribute('data-product');
-                sessionStorage.setItem('selectedProduct', productId);
-                window.location.href = 'products.html';
+                window.location.href = `detail.html?id=${productId}`;
             });
         });
 
@@ -2333,14 +2580,13 @@
                     e.stopPropagation();
                     
                     const productId = card.getAttribute('data-product');
-                    const productName = card.querySelector('.product-name').textContent;
-                    const productPrice = parseFloat(card.querySelector('.product-price').textContent.replace('¥', ''));
-                    const productImage = card.querySelector('.product-image').src;
+                    const productName = card.querySelector('.hot-product-title').textContent;
+                    const productImage = card.querySelector('.hot-product-image').src;
                     
                     cart.addItem({
                         id: productId,
                         name: productName,
-                        price: productPrice,
+                        price: 999, // 这里需要添加实际价格
                         image: productImage
                     });
                 });
@@ -2458,6 +2704,103 @@
             // 跳转到用户界面
             window.location.href = 'user.html';
         });
+
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        // 更新视频播放相关的JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            const videoContainer = document.querySelector('.video-container');
+            const video = document.getElementById('mysteryVideo');
+            const overlay = document.querySelector('.video-overlay');
+            const playButton = document.querySelector('.play-button');
+
+            // 点击播放按钮或视频区域时的处理
+            function toggleVideo(event) {
+                event.preventDefault();
+                if (video.paused) {
+                    video.play()
+                        .then(() => {
+                            overlay.style.opacity = '0';
+                            overlay.style.pointerEvents = 'none';
+                        })
+                        .catch(error => {
+                            console.error('视频播放失败:', error);
+                        });
+                } else {
+                    video.pause();
+                    overlay.style.opacity = '1';
+                    overlay.style.pointerEvents = 'auto';
+                }
+            }
+
+            // 添加点击事件监听器
+            videoContainer.addEventListener('click', toggleVideo);
+            playButton.addEventListener('click', toggleVideo);
+
+            // 视频结束时的处理
+            video.addEventListener('ended', function() {
+                overlay.style.opacity = '1';
+                overlay.style.pointerEvents = 'auto';
+                video.currentTime = 0;
+            });
+
+            // 视频暂停时的处理
+            video.addEventListener('pause', function() {
+                overlay.style.opacity = '1';
+                overlay.style.pointerEvents = 'auto';
+            });
+
+            // 视频播放时的处理
+            video.addEventListener('play', function() {
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+            });
+
+            // 添加错误处理
+            video.addEventListener('error', function(e) {
+                console.error('视频加载错误:', e);
+                overlay.style.opacity = '1';
+                overlay.style.pointerEvents = 'auto';
+            });
+        });
+
+        // 热门商品点击事件
+        document.querySelectorAll('.product-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // 让链接正常工作，不需要阻止默认行为
+                // 直接跳转到对应的商品详情页
+            });
+        });
+
+        document.querySelectorAll('.hot-product-card .product-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = this.getAttribute('href').split('#')[1];
+                // 直接跳转并传递参数
+                window.location.href = `products.html?product=${productId}`;
+            });
+        });
+
+        // 添加热门商品点击事件
+        document.addEventListener('DOMContentLoaded', function() {
+            const hotProductCards = document.querySelectorAll('.hot-product-card');
+            hotProductCards.forEach(card => {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function() {
+                    const productId = this.querySelector('.hot-product-title').textContent
+                        .replace('❧ ', '')
+                        .replace(' ❧', '')
+                        .toLowerCase()
+                        .replace(/\s+/g, '-');
+                    window.location.href = `products.html?product=${productId}`;
+                });
+            });
+        });
+
+        // 其他现有的 JavaScript 代码
     </script>
 </body>
 </html> 
