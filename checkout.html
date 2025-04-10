@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -326,235 +326,237 @@
     <div class="backdrop"></div>
     
     <header class="header">
-        <a href="index.html" class="logo">Vampire Mystery Shop</a>
+        <a href="index.html" class="logo">VAMPIRE SHOP</a>
+        <nav>
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="products.html" class="nav-link">Shop</a>
+            <a href="user.html" class="nav-link">Account</a>
+        </nav>
     </header>
 
     <div class="checkout-container">
         <div class="checkout-form">
-            <h2>选择支付方式</h2>
-            <div class="payment-methods">
-                <div class="payment-method" data-method="alipay">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSI2NCIgZmlsbD0iIzE2NzdGRiIvPjxwYXRoIGQ9Ik0xMTAgODIuNEM5NS42IDcxLjIgNzQuNCA1NiA3NC40IDU2SDQ0VjY0SDY4QzY4IDY0IDY1LjYgNzEuMiA1Ny42IDc4LjRDNDIuNCA2OCAzMiA2NC44IDI0LjggNjRDMTcuNiA2My4yIDEyIDY0LjggMTIgNjQuOEMxMiA2NC44IDE2IDkyIDQ0IDk2LjhDNzIgMTAxLjYgOTIgOTIgOTIgOTJMMTEwIDgyLjRaTTU3LjYgODQuOEM0OS42IDgyLjQgNDQgNzguNCA0NCA3OC40QzQ0IDc4LjQgNTIgNzQuNCA2MCA3NC40QzY4IDc0LjQgNzQuNCA3OC40IDc0LjQgNzguNEM3NC40IDc4LjQgNjUuNiA4Ny4yIDU3LjYgODQuOFoiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTQ0IDUySDkyVjM2SDQ0VjUyWiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=" alt="支付宝">
-                    <h3>支付宝</h3>
-                </div>
-                <div class="payment-method" data-method="wechat">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSI2NCIgZmlsbD0iIzA3QzE2MCIvPjxwYXRoIGQ9Ik05Mi44IDg0LjhDOTIuOCA3NS4yIDgyLjQgNjcuMiA2OS42IDY3LjJDNTYuOCA2Ny4yIDQ2LjQgNzUuMiA0Ni40IDg0LjhDNDYuNCA5NC40IDU2LjggMTAyLjQgNjkuNiAxMDIuNEM3My42IDEwMi40IDc3LjYgMTAxLjYgODAuOCA5OS4yTDg4IDEwMi40TDg2LjQgOTZDOTAuNCA5My42IDkyLjggODkuNiA5Mi44IDg0LjhaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik04MS42IDI1LjZDNjYuNCAyNS42IDU0LjQgMzUuMiA1NC40IDQ2LjRDNTQuNCA1MiA1OC40IDU3LjYgNjQgNjAuOEw2Mi40IDY4TDcwLjQgNjRDNzMuNiA2NS42IDc3LjYgNjYuNCA4MS42IDY2LjRDOTYuOCA2Ni40IDEwOC44IDU2LjggMTA4LjggNDYuNEMxMDguOCAzNS4yIDk2LjggMjUuNiA4MS42IDI1LjZaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik03My42IDQxLjZDNzMuNiA0My43MDkxIDcxLjgwOTEgNDUuNSA2OS43IDQ1LjVDNjcuNTkwOSA0NS41IDY1LjggNDMuNzA5MSA2NS44IDQxLjZDNjUuOCAzOS40OTA5IDY3LjU5MDkgMzcuNyA2OS43IDM3LjdDNzEuODA5MSAzNy43IDczLjYgMzkuNDkwOSA3My42IDQxLjZaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik05My42IDQxLjZDOTMuNiA0My43MDkxIDkxLjgwOTEgNDUuNSA4OS43IDQ1LjVDODcuNTkwOSA0NS41IDg1LjggNDMuNzA5MSA4NS44IDQxLjZDODUuOCAzOS40OTA5IDg3LjU5MDkgMzcuNyA4OS43IDM3LjdDOTEuODA5MSAzNy43IDkzLjYgMzkuNDkwOSA5My42IDQxLjZaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik02MS42IDgwQzYxLjYgODEuNTQ2NCA2MC4zNDY0IDgyLjggNTguOCA4Mi44QzU3LjI1MzYgODIuOCA1NiA4MS41NDY0IDU2IDgwQzU2IDc4LjQ1MzYgNTcuMjUzNiA3Ny4yIDU4LjggNzcuMkM2MC4zNDY0IDc3LjIgNjEuNiA3OC40NTM2IDYxLjYgODBaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik03Ny42IDgwQzc3LjYgODEuNTQ2NCA3Ni4zNDY0IDgyLjggNzQuOCA4Mi44QzczLjI1MzYgODIuOCA3MiA4MS41NDY0IDcyIDgwQzcyIDc4LjQ1MzYgNzMuMjUzNiA3Ny4yIDc0LjggNzcuMkM3Ni4zNDY0IDc3LjIgNzcuNiA3OC40NTM2IDc3LjYgODBaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==" alt="微信支付">
-                    <h3>微信支付</h3>
-                </div>
-                <div class="payment-method" data-method="card">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSI2NCIgZmlsbD0iI0ZGNkI2QiIvPjxwYXRoIGQ9Ik0yNCA0NEMyNCAzOS41ODE3IDI3LjU4MTcgMzYgMzIgMzZIOTZDMTAwLjQxOCAzNiAxMDQgMzkuNTgxNyAxMDQgNDRWODRDMTA0IDg4LjQxODMgMTAwLjQxOCA5MiA5NiA5MkgzMkMyNy41ODE3IDkyIDI0IDg4LjQxODMgMjQgODRWNDRaIiBmaWxsPSJ3aGl0ZSIvPjxyZWN0IHg9IjI0IiB5PSI1MiIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgiIGZpbGw9IiNGRjZCNkIiLz48Y2lyY2xlIGN4PSI4OCIgY3k9Ijc2IiByPSI4IiBmaWxsPSIjRkZEOTNEIi8+PGNpcmNsZSBjeD0iNzYiIGN5PSI3NiIgcj0iOCIgZmlsbD0iI0ZGNkI2QiIvPjwvc3ZnPg==" alt="银行卡">
-                    <h3>银行卡</h3>
-                </div>
+            <h2>Shipping Information</h2>
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" required>
             </div>
-            <button class="checkout-btn" onclick="processPayment()">确认支付</button>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Shipping Address</label>
+                <textarea id="address" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="notes">Order Notes (Optional)</label>
+                <textarea id="notes"></textarea>
+            </div>
         </div>
 
         <div class="order-summary">
             <div class="order-header">
-                <h2>订单摘要</h2>
-                <span class="order-number">订单号：VM<span id="orderNumber"></span></span>
+                <h2>Order Summary</h2>
+                <span class="order-number">Order #VMS-2024001</span>
             </div>
 
-            <div class="order-items" id="checkout-items">
-                <!-- 订单项将通过 JavaScript 动态添加 -->
+            <div class="order-items" id="orderItems">
+                <!-- Order items will be dynamically added here -->
             </div>
 
             <div class="delivery-options">
-                <h3>配送方式</h3>
-                <div class="delivery-option selected" onclick="selectDelivery(this, 0)">
-                    <input type="radio" name="delivery" checked>
-                    <span>普通配送 (3-5天送达)</span>
-                    <span class="delivery-price">免费</span>
+                <h3>Shipping Method</h3>
+                <div class="delivery-option selected">
+                    <input type="radio" name="delivery" id="standard" checked>
+                    <label for="standard">Standard Shipping</label>
+                    <span class="delivery-price">$5.99</span>
                 </div>
-                <div class="delivery-option" onclick="selectDelivery(this, 20)">
-                    <input type="radio" name="delivery">
-                    <span>快速配送 (1-2天送达)</span>
-                    <span class="delivery-price">¥20.00</span>
-                </div>
-                <div class="delivery-option" onclick="selectDelivery(this, 50)">
-                    <input type="radio" name="delivery">
-                    <span>午夜专送 (当天午夜送达)</span>
-                    <span class="delivery-price">¥50.00</span>
+                <div class="delivery-option">
+                    <input type="radio" name="delivery" id="express">
+                    <label for="express">Express Shipping</label>
+                    <span class="delivery-price">$15.99</span>
                 </div>
             </div>
 
             <div class="coupon-section">
-                <h3>优惠券</h3>
+                <h3>Promo Code</h3>
                 <div class="coupon-input">
-                    <input type="text" id="couponCode" placeholder="输入优惠码">
-                    <button class="apply-coupon" onclick="applyCoupon()">应用</button>
+                    <input type="text" placeholder="Enter promo code">
+                    <button class="apply-coupon">Apply</button>
                 </div>
             </div>
 
             <div class="price-breakdown">
                 <div class="price-row">
-                    <span>商品总价</span>
-                    <span>¥<span id="subtotal">0.00</span></span>
+                    <span>Subtotal</span>
+                    <span id="subtotal">$0.00</span>
                 </div>
                 <div class="price-row">
-                    <span>配送费</span>
-                    <span>¥<span id="delivery-fee">0.00</span></span>
+                    <span>Shipping</span>
+                    <span id="shipping">$5.99</span>
                 </div>
-                <div class="price-row" id="discount-row" style="display: none;">
-                    <span>优惠折扣</span>
-                    <span>-¥<span id="discount-amount">0.00</span></span>
+                <div class="price-row">
+                    <span>Discount</span>
+                    <span id="discount">-$0.00</span>
                 </div>
                 <div class="price-row total">
-                    <span>总计</span>
-                    <span>¥<span id="checkout-total-amount">0.00</span></span>
+                    <span>Total</span>
+                    <span id="total">$0.00</span>
                 </div>
             </div>
 
+            <div class="payment-methods">
+                <h3>Payment Method</h3>
+                <div class="payment-options">
+                    <div class="payment-option">
+                        <input type="radio" name="payment" id="card" checked>
+                        <label for="card">Credit Card</label>
+                        <img src="assets/payment/card.svg" alt="Credit Card">
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" name="payment" id="wechat">
+                        <label for="wechat">WeChat Pay</label>
+                        <img src="assets/payment/wechat.svg" alt="WeChat Pay">
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" name="payment" id="alipay">
+                        <label for="alipay">Alipay</label>
+                        <img src="assets/payment/alipay.svg" alt="Alipay">
+                    </div>
+                </div>
+            </div>
+
+            <button class="checkout-button" onclick="processCheckout()">Complete Order</button>
+
             <div class="order-note">
-                <p>* 午夜专送服务仅限特定区域，由我们的吸血鬼快递员完成配送。</p>
-                <p>* 所有商品均为正品，享受30天无理由退换。</p>
+                <p>By completing your order, you agree to our Terms of Service and Privacy Policy.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // 生成随机订单号
-        function generateOrderNumber() {
-            const date = new Date();
-            const year = date.getFullYear().toString().substr(-2);
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const day = date.getDate().toString().padStart(2, '0');
-            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-            return `${year}${month}${day}${random}`;
-        }
-
-        // 从 localStorage 获取购物车数据
-        function loadCartData() {
+        // Load cart items
+        function loadCartItems() {
             const cartData = localStorage.getItem('cartData');
-            return cartData ? JSON.parse(cartData) : [];
-        }
+            const cartItems = cartData ? JSON.parse(cartData) : [];
+            const orderItemsContainer = document.getElementById('orderItems');
+            let subtotal = 0;
 
-        let subtotal = 0;
-        let deliveryFee = 0;
-        let discount = 0;
-
-        // 显示订单信息
-        function displayOrderItems() {
-            const cart = loadCartData();
-            const checkoutItems = document.getElementById('checkout-items');
-            const subtotalElement = document.getElementById('subtotal');
-            
-            checkoutItems.innerHTML = '';
-            subtotal = 0;
-
-            cart.forEach(item => {
+            orderItemsContainer.innerHTML = '';
+            cartItems.forEach(item => {
+                const price = parseFloat(item.price);
+                const quantity = parseInt(item.quantity || 1);
+                const totalPrice = price * quantity;
+                
                 const itemElement = document.createElement('div');
                 itemElement.className = 'order-item';
-                const priceInYuan = item.price * 7.2;
                 itemElement.innerHTML = `
                     <img src="${item.image}" alt="${item.title}">
-                    <div>
+                    <div class="item-details">
                         <h4>${item.title}</h4>
-                        <p>¥${priceInYuan.toFixed(2)}</p>
+                        <p>Quantity: ${quantity}</p>
+                        <p>$${price.toFixed(2)} × ${quantity} = $${totalPrice.toFixed(2)}</p>
                     </div>
                 `;
-                checkoutItems.appendChild(itemElement);
-                subtotal += priceInYuan;
+                orderItemsContainer.appendChild(itemElement);
+                subtotal += totalPrice;
             });
 
-            subtotalElement.textContent = subtotal.toFixed(2);
-            updateTotal();
+            updatePrices(subtotal);
         }
 
-        // 选择配送方式
-        function selectDelivery(element, fee) {
-            document.querySelectorAll('.delivery-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-            element.classList.add('selected');
-            element.querySelector('input').checked = true;
-            deliveryFee = fee;
-            document.getElementById('delivery-fee').textContent = fee.toFixed(2);
-            updateTotal();
-        }
+        // Update price breakdown
+        function updatePrices(subtotal) {
+            const shipping = document.querySelector('input[name="delivery"]:checked').id === 'standard' ? 5.99 : 15.99;
+            const discountCode = document.querySelector('.coupon-input input').value.trim().toUpperCase();
+            let discount = 0;
 
-        // 应用优惠券
-        function applyCoupon() {
-            const couponCode = document.getElementById('couponCode').value.toUpperCase();
-            const discountRow = document.getElementById('discount-row');
-            const discountAmount = document.getElementById('discount-amount');
-
-            // 优惠券逻辑
-            switch(couponCode) {
+            // Apply discount based on promo code
+            switch(discountCode) {
                 case 'VAMPIRE10':
-                    discount = subtotal * 0.1;
-                    alert('优惠券使用成功！享受9折优惠。');
+                    discount = subtotal * 0.1; // 10% off
                     break;
                 case 'BLOOD20':
-                    discount = subtotal * 0.2;
-                    alert('优惠券使用成功！享受8折优惠。');
+                    discount = subtotal * 0.2; // 20% off
                     break;
                 case 'NEWMOON':
-                    discount = 50;
-                    alert('优惠券使用成功！立减50元。');
+                    discount = 50; // $50 off
                     break;
-                default:
-                    alert('无效的优惠券代码');
-                    discount = 0;
-                    discountRow.style.display = 'none';
-                    updateTotal();
-                    return;
+                case 'WELCOME15':
+                    discount = subtotal * 0.15; // 15% off
+                    break;
             }
 
-            discountRow.style.display = 'flex';
-            discountAmount.textContent = discount.toFixed(2);
-            updateTotal();
+            const total = Math.max(0, subtotal + shipping - discount);
+
+            // Update display with USD prices
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('shipping').textContent = `$${shipping.toFixed(2)}`;
+            document.getElementById('discount').textContent = `-$${discount.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
         }
 
-        // 更新总价
-        function updateTotal() {
-            const total = subtotal + deliveryFee - discount;
-            document.getElementById('checkout-total-amount').textContent = total.toFixed(2);
-        }
-
-        // 处理支付方式选择
-        let selectedPaymentMethod = null;
-        document.querySelectorAll('.payment-method').forEach(method => {
-            method.addEventListener('click', () => {
-                document.querySelectorAll('.payment-method').forEach(m => {
-                    m.classList.remove('selected');
+        // Handle shipping method change
+        document.querySelectorAll('input[name="delivery"]').forEach(input => {
+            input.addEventListener('change', function() {
+                document.querySelectorAll('.delivery-option').forEach(option => {
+                    option.classList.remove('selected');
                 });
-                method.classList.add('selected');
-                selectedPaymentMethod = method.dataset.method;
+                this.closest('.delivery-option').classList.add('selected');
+                const subtotal = parseFloat(document.getElementById('subtotal').textContent.slice(1));
+                updatePrices(subtotal);
             });
         });
 
-        // 处理支付
-        function processPayment() {
-            if (!selectedPaymentMethod) {
-                alert('请选择支付方式');
+        // Handle promo code application
+        document.querySelector('.apply-coupon').addEventListener('click', function() {
+            const subtotal = parseFloat(document.getElementById('subtotal').textContent.slice(1));
+            const code = document.querySelector('.coupon-input input').value.trim().toUpperCase();
+            
+            // Validate promo code
+            if (code && !['VAMPIRE10', 'BLOOD20', 'NEWMOON', 'WELCOME15'].includes(code)) {
+                alert('Invalid promo code');
+                return;
+            }
+            
+            updatePrices(subtotal);
+            
+            if (code) {
+                alert('Promo code applied successfully!');
+            }
+        });
+
+        // Process checkout
+        function processCheckout() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+
+            if (!name || !email || !phone || !address) {
+                alert('Please fill in all required fields');
                 return;
             }
 
-            switch(selectedPaymentMethod) {
-                case 'alipay':
-                    alert('正在跳转到支付宝支付...');
-                    break;
-                case 'wechat':
-                    alert('请使用微信扫描二维码支付...');
-                    break;
-                case 'card':
-                    alert('正在跳转到银行卡支付...');
-                    break;
+            const total = parseFloat(document.getElementById('total').textContent.slice(1));
+            if (total <= 0) {
+                alert('Your cart is empty');
+                return;
             }
 
-            setTimeout(() => {
-                localStorage.removeItem('cartData');
-                alert('支付成功！感谢您的购买。');
-                window.location.href = 'products.html';
-            }, 1500);
+            // Add your payment processing logic here
+            alert('Order placed successfully! Thank you for shopping with us.');
+            localStorage.removeItem('cartData');
+            window.location.href = 'index.html';
         }
 
-        // 页面加载时初始化
-        window.addEventListener('load', () => {
-            document.getElementById('orderNumber').textContent = generateOrderNumber();
-            displayOrderItems();
-        });
+        // Initialize page
+        window.addEventListener('load', loadCartItems);
     </script>
 </body>
 </html> 
