@@ -1890,6 +1890,173 @@
                 font-size: 1.2rem;
             }
         }
+
+        /* 移动端基础样式优化 */
+        @media screen and (max-width: 768px) {
+            /* 导航栏移动端优化 */
+            .nav-container {
+                padding: 10px 15px;
+            }
+            
+            .logo img {
+                width: 120px;
+            }
+
+            /* 视频区域移动端优化 */
+            .video-container {
+                height: 300px;
+                margin: 20px auto;
+            }
+
+            .video-title {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+
+            .play-button {
+                width: 60px;
+                height: 60px;
+            }
+
+            /* 热门商品区域移动端优化 */
+            .hot-products {
+                padding: 20px 15px;
+            }
+
+            .hot-products h2 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 0 10px;
+            }
+
+            .product-card {
+                margin: 0 auto;
+                max-width: 320px;
+            }
+
+            .product-card img {
+                height: 200px;
+            }
+
+            .product-info {
+                padding: 15px;
+            }
+
+            .product-info h3 {
+                font-size: 18px;
+            }
+
+            .product-info p {
+                font-size: 14px;
+            }
+
+            /* 轮播图移动端优化 */
+            .carousel-section {
+                padding: 20px 10px;
+            }
+
+            .carousel-section h2 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+
+            .carousel-container {
+                max-width: 100%;
+                height: 250px;
+            }
+
+            .carousel-item img {
+                height: 200px;
+            }
+
+            .carousel-caption {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .carousel-controls button {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+            }
+
+            /* 页脚移动端优化 */
+            footer {
+                padding: 20px 15px;
+            }
+
+            footer p {
+                font-size: 12px;
+            }
+
+            /* 社交媒体链接移动端优化 */
+            .social-links {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px 15px;
+            }
+
+            .social-link {
+                width: 100%;
+                max-width: 280px;
+                margin: 0 auto;
+            }
+
+            /* 商店信息区域移动端优化 */
+            .shop-info {
+                padding: 20px 15px;
+                flex-direction: column;
+            }
+
+            .shop-details {
+                width: 100%;
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .map-container {
+                width: 100%;
+                height: 250px;
+            }
+        }
+
+        /* 超小屏幕设备优化 */
+        @media screen and (max-width: 480px) {
+            .video-container {
+                height: 250px;
+            }
+
+            .play-button {
+                width: 50px;
+                height: 50px;
+            }
+
+            .product-card {
+                max-width: 100%;
+            }
+
+            .product-card img {
+                height: 180px;
+            }
+
+            .carousel-container {
+                height: 200px;
+            }
+
+            .carousel-item img {
+                height: 150px;
+            }
+
+            .carousel-caption {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
