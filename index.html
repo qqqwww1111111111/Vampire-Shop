@@ -2717,53 +2717,55 @@
             const overlay = document.querySelector('.video-overlay');
             const playButton = document.querySelector('.play-button');
 
-            // 点击播放按钮或视频区域时的处理
-            function toggleVideo(event) {
+            // 修改点击事件处理函数
+            function playVideo(event) {
                 event.preventDefault();
+                event.stopPropagation(); // 阻止事件冒泡
+                
                 if (video.paused) {
-                    video.play()
-                        .then(() => {
+                    // 尝试播放视频
+                    const playPromise = video.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            // 播放成功
                             overlay.style.opacity = '0';
                             overlay.style.pointerEvents = 'none';
-                        })
-                        .catch(error => {
+                        }).catch(error => {
                             console.error('视频播放失败:', error);
                         });
-                } else {
-                    video.pause();
-                    overlay.style.opacity = '1';
-                    overlay.style.pointerEvents = 'auto';
+                    }
                 }
             }
 
-            // 添加点击事件监听器
-            videoContainer.addEventListener('click', toggleVideo);
-            playButton.addEventListener('click', toggleVideo);
-
-            // 视频结束时的处理
-            video.addEventListener('ended', function() {
+            // 视频暂停或结束时的处理
+            function showOverlay() {
                 overlay.style.opacity = '1';
                 overlay.style.pointerEvents = 'auto';
+            }
+
+            // 单独为播放按钮添加点击事件
+            playButton.addEventListener('click', playVideo);
+
+            // 视频结束时显示遮罩
+            video.addEventListener('ended', function() {
+                showOverlay();
                 video.currentTime = 0;
             });
 
-            // 视频暂停时的处理
-            video.addEventListener('pause', function() {
-                overlay.style.opacity = '1';
-                overlay.style.pointerEvents = 'auto';
-            });
+            // 视频暂停时显示遮罩
+            video.addEventListener('pause', showOverlay);
 
-            // 视频播放时的处理
+            // 视频播放时隐藏遮罩
             video.addEventListener('play', function() {
                 overlay.style.opacity = '0';
                 overlay.style.pointerEvents = 'none';
             });
 
-            // 添加错误处理
+            // 错误处理
             video.addEventListener('error', function(e) {
                 console.error('视频加载错误:', e);
-                overlay.style.opacity = '1';
-                overlay.style.pointerEvents = 'auto';
+                showOverlay();
             });
         });
 
@@ -2801,6 +2803,83 @@
         });
 
         // 其他现有的 JavaScript 代码
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousels = document.querySelectorAll('.carousel');
+        
+        carousels.forEach(carousel => {
+            const items = carousel.querySelectorAll('.carousel-item');
+            const container = carousel.closest('.carousel-container');
+            const dotsContainer = container.querySelector('.carousel-dots');
+            let currentIndex = 0;
+            let autoplayInterval;
+            
+            // 创建导航点
+            items.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(index));
+                dotsContainer.appendChild(dot);
+            });
+            
+            // 显示指定幻灯片
+            function goToSlide(index) {
+                items[currentIndex].classList.remove('active');
+                dotsContainer.children[currentIndex].classList.remove('active');
+                
+                currentIndex = index;
+                
+                items[currentIndex].classList.add('active');
+                dotsContainer.children[currentIndex].classList.add('active');
+            }
+            
+            // 下一张幻灯片
+            function nextSlide() {
+                const nextIndex = (currentIndex + 1) % items.length;
+                goToSlide(nextIndex);
+            }
+            
+            // 上一张幻灯片
+            function prevSlide() {
+                const prevIndex = (currentIndex - 1 + items.length) % items.length;
+                goToSlide(prevIndex);
+            }
+            
+            // 添加控制按钮事件监听
+            const prevButton = container.querySelector('.prev');
+            const nextButton = container.querySelector('.next');
+            
+            prevButton.addEventListener('click', () => {
+                clearInterval(autoplayInterval);
+                prevSlide();
+                startAutoplay();
+            });
+            
+            nextButton.addEventListener('click', () => {
+                clearInterval(autoplayInterval);
+                nextSlide();
+                startAutoplay();
+            });
+            
+            // 自动播放
+            function startAutoplay() {
+                autoplayInterval = setInterval(nextSlide, 5000);
+            }
+            
+            // 鼠标悬停时暂停自动播放
+            container.addEventListener('mouseenter', () => {
+                clearInterval(autoplayInterval);
+            });
+            
+            container.addEventListener('mouseleave', startAutoplay);
+            
+            // 初始化第一张幻灯片和自动播放
+            items[0].classList.add('active');
+            startAutoplay();
+        });
+    });
     </script>
 </body>
 </html> 
